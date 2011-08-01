@@ -104,7 +104,6 @@ public class AbstractValue<T> implements ValueView<T>
             _toAdd = null;
         }
 
-        // TODO: notify listeners
         return ovalue;
     }
 
