@@ -23,7 +23,7 @@ public class ValueTest
                 fired[0] = true;
             }
         });
-        value.update(15);
+        assertEquals(42, value.update(15).intValue());
         assertEquals(15, value.get().intValue());
         assertTrue(fired[0]);
     }
