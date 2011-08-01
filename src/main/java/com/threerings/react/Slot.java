@@ -30,7 +30,7 @@ public abstract class Slot<T>
     }
 
     /**
-     * Returns the priority of this slot. Slots will be notified by signals in order of priority.
+     * Returns the priority of this slot. Slots will be notified in order of priority.
      */
     public int priority () {
         return 0;

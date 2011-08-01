@@ -25,6 +25,9 @@ public class AbstractSignal<T> implements SignalView<T>
         return cons;
     }
 
+    /**
+     * Emits the supplied event to all connected slots.
+     */
     protected void emitToSlots (T event) {
         // note that we're dispatching
         Cons slots = _slots;
