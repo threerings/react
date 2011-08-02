@@ -11,7 +11,7 @@ package com.threerings.react;
  * entity which dispatches value changes in a custom manner (like over the network). Value
  * consumers should require only a view on a value, rather than a concrete value.
  */
-public interface ValueView<T>
+public interface ValueView<T> extends SignalView<T>
 {
     /**
      * Used to observe changes to a value. One must override only one of the {@link #onChange}
@@ -62,10 +62,4 @@ public interface ValueView<T>
      * @return a connection instance which can be used to cancel the connection.
      */
     Connection listen (Listener<T> slot);
-
-    /**
-     * Returns a view of this value as a signal, which can be observed by slots. The signal will be
-     * notified of the new value when this value changes.
-     */
-    SignalView<T> asSignal ();
 }

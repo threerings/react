@@ -10,15 +10,11 @@ import java.util.Set;
 /**
  * Handles the machinery of connecting listeners to a value and notifying them, without exposing a
  * public interface for updating the value. This can be used by libraries which wish to provide
- * observable values, but must manage the distribution of value updates themselves (so that they
- * may send them over the network, for example).
+ * observable values, but must manage the maintenance and distribution of value updates themselves
+ * (so that they may send them over the network, for example).
  */
-public class AbstractValue<T> implements ValueView<T>
+public abstract class AbstractValue<T> implements ValueView<T>
 {
-    @Override public T get () {
-        return _value;
-    }
-
     @Override public Connection listen (Listener<T> listener) {
         Cons cons = new Cons(listener);
         if (isDispatching()) {
@@ -30,34 +26,32 @@ public class AbstractValue<T> implements ValueView<T>
         return cons;
     }
 
-    @Override public SignalView<T> asSignal () {
-        return new SignalView<T>() {
-            public Connection connect (final Slot<T> slot) {
-                return listen(new Listener<T>() {
-                    public void onChange (T value) {
-                        slot.onEmit(value);
-                    }
-                    public int priority () {
-                        return slot.priority();
-                    }
-                });
+    @Override public Connection connect (final Slot<T> slot) {
+        return listen(new Listener<T>() {
+            public void onChange (T value) {
+                slot.onEmit(value);
             }
-        };
+            public int priority () {
+                return slot.priority();
+            }
+        });
     }
 
     @Override public int hashCode () {
-        return (_value == null) ? 0 : _value.hashCode();
+        T value = get();
+        return (value == null) ? 0 : value.hashCode();
     }
 
     @Override public boolean equals (Object other) {
         if (other == null) return false;
         if (other.getClass() != getClass()) return false;
+        T value = get();
         @SuppressWarnings("unchecked") T ovalue = ((AbstractValue<T>)other).get();
-        return (_value == ovalue || (ovalue != null && ovalue.equals(_value)));
+        return (value == ovalue || (ovalue != null && ovalue.equals(value)));
     }
 
     @Override public String toString () {
-        return getClass().getSimpleName() + "(" + _value + ")";
+        return getClass().getSimpleName() + "(" + get() + ")";
     }
 
     /**
@@ -66,7 +60,8 @@ public class AbstractValue<T> implements ValueView<T>
      * nulls).
      */
     protected T updateAndNotifyIf (T value) {
-        if (value == _value || (value != null && value.equals(_value))) return value;
+        T ovalue = get();
+        if (value == ovalue || (value != null && value.equals(ovalue))) return value;
         return updateAndNotify(value);
     }
 
@@ -76,8 +71,8 @@ public class AbstractValue<T> implements ValueView<T>
      */
     protected T updateAndNotify (T value) {
         // first update our value
-        T ovalue = _value;
-        _value = value;
+        T ovalue = get();
+        updateLocal(value);
 
         // next note that we're dispatching
         Cons lners = _listeners;
@@ -107,6 +102,8 @@ public class AbstractValue<T> implements ValueView<T>
         return ovalue;
     }
 
+    protected abstract void updateLocal (T value);
+
     protected final boolean isDispatching () {
         return _listeners == DISPATCHING;
     }
@@ -135,7 +132,8 @@ public class AbstractValue<T> implements ValueView<T>
     protected Cons _toAdd;
     protected Set<Cons> _toRemove;
 
-    protected T _value;
-
-    protected static final Object DISPATCHING = new AbstractValue<Void>().new Cons(null);
+    protected static final Object DISPATCHING = new AbstractValue<Void>() {
+        public Void get () { return null; }
+        protected void updateLocal (Void value) {}
+    }.new Cons(null);
 }

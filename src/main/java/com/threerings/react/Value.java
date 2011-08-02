@@ -42,4 +42,14 @@ public class Value<T> extends AbstractValue<T>
     public T updateForce (T value) {
         return updateAndNotify(value);
     }
+
+    @Override public T get () {
+        return _value;
+    }
+
+    @Override protected void updateLocal (T value) {
+        _value = value;
+    }
+
+    protected T _value;
 }

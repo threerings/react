@@ -31,7 +31,7 @@ public class ValueTest
     @Test public void testAsSignal () {
         Value<Integer> value = Value.create(42);
         final boolean[] fired = new boolean[] { false };
-        value.asSignal().connect(new Slot<Integer>() {
+        value.connect(new Slot<Integer>() {
             public void onEmit (Integer value) {
                 assertEquals(15, value.intValue());
                 fired[0] = true;
@@ -44,7 +44,7 @@ public class ValueTest
     @Test public void testAsOnceSignal () {
         Value<Integer> value = Value.create(42);
         final int[] fired = new int[] { 0 };
-        value.asSignal().connect(new Slot<Integer>() {
+        value.connect(new Slot<Integer>() {
             public void onEmit (Integer value) {
                 fired[0]++;
             }
