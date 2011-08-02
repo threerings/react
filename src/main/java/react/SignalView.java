@@ -3,7 +3,7 @@
 // Copyright (c) 2011, Three Rings Design, Inc. - All rights reserved.
 // http://github.com/threerings/react/blob/master/LICENSE
 
-package com.threerings.react;
+package react;
 
 /**
  * A view of a {@link Signal}, on which slots may listen, but to which one cannot emit events. This

@@ -3,7 +3,7 @@
 // Copyright (c) 2011, Three Rings Design, Inc. - All rights reserved.
 // http://github.com/threerings/react/blob/master/LICENSE
 
-package com.threerings.react;
+package react;
 
 /**
  * A signal that emits an event with no associated data. It can be used with {@code Slot<Void>}

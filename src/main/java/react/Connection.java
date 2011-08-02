@@ -3,7 +3,7 @@
 // Copyright (c) 2011, Three Rings Design, Inc. - All rights reserved.
 // http://github.com/threerings/react/blob/master/LICENSE
 
-package com.threerings.react;
+package react;
 
 /**
  * Provides a mechanism to cancel a slot or listener registration, or to perform post-registration

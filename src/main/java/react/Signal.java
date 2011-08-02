@@ -3,7 +3,7 @@
 // Copyright (c) 2011, Three Rings Design, Inc. - All rights reserved.
 // http://github.com/threerings/react/blob/master/LICENSE
 
-package com.threerings.react;
+package react;
 
 /**
  * A signal that emits events of type {@code T}. {@link Slot}s may be connected to a signal to be

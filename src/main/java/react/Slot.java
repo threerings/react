@@ -3,7 +3,7 @@
 // Copyright (c) 2011, Three Rings Design, Inc. - All rights reserved.
 // http://github.com/threerings/react/blob/master/LICENSE
 
-package com.threerings.react;
+package react;
 
 /**
  * Reacts to signal emissions. Users must override either {@link #onEmit(T)} or {@link #onEmit()},
