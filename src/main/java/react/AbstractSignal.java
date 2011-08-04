@@ -14,7 +14,7 @@ import java.util.Set;
  */
 public class AbstractSignal<T> implements SignalView<T>
 {
-    @Override public Connection connect (Slot<T> slot) {
+    @Override public Connection connect (Slot<? super T> slot) {
         Cons cons = new Cons(slot);
         if (isDispatching()) {
             cons.next = _toAdd;
@@ -60,9 +60,9 @@ public class AbstractSignal<T> implements SignalView<T>
     }
 
     protected class Cons extends AbstractConnection<Cons> {
-        public final Slot<T> slot;
+        public final Slot<? super T> slot;
 
-        public Cons (Slot<T> slot) {
+        public Cons (Slot<? super T> slot) {
             this.slot = slot;
         }
 

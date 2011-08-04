@@ -61,5 +61,5 @@ public interface ValueView<T> extends SignalView<T>
      * changes.
      * @return a connection instance which can be used to cancel the connection.
      */
-    Connection listen (Listener<T> slot);
+    Connection listen (Listener<? super T> listener);
 }

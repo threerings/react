@@ -15,7 +15,7 @@ import java.util.Set;
  */
 public abstract class AbstractValue<T> implements ValueView<T>
 {
-    @Override public Connection listen (Listener<T> listener) {
+    @Override public Connection listen (Listener<? super T> listener) {
         Cons cons = new Cons(listener);
         if (isDispatching()) {
             cons.next = _toAdd;
@@ -26,7 +26,7 @@ public abstract class AbstractValue<T> implements ValueView<T>
         return cons;
     }
 
-    @Override public Connection connect (final Slot<T> slot) {
+    @Override public Connection connect (final Slot<? super T> slot) {
         return listen(new Listener<T>() {
             public void onChange (T value) {
                 slot.onEmit(value);
@@ -109,9 +109,9 @@ public abstract class AbstractValue<T> implements ValueView<T>
     }
 
     protected class Cons extends AbstractConnection<Cons> {
-        public final Listener<T> listener;
+        public final Listener<? super T> listener;
 
-        public Cons (Listener<T> listener) {
+        public Cons (Listener<? super T> listener) {
             this.listener = listener;
         }
 

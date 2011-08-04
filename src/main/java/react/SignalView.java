@@ -17,5 +17,5 @@ public interface SignalView<T>
      * signal, the slot will be notified.
      * @return a connection instance which can be used to cancel the connection.
      */
-    Connection connect (Slot<T> slot);
+    Connection connect (Slot<? super T> slot);
 }
