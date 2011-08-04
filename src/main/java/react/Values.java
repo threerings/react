@@ -18,7 +18,7 @@ public class Values
      */
     public static <T> ValueView<Boolean> toggler (SignalView<T> signal, boolean initial) {
         final Value<Boolean> value = Value.create(initial);
-        signal.connect(new Slot<T>() {
+        signal.connect(new UnitSlot() {
             @Override public void onEmit () {
                 value.update(!value.get());
             }

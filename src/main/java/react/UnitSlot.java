@@ -1,0 +1,23 @@
+//
+// React - a library for functional-reactive-like programming in Java
+// Copyright (c) 2011, Three Rings Design, Inc. - All rights reserved.
+// http://github.com/threerings/react/blob/master/LICENSE
+
+package react;
+
+/**
+ * A {@link Slot} for use when the type of emitted signal is ignored. As slots are contravariant,
+ * this slot may be wired to any signal without bothering to determine its type.
+ */
+public abstract class UnitSlot extends Slot<Object>
+{
+    // if you're using unit slot, you're not allow to see the event
+    @Override public final void onEmit (Object event) {
+        onEmit();
+    }
+
+    /**
+     * Called when a signal to which this slot is connected has emitted an event.
+     */
+    public abstract void onEmit ();
+}

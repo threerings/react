@@ -6,28 +6,16 @@
 package react;
 
 /**
- * Reacts to signal emissions. Users must override either {@link #onEmit(T)} or {@link #onEmit()},
- * depending on whether they care about the emitted event. The priority of a slot can be changed
- * from the default by overriding {@link #priority}.
+ * Reacts to signal emissions. The priority of a slot can be changed from the default by overriding
+ * {@link #priority}.
  */
 public abstract class Slot<T>
 {
     /**
-     * Called when a signal to which this signal is connected has emitted an event. The default
-     * implementation calls the event-forgetting {@code onEvent} method.
+     * Called when a signal to which this slot is connected has emitted an event.
      * @param event the event emitted by the signal.
      */
-    public void onEmit (T event) {
-        onEmit();
-    }
-
-    /**
-     * Called when a signal to which this signal is connected has emitted an event. This is only
-     * called if the non-event-forgetting method has not been overridden.
-     */
-    public void onEmit () {
-        // noop
-    }
+    public abstract void onEmit (T event);
 
     /**
      * Returns the priority of this slot. Slots will be notified in order of priority.

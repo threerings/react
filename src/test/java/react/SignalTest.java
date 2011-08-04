@@ -39,7 +39,7 @@ public class SignalTest
 
     @Test public void testSlotPriority () {
         final int[] counter = new int[] { 0 };
-        class TestSlot extends Slot<Void> {
+        class TestSlot extends UnitSlot {
             public int order;
             public void onEmit () {
                 order = ++counter[0];
@@ -73,7 +73,7 @@ public class SignalTest
     @Test public void testAddDuringDispatch () {
         final Signal<Integer> signal = Signal.create();
         final AccSlot<Integer> toAdd = new AccSlot<Integer>();
-        signal.connect(new Slot<Integer>() {
+        signal.connect(new UnitSlot() {
             public void onEmit () {
                 signal.connect(toAdd);
             }
@@ -98,7 +98,7 @@ public class SignalTest
         assertEquals(Arrays.asList(5), toRemove.events);
 
         // now add our removing signal, and dispatch again
-        signal.connect(new Slot<Integer>() {
+        signal.connect(new UnitSlot() {
             public void onEmit () {
                 rconn.disconnect();
             }
@@ -126,7 +126,7 @@ public class SignalTest
         assertEquals(Arrays.asList(5), toRemove.events);
 
         // now add our adder/remover signal, and dispatch again
-        signal.connect(new Slot<Integer>() {
+        signal.connect(new UnitSlot() {
             public void onEmit () {
                 rconn.disconnect();
                 signal.connect(toAdd);
@@ -141,6 +141,18 @@ public class SignalTest
         signal.emit(9);
         assertEquals(Arrays.asList(9), toAdd.events);
         assertEquals(Arrays.asList(5, 42), toRemove.events);
+    }
+
+    @Test public void testUnitSlot () {
+        Signal<Integer> signal = Signal.create();
+        final boolean[] fired = new boolean[] { false };
+        signal.connect(new UnitSlot() {
+            public void onEmit () {
+                fired[0] = true;
+            }
+        });
+        signal.emit(42);
+        assertTrue(fired[0]);
     }
 
     protected static class AccSlot<T> extends Slot<T> {
