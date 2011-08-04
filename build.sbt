@@ -6,9 +6,9 @@ organization := "com.threerings"
 
 crossPaths := false
 
-autoScalaLibrary := false
-
 javacOptions ++= Seq("-Xlint", "-Xlint:-serial")
+
+autoScalaLibrary := false // no scala-library dependency
 
 libraryDependencies ++= Seq(
   "junit" % "junit" % "4.+" % "test",
