@@ -19,7 +19,7 @@ public abstract class AbstractValue<T> implements ValueView<T>
      * Creates a value that maps this value via a function. Every time this value is updated the
      * mapped value will be updated, regardless of whether or not the mapped value differs.
      */
-    public <M> ValueView<M> map (final Function<T, M> func) {
+    public <M> ValueView<M> map (final Function<? super T, M> func) {
         final AbstractValue<T> outer = this;
         final AbstractValue<M> mapped = new AbstractValue<M>() {
             @Override public M get () {
