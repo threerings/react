@@ -58,6 +58,18 @@ public abstract class AbstractValue<T> implements ValueView<T>
         });
     }
 
+    @Override public Connection connectNotify (Slot<? super T> slot) {
+        Connection c = connect(slot);
+        slot.onEmit(get());
+        return c;
+    }
+
+    @Override public Connection listenNotify (Listener<? super T> listener) {
+        Connection c = listen(listener);
+        listener.onChange(get(), null);
+        return c;
+    }
+
     @Override public int hashCode () {
         T value = get();
         return (value == null) ? 0 : value.hashCode();

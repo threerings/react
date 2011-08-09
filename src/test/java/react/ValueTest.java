@@ -70,4 +70,28 @@ public class ValueTest
         value.updateForce(15);
         assertEquals(2, fired[0]);
     }
+
+    @Test public void testConnectNotify () {
+        Value<Integer> value = Value.create(42);
+        final boolean[] fired = new boolean[] { false };
+        value.connectNotify(new Slot<Integer>() {
+            public void onEmit (Integer value) {
+                assertEquals(42, value.intValue());
+                fired[0] = true;
+            }
+        });
+        assertTrue(fired[0]);
+    }
+
+    @Test public void testListenNotify () {
+        Value<Integer> value = Value.create(42);
+        final boolean[] fired = new boolean[] { false };
+        value.listenNotify(new Value.Listener<Integer>() {
+            public void onChange (Integer value) {
+                assertEquals(42, value.intValue());
+                fired[0] = true;
+            }
+        });
+        assertTrue(fired[0]);
+    }
 }
