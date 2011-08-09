@@ -15,6 +15,27 @@ import java.util.Set;
  */
 public abstract class AbstractValue<T> implements ValueView<T>
 {
+    /**
+     * Creates a value that maps this value via a function. Every time this value is updated the
+     * mapped value will be updated, regardless of whether or not the mapped value differs.
+     */
+    public <M> ValueView<M> map (final Function<T, M> func) {
+        final AbstractValue<T> outer = this;
+        final AbstractValue<M> mapped = new AbstractValue<M>() {
+            @Override public M get () {
+                return func.apply(outer.get());
+            }
+            // we don't track internal state
+            @Override protected void updateLocal (M value) {}
+        };
+        listen(new Listener<T>() {
+            @Override public void onChange (T value) {
+                mapped.updateAndNotify(func.apply(value));
+            }
+        });
+        return mapped;
+    }
+
     @Override public Connection listen (Listener<? super T> listener) {
         Cons cons = new Cons(listener);
         if (isDispatching()) {

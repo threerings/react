@@ -53,4 +53,25 @@ public class ValueTest
         value.update(42);
         assertEquals(1, fired[0]);
     }
+
+    @Test public void testMappedValue () {
+        Value<Integer> value = Value.create(42);
+        final int[] fired = new int[] { 0 };
+        value.map(new Function<Integer,String>() {
+            public String apply (Integer value) {
+                return value.toString();
+            }
+        }).connect(new Slot<String>() {
+            public void onEmit (String value) {
+                assertEquals("15", value);
+                fired[0]++;
+            }
+        });
+        value.update(15);
+        assertEquals(1, fired[0]);
+        value.update(15);
+        assertEquals(1, fired[0]);
+        value.updateForce(15);
+        assertEquals(2, fired[0]);
+    }
 }
