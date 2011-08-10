@@ -103,8 +103,15 @@ public abstract class AbstractValue<T> implements ValueView<T>
      * @return the previously contained value.
      */
     protected T updateAndNotify (T value) {
+        return updateAndNotify(value, get());
+    }
+
+    /**
+     * Updates the value contained in this instance and notifies registered listeners.
+     * @return the previously contained value.
+     */
+    protected T updateAndNotify (T value, T ovalue) {
         // first update our value
-        T ovalue = get();
         updateLocal(value);
 
         // next note that we're dispatching
