@@ -13,6 +13,13 @@ import static org.junit.Assert.*;
  */
 public class ValueTest
 {
+    public static class Counter extends Value.Listener<Object> {
+        public int notifies;
+        @Override public void onChange () {
+            notifies++;
+        }
+    }
+
     @Test public void testSimpleListener () {
         Value<Integer> value = Value.create(42);
         final boolean[] fired = new boolean[] { false };
@@ -43,39 +50,32 @@ public class ValueTest
 
     @Test public void testAsOnceSignal () {
         Value<Integer> value = Value.create(42);
-        final int[] fired = new int[] { 0 };
-        value.connect(new Slot<Integer>() {
-            public void onEmit (Integer value) {
-                fired[0]++;
-            }
-        }).once();
+        SignalTest.Counter counter = new SignalTest.Counter();
+        value.connect(counter).once();
         value.update(15);
         value.update(42);
-        assertEquals(1, fired[0]);
+        assertEquals(1, counter.notifies);
     }
 
     @Test public void testMappedValue () {
         Value<Integer> value = Value.create(42);
-        final int[] fired = new int[] { 0 };
         MappedValueView<String> mapped = value.map(Functions.TO_STRING);
-        mapped.connect(new Slot<String>() {
-            public void onEmit (String value) {
-                assertEquals("15", value);
-                fired[0]++;
-            }
-        });
+
+        Counter counter = new Counter();
+        mapped.listen(counter);
+        mapped.connect(SignalTest.require("15"));
 
         value.update(15);
-        assertEquals(1, fired[0]);
+        assertEquals(1, counter.notifies);
         value.update(15);
-        assertEquals(1, fired[0]);
+        assertEquals(1, counter.notifies);
         value.updateForce(15);
-        assertEquals(2, fired[0]);
+        assertEquals(2, counter.notifies);
 
         // disconnect the mapped value and ensure that it no longer updates
         mapped.connection().disconnect();
         value.update(25);
-        assertEquals(2, fired[0]);
+        assertEquals(2, counter.notifies);
     }
 
     @Test public void testConnectNotify () {

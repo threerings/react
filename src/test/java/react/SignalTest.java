@@ -17,6 +17,21 @@ import static org.junit.Assert.*;
  */
 public class SignalTest
 {
+    public static class Counter extends UnitSlot {
+        public int notifies;
+        @Override public void onEmit () {
+            notifies++;
+        }
+    }
+
+    public static <T> Slot<T> require (final T reqValue) {
+        return new Slot<T>() {
+            public void onEmit (T value) {
+                assertEquals(reqValue, value);
+            }
+        };
+    }
+
     @Test public void testSignalToSlot () {
         Signal<Integer> signal = Signal.create();
         AccSlot<Integer> slot = new AccSlot<Integer>();

@@ -17,7 +17,8 @@ import java.util.Set;
  * Provides a reactive model of a map. Note that {@link #put} and other default mechanisms for
  * updating the map <em>will not</em> trigger a notification if the updated value is equal to the
  * value already in the map. Use {@link #putForce} to force a notification. Similarly, {@link
- * #remove} will only generate a notification if a mapping for the specified key existed.
+ * #remove} will only generate a notification if a mapping for the specified key existed, use
+ * {@link #removeForce} to force a notification.
  */
 public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
     implements Map<K,V>
@@ -53,14 +54,14 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
     }
 
     /**
-     * Creates a distributed map with the supplied underlying map implementation.
+     * Creates a reactive map with the supplied underlying map implementation.
      */
     public static <K,V> RMap<K,V> create (Map<K,V> impl) {
         return new RMap<K,V>(impl);
     }
 
     /**
-     * Creates a distributed map with the supplied underlying map implementation.
+     * Creates a reactive map with the supplied underlying map implementation.
      */
     public RMap (Map<K,V> impl) {
         _impl = impl;
@@ -115,14 +116,10 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
         };
         model.setConnection(listen(new Listener<K,V>() {
             @Override public void onPut (K pkey, V value, V ovalue) {
-                if (key.equals(pkey)) {
-                    if (ovalue == null) model.notifyChange(true, false);
-                }
+                if (key.equals(pkey) && ovalue == null) model.notifyChange(true, false);
             }
-            @Override public void onRemove (K pkey, V ovalue) {
-                if (key.equals(pkey)) {
-                    model.notifyChange(false, true);
-                }
+            @Override public void onRemove (K rkey, V ovalue) {
+                if (key.equals(rkey)) model.notifyChange(false, true);
             }
         }));
         return model;
@@ -141,14 +138,10 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
         };
         model.setConnection(listen(new Listener<K,V>() {
             @Override public void onPut (K pkey, V value, V ovalue) {
-                if (key.equals(pkey)) {
-                    model.notifyChange(value, ovalue);
-                }
+                if (key.equals(pkey)) model.notifyChange(value, ovalue);
             }
             @Override public void onRemove (K pkey, V ovalue) {
-                if (key.equals(pkey)) {
-                    model.notifyChange(null, ovalue);
-                }
+                if (key.equals(pkey)) model.notifyChange(null, ovalue);
             }
         }));
         return model;
@@ -375,9 +368,9 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
     }
 
     protected void notifyPut (K key, V value, V oldValue) {
-        Cons<RMap.Listener<K,V>> lners = prepareNotify();
+        Cons<Listener<K,V>> lners = prepareNotify();
         try {
-            for (Cons<RMap.Listener<K,V>> cons = lners; cons != null; cons = cons.next) {
+            for (Cons<Listener<K,V>> cons = lners; cons != null; cons = cons.next) {
                 cons.listener.onPut(key, value, oldValue);
                 if (cons.oneShot) cons.disconnect();
             }
@@ -391,9 +384,9 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
     }
 
     protected void notifyRemove (K key, V oldValue) {
-        Cons<RMap.Listener<K,V>> lners = prepareNotify();
+        Cons<Listener<K,V>> lners = prepareNotify();
         try {
-            for (Cons<RMap.Listener<K,V>> cons = lners; cons != null; cons = cons.next) {
+            for (Cons<Listener<K,V>> cons = lners; cons != null; cons = cons.next) {
                 cons.listener.onRemove(key, oldValue);
                 if (cons.oneShot) cons.disconnect();
             }
