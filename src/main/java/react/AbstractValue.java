@@ -17,23 +17,21 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
     implements ValueView<T>
 {
     /**
-     * Creates a value that maps this value via a function. Every time this value is updated the
-     * mapped value will be updated, regardless of whether or not the mapped value differs.
+     * Creates a value that maps this value via a function. When this value changes, the mapped
+     * listeners will be notified, regardless of whether the new and old mapped values differ.
      */
-    public <M> ValueView<M> map (final Function<? super T, M> func) {
+    public <M> MappedValueView<M> map (final Function<? super T, M> func) {
         final AbstractValue<T> outer = this;
-        final AbstractValue<M> mapped = new AbstractValue<M>() {
+        final MappedValue<M> mapped = new MappedValue<M>() {
             @Override public M get () {
                 return func.apply(outer.get());
             }
-            // we don't track internal state
-            @Override protected void updateLocal (M value) {}
         };
-        listen(new Listener<T>() {
-            @Override public void onChange (T value) {
-                mapped.updateAndNotify(func.apply(value));
+        mapped.setConnection(listen(new Listener<T>() {
+            @Override public void onChange (T value, T ovalue) {
+                mapped.notifyChange(func.apply(value), func.apply(ovalue));
             }
-        });
+        }));
         return mapped;
     }
 
@@ -129,5 +127,7 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
         }
     }
 
-    protected abstract void updateLocal (T value);
+    protected void updateLocal (T value) {
+        throw new UnsupportedOperationException();
+    }
 }

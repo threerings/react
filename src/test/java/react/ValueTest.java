@@ -57,17 +57,24 @@ public class ValueTest
     @Test public void testMappedValue () {
         Value<Integer> value = Value.create(42);
         final int[] fired = new int[] { 0 };
-        value.map(Functions.TO_STRING).connect(new Slot<String>() {
+        MappedValueView<String> mapped = value.map(Functions.TO_STRING);
+        mapped.connect(new Slot<String>() {
             public void onEmit (String value) {
                 assertEquals("15", value);
                 fired[0]++;
             }
         });
+
         value.update(15);
         assertEquals(1, fired[0]);
         value.update(15);
         assertEquals(1, fired[0]);
         value.updateForce(15);
+        assertEquals(2, fired[0]);
+
+        // disconnect the mapped value and ensure that it no longer updates
+        mapped.connection().disconnect();
+        value.update(25);
         assertEquals(2, fired[0]);
     }
 
