@@ -17,7 +17,7 @@ public interface ValueView<T> extends SignalView<T>
      * Used to observe changes to a value. One must override only one of the {@link #onChange}
      * methods, depending on how much information is desired.
      */
-    abstract class Listener<T> {
+    abstract class Listener<T> extends Reactor.RListener {
         /**
          * Called when the value to which this listener is bound has changed. This method will call
          * the old-value-forgetting version ({@link #onChange(T)}) by default.
@@ -41,13 +41,6 @@ public interface ValueView<T> extends SignalView<T>
          */
         public void onChange () {
             // noop
-        }
-
-        /**
-         * Returns the priority of this listener. Listeners will be notified in order of priority.
-         */
-        public int priority () {
-            return 0;
         }
     }
 

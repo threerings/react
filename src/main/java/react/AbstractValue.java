@@ -13,7 +13,8 @@ import java.util.Set;
  * observable values, but must manage the maintenance and distribution of value updates themselves
  * (so that they may send them over the network, for example).
  */
-public abstract class AbstractValue<T> implements ValueView<T>
+public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
+    implements ValueView<T>
 {
     /**
      * Creates a value that maps this value via a function. Every time this value is updated the
@@ -37,14 +38,9 @@ public abstract class AbstractValue<T> implements ValueView<T>
     }
 
     @Override public Connection listen (Listener<? super T> listener) {
-        Cons cons = new Cons(listener);
-        if (isDispatching()) {
-            cons.next = _toAdd;
-            _toAdd = cons;
-        } else {
-            _listeners = Cons.insert(_listeners, cons);
-        }
-        return cons;
+        // alas, Java does not support higher kinded types; this cast is safe
+        @SuppressWarnings("unchecked") Listener<T> casted = (Listener<T>)listener;
+        return addConnection(casted);
     }
 
     @Override public Connection connect (final Slot<? super T> slot) {
@@ -111,6 +107,7 @@ public abstract class AbstractValue<T> implements ValueView<T>
      * @return the previously contained value.
      */
     protected T updateAndNotify (T value, T ovalue) {
+        checkMutate();
         updateLocal(value);
         notifyChange(value, ovalue);
         return ovalue;
@@ -120,64 +117,16 @@ public abstract class AbstractValue<T> implements ValueView<T>
      * Notifies our listeners of a value change.
      */
     protected void notifyChange (T value, T ovalue) {
-        // note that we're dispatching
-        Cons lners = _listeners;
-        _listeners = (Cons)DISPATCHING;
-
-        // now dispatch to all existing listeners
-        Cons cons = lners;
-        while (cons != null) {
-            cons.listener.onChange(value, ovalue);
-            if (cons.oneShot) cons.disconnect();
-            cons = cons.next;
-        }
-
-        // note that we're no longer dispatching
-        _listeners = lners;
-
-        // now remove listeners any queued for removing and add any queued for adding
-        if (_toRemove != null) {
-            _listeners = Cons.removeAll(_listeners, _toRemove);
-            _toRemove = null;
-        }
-        if (_toAdd != null) {
-            _listeners = Cons.insertAll(_listeners, _toAdd);
-            _toAdd = null;
+        Cons<ValueView.Listener<T>> lners = prepareNotify();
+        try {
+            for (Cons<ValueView.Listener<T>> cons = lners; cons != null; cons = cons.next) {
+                cons.listener.onChange(value, ovalue);
+                if (cons.oneShot) cons.disconnect();
+            }
+        } finally {
+            finishNotify(lners);
         }
     }
 
     protected abstract void updateLocal (T value);
-
-    protected final boolean isDispatching () {
-        return _listeners == DISPATCHING;
-    }
-
-    protected class Cons extends AbstractConnection<Cons> {
-        public final Listener<? super T> listener;
-
-        public Cons (Listener<? super T> listener) {
-            this.listener = listener;
-        }
-
-        @Override public void disconnect () {
-            if (isDispatching()) {
-                _toRemove = Cons.queueRemove(_toRemove, this);
-            } else {
-                _listeners = Cons.remove(_listeners, this);
-            }
-        }
-
-        @Override public int priority () {
-            return listener.priority();
-        }
-    }
-
-    protected Cons _listeners;
-    protected Cons _toAdd;
-    protected Set<Cons> _toRemove;
-
-    protected static final Object DISPATCHING = new AbstractValue<Void>() {
-        public Void get () { return null; }
-        protected void updateLocal (Void value) {}
-    }.new Cons(null);
 }

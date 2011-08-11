@@ -8,29 +8,43 @@ package react;
 import java.util.HashSet;
 import java.util.Set;
 
+import react.Reactor.RListener;
+
 /**
- * An implementation detail that simplifies life for {@link Connection}-using entities.
+ * Implements {@link Connection} and a linked-list style listener list for {@link Reactor}s.
  */
-abstract class AbstractConnection<T extends AbstractConnection> implements Connection
+class Cons<L extends RListener> implements Connection
 {
+    /** The reactor that owns this cons cell. */
+    public final Reactor<L> owner;
+
+    /** The listener being tracked by this cons cell. */
+    public final L listener;
+
     /** The next connection in our chain. */
-    public T next;
+    public Cons<L> next;
 
     /** Indicates whether this connection is one-shot or persistent. */
     public boolean oneShot;
+
+    public Cons (Reactor<L> owner, L listener) {
+        this.owner = owner;
+        this.listener = listener;
+    }
 
     @Override public Connection once () {
         oneShot = true;
         return this;
     }
 
-    /** Returns the priority of this connection. */
-    public abstract int priority ();
+    @Override public void disconnect () {
+        owner.disconnect(this);
+    }
 
-    static <T extends AbstractConnection<T>> T insert (T head, T cons) {
+    static <L extends RListener> Cons<L> insert (Cons<L> head, Cons<L> cons) {
         if (head == null) {
             return cons;
-        } else if (head.priority() > cons.priority()) {
+        } else if (head.listener.priority() > cons.listener.priority()) {
             cons.next = head;
             return cons;
         } else {
@@ -39,9 +53,9 @@ abstract class AbstractConnection<T extends AbstractConnection> implements Conne
         }
     }
 
-    static <T extends AbstractConnection<T>> T insertAll (T head, T toAdd) {
+    static <L extends RListener> Cons<L> insertAll (Cons<L> head, Cons<L> toAdd) {
         while (toAdd != null) {
-            T next = toAdd.next;
+            Cons<L> next = toAdd.next;
             toAdd.next = null;
             head = insert(head, toAdd);
             toAdd = next;
@@ -49,9 +63,9 @@ abstract class AbstractConnection<T extends AbstractConnection> implements Conne
         return head;
     }
 
-    static <T extends AbstractConnection<T>> T remove (T head, T cons) {
+    static <L extends RListener> Cons<L> remove (Cons<L> head, Cons<L> cons) {
         if (head == cons) return head.next;
-        T prev = head;
+        Cons<L> prev = head;
         while (prev.next != cons) {
             prev = prev.next;
         }
@@ -59,16 +73,16 @@ abstract class AbstractConnection<T extends AbstractConnection> implements Conne
         return head;
     }
 
-    static <T extends AbstractConnection<T>> T removeAll (T head, Set<T> toRemove) {
+    static <L extends RListener> Cons<L> removeAll (Cons<L> head, Set<Cons<L>> toRemove) {
         if (head == null) return null;
         if (toRemove.contains(head)) return removeAll(head.next, toRemove);
         head.next = removeAll(head.next, toRemove);
         return head;
     }
 
-    static <T extends AbstractConnection<T>> Set<T> queueRemove (Set<T> toRemove, T cons) {
+    static <L extends RListener> Set<Cons<L>> queueRemove (Set<Cons<L>> toRemove, Cons<L> cons) {
         if (toRemove == null) {
-            toRemove = new HashSet<T>();
+            toRemove = new HashSet<Cons<L>>();
         }
         toRemove.add(cons);
         return toRemove;
