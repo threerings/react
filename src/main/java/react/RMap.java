@@ -33,9 +33,7 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
             onPut(key, value);
         }
 
-        /**
-         * Notifies listener of an added or updated mapping.
-         */
+        /** Notifies listener of an added or updated mapping. */
         public void onPut (K key, V value) {
             // noop
         }
@@ -48,9 +46,7 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
             onRemove(key);
         }
 
-        /**
-         * Notifies listener of a removed mapping.
-         */
+        /** Notifies listener of a removed mapping. */
         public void onRemove (K key) {
             // noop
         }
