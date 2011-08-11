@@ -111,10 +111,16 @@ public abstract class AbstractValue<T> implements ValueView<T>
      * @return the previously contained value.
      */
     protected T updateAndNotify (T value, T ovalue) {
-        // first update our value
         updateLocal(value);
+        notifyChange(value, ovalue);
+        return ovalue;
+    }
 
-        // next note that we're dispatching
+    /**
+     * Notifies our listeners of a value change.
+     */
+    protected void notifyChange (T value, T ovalue) {
+        // note that we're dispatching
         Cons lners = _listeners;
         _listeners = (Cons)DISPATCHING;
 
@@ -138,8 +144,6 @@ public abstract class AbstractValue<T> implements ValueView<T>
             _listeners = Cons.insertAll(_listeners, _toAdd);
             _toAdd = null;
         }
-
-        return ovalue;
     }
 
     protected abstract void updateLocal (T value);

@@ -22,6 +22,6 @@ public class Signal<T> extends AbstractSignal<T>
      * Causes this signal to emit the supplied event to connected slots.
      */
     public void emit (T event) {
-        emitToSlots(event);
+        notifyEmit(event);
     }
 }

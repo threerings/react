@@ -23,6 +23,6 @@ public class UnitSignal extends AbstractSignal<Void>
      * Causes this signal to emit an event to its connected slots.
      */
     public void emit () {
-        emitToSlots(null);
+        notifyEmit(null);
     }
 }
