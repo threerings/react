@@ -67,6 +67,14 @@ public abstract class Reactor<L extends Reactor.RListener>
     }
 
     /**
+     * Returns true if both values are null, reference the same instance, or are {@link
+     * Object#equals}.
+     */
+    protected static <T> boolean areEqual (T o1, T o2) {
+        return (o1 == o2 || (o1 != null && o1.equals(o2)));
+    }
+
+    /**
      * Called prior to mutating any underlying model; allows subclasses to reject mutation.
      */
     protected void checkMutate () {

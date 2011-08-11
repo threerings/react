@@ -76,7 +76,7 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
         if (other.getClass() != getClass()) return false;
         T value = get();
         @SuppressWarnings("unchecked") T ovalue = ((AbstractValue<T>)other).get();
-        return (value == ovalue || (ovalue != null && ovalue.equals(value)));
+        return areEqual(value, ovalue);
     }
 
     @Override public String toString () {
@@ -84,14 +84,11 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
     }
 
     /**
-     * Updates the value contained in this instance iff said value is not equal to the value
-     * already contained in this instance, as defined by {@link Object#equals} (accounting for
-     * nulls).
+     * Updates the value contained in this instance and notifies registered listeners iff said
+     * value is not equal to the value already contained in this instance (per {@link #areEqual}).
      */
     protected T updateAndNotifyIf (T value) {
-        T ovalue = get();
-        if (value == ovalue || (value != null && value.equals(ovalue))) return value;
-        return updateAndNotify(value);
+        return updateAndNotify(value, get(), false);
     }
 
     /**
@@ -99,17 +96,21 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
      * @return the previously contained value.
      */
     protected T updateAndNotify (T value) {
-        return updateAndNotify(value, get());
+        return updateAndNotify(value, get(), true);
     }
 
     /**
      * Updates the value contained in this instance and notifies registered listeners.
+     * @param force if true, the listeners will always be notified, if false the will be notified
+     * only if the new value is not equal to the old value (per {@link #areEqual}).
      * @return the previously contained value.
      */
-    protected T updateAndNotify (T value, T ovalue) {
+    protected T updateAndNotify (T value, T ovalue, boolean force) {
         checkMutate();
         updateLocal(value);
-        notifyChange(value, ovalue);
+        if (force || !areEqual(value, ovalue)) {
+            notifyChange(value, ovalue);
+        }
         return ovalue;
     }
 
