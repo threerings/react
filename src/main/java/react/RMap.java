@@ -54,13 +54,6 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
         public void onRemove (K key) {
             // noop
         }
-
-        /**
-         * Returns the priority of this listener. Listeners will be notified in order of priority.
-         */
-        public int priority () {
-            return 0;
-        }
     }
 
     /**
