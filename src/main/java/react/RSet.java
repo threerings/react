@@ -213,7 +213,7 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
     }
 
     // from interface Set<E>
-    public <E> E[] toArray (E[] array) {
+    public <T> T[] toArray (T[] array) {
         return _impl.toArray(array);
     }
 
