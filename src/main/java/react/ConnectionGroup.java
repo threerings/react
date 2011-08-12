@@ -14,26 +14,28 @@ import java.util.Set;
 public class ConnectionGroup
 {
     /**
-     * Disconnects all connections in the group.
+     * Disconnects all connections in this group.
      */
-    public void disconnect ()
-    {
+    public void disconnect () {
         for (Connection c : _connections) {
             c.disconnect();
         }
         _connections.clear();
     }
 
-    /** Adds a connection to the group. */
-    public Connection add (Connection c)
-    {
+    /**
+     * Adds the supplied connection to this group.
+     * @return the supplied connection.
+     */
+    public Connection add (Connection c) {
         _connections.add(c);
         return c;
     }
 
-    /** Removes a connection from the group while leaving its connected status unchanged. */
-    public void remove (Connection c)
-    {
+    /**
+     * Removes a connection from this group while leaving its connected status unchanged.
+     */
+    public void remove (Connection c) {
         _connections.remove(c);
     }
 
