@@ -309,27 +309,30 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
                         _current = iiter.next();
                         return new Map.Entry<K,V>() {
                             public K getKey () {
-                                return _current.getKey();
+                                return _ientry.getKey();
                             }
                             public V getValue () {
-                                return _current.getValue();
+                                return _ientry.getValue();
                             }
                             public V setValue (V value) {
                                 checkMutate();
-                                V ovalue = _current.setValue(value);
+                                if (_ientry != _current) throw new IllegalStateException(
+                                    "Cannot update entry as iterator has moved on.");
+                                V ovalue = _ientry.setValue(value);
                                 if (!areEqual(value, ovalue)) {
-                                    emitPut(_current.getKey(), value, ovalue);
+                                    emitPut(_ientry.getKey(), value, ovalue);
                                 }
                                 return ovalue;
                             }
                             // it's safe to pass these through because Map.Entry's
                             // implementations operate solely on getKey/getValue
                             public boolean equals (Object o) {
-                                return _current.equals(o);
+                                return _ientry.equals(o);
                             }
                             public int hashCode () {
-                                return _current.hashCode();
+                                return _ientry.hashCode();
                             }
+                            protected Map.Entry<K,V> _ientry = _current;
                         };
                     }
                     public void remove () {
