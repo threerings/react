@@ -136,8 +136,9 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
 
     /**
      * Updates our locally stored value. Default implementation throws unsupported operation.
+     * @return the previously stored value.
      */
-    protected void updateLocal (T value) {
+    protected T updateLocal (T value) {
         throw new UnsupportedOperationException();
     }
 }

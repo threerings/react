@@ -47,8 +47,10 @@ public class Value<T> extends AbstractValue<T>
         return _value;
     }
 
-    @Override protected void updateLocal (T value) {
+    @Override protected T updateLocal (T value) {
+        T oldValue = _value;
         _value = value;
+        return oldValue;
     }
 
     protected T _value;
