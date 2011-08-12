@@ -16,11 +16,7 @@ import java.util.Set;
 public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
     implements ValueView<T>
 {
-    /**
-     * Creates a value that maps this value via a function. When this value changes, the mapped
-     * listeners will be notified, regardless of whether the new and old mapped values differ.
-     */
-    public <M> MappedValueView<M> map (final Function<? super T, M> func) {
+    @Override public <M> MappedValueView<M> map (final Function<? super T, M> func) {
         final AbstractValue<T> outer = this;
         final MappedValue<M> mapped = new MappedValue<M>() {
             @Override public M get () {

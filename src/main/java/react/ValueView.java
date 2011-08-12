@@ -50,6 +50,12 @@ public interface ValueView<T> extends SignalView<T>
     T get ();
 
     /**
+     * Creates a value that maps this value via a function. When this value changes, the mapped
+     * listeners will be notified, regardless of whether the new and old mapped values differ.
+     */
+    <M> MappedValueView<M> map (final Function<? super T, M> func);
+
+    /**
      * Connects the supplied listener to this value, such that it will be notified when this value
      * changes.
      * @return a connection instance which can be used to cancel the connection.
