@@ -299,4 +299,24 @@ public class RMapTest
         map.put(2, "ii");
         assertEquals(3, counter.notifies);
     }
+
+    @Test public void testEntrySetIteratorEdgeCase () {
+        RMap<Integer,String> map = RMap.create(new HashMap<Integer,String>());
+        map.put(1, "one");
+        map.put(2, "two");
+
+        Iterator<Map.Entry<Integer,String>> iter = map.entrySet().iterator();
+        Map.Entry<Integer,String> e1 = iter.next();
+        iter.remove();
+
+        Map.Entry<Integer,String> e2 = iter.next();
+        e2.setValue("bif");
+
+        try {
+            e1.setValue("baz");
+            fail();
+        } catch (IllegalStateException ise) {
+            // this is the expected behavior
+        }
+    }
 }

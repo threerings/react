@@ -316,8 +316,8 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
                             }
                             public V setValue (V value) {
                                 checkMutate();
-                                if (_ientry != _current) throw new IllegalStateException(
-                                    "Cannot update entry as iterator has moved on.");
+                                if (!iset.contains(this)) throw new IllegalStateException(
+                                    "Cannot update removed map entry.");
                                 V ovalue = _ientry.setValue(value);
                                 if (!areEqual(value, ovalue)) {
                                     emitPut(_ientry.getKey(), value, ovalue);
