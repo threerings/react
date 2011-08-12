@@ -107,9 +107,16 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
         checkMutate();
         updateLocal(value);
         if (force || !areEqual(value, ovalue)) {
-            notifyChange(value, ovalue);
+            emitChange(value, ovalue);
         }
         return ovalue;
+    }
+
+    /**
+     * Emits a change notification. Default implementation immediately notifies listeners.
+     */
+    protected void emitChange (T value, T ovalue) {
+        notifyChange(value, ovalue);
     }
 
     /**
@@ -127,6 +134,9 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
         }
     }
 
+    /**
+     * Updates our locally stored value. Default implementation throws unsupported operation.
+     */
     protected void updateLocal (T value) {
         throw new UnsupportedOperationException();
     }
