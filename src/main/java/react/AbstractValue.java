@@ -78,7 +78,8 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
     }
 
     @Override public String toString () {
-        return getClass().getSimpleName() + "(" + get() + ")";
+        String cname = getClass().getName();
+        return cname.substring(cname.lastIndexOf(".")+1) + "(" + get() + ")";
     }
 
     /**
