@@ -111,7 +111,7 @@ public class RSetTest
         containsOne.listen(counter);
         containsTwo.listen(counter);
 
-        // remove the setping for one and ensure that we're notified
+        // remove the element for one and ensure that we're notified
         containsOne.connect(SignalTest.require(false)).once();
         set.remove(1);
         assertEquals(1, counter.notifies);
@@ -124,7 +124,7 @@ public class RSetTest
         set.removeForce(1);
         assertEquals(2, counter.notifies);
 
-        // add a setping for two and ensure that we're notified
+        // add an element for two and ensure that we're notified
         containsTwo.connect(SignalTest.require(true)).once();
         set.add(2);
         assertEquals(3, counter.notifies);
