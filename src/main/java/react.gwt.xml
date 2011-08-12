@@ -1,4 +1,4 @@
 <!-- defines our GWT module -->
 <module>
-  <source path="."/>
+  <source path="react"/>
 </module>
