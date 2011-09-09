@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<project name="react" default="compile" basedir="." xmlns:artifact="urn:maven-artifact-ant">
+  <property name="src.dir"      location="src/main/java"/>
+  <property name="tsrc.dir"     location="src/test/java"/>
+  <property name="target.dir"   location="target"/>
+  <property name="classes.dir"  location="${target.dir}/classes"/>
+  <property name="tclasses.dir" location="${target.dir}/test-classes"/>
+
+  <property name="ooo-build.vers" value="2.6"/>
+  <ant antfile="etc/bootstrap.xml"/>
+  <import file="${user.home}/.m2/ooo-build/${ooo-build.vers}/ooo-build.xml"/>
+
+  <target name="-prepare" depends="-init-ooo">
+    <mkdir dir="${target.dir}"/>
+    <mavendep pom="pom.xml"/>
+    <mavendep pom="pom.xml" id="test" scope="test"/>
+    <path id="test.classpath">
+      <path refid="test.path"/>
+      <pathelement location="${classes.dir}"/>
+      <pathelement location="${tclasses.dir}"/>
+    </path>
+  </target>
+
+  <target name="clean" description="Deletes all build results.">
+    <delete dir="${target.dir}"/>
+  </target>
+
+  <target name="compile" depends="-prepare" description="Compiles the code.">
+    <mkdir dir="${classes.dir}"/>
+    <ooojavac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="pom.xml.path">
+      <exclude name="pythagoras/gwt/**"/>
+    </ooojavac>
+    <mkdir dir="${tclasses.dir}"/>
+    <ooojavac srcdir="${tsrc.dir}" destdir="${tclasses.dir}" classpathref="test.classpath"/>
+  </target>
+
+  <target name="test" depends="compile" description="Runs the unit tests.">
+    <taskdef name="unit" classpathref="test.path"
+      classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"/>
+    <mkdir dir="${target.dir}/test-reports"/>
+    <unit printsummary="off" haltonfailure="yes" fork="${junit.fork}">
+      <classpath refid="test.classpath"/>
+      <formatter type="brief" usefile="false"/>
+      <formatter type="xml"/>
+      <batchtest todir="${target.dir}/test-reports">
+        <fileset dir="${tsrc.dir}" includes="**/*Test.java"/>
+      </batchtest>
+    </unit>
+  </target>
+
+  <target name="package" depends="test" description="Compiles code and builds jar file.">
+    <jar destfile="${target.dir}/${ant.project.name}.jar">
+      <fileset dir="${src.dir}" includes="**"/>
+    </jar>
+  </target>
+
+  <property name="maven.install.repo" value="file://${user.home}/.m2/repository"/>
+  <target name="install" depends="package"
+          description="Deploys our build artifacts to a Maven repository.">
+    <mavendeploy file="${target.dir}/${ant.project.name}.jar" srcdir="${src.dir}" pom="pom.xml"/>
+  </target>
+</project>
