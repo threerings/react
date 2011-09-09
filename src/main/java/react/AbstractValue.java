@@ -47,15 +47,13 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
     }
 
     @Override public Connection connectNotify (Slot<? super T> slot) {
-        Connection c = connect(slot);
         slot.onEmit(get());
-        return c;
+        return connect(slot);
     }
 
     @Override public Connection listenNotify (Listener<? super T> listener) {
-        Connection c = listen(listener);
         listener.onChange(get(), null);
-        return c;
+        return listen(listener);
     }
 
     @Override public int hashCode () {
