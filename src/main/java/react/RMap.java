@@ -372,14 +372,21 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
 
     protected void notifyPut (K key, V value, V oldValue) {
         Cons<Listener<K,V>> lners = prepareNotify();
+        MultiFailureException error = null;
         try {
             for (Cons<Listener<K,V>> cons = lners; cons != null; cons = cons.next) {
-                cons.listener.onPut(key, value, oldValue);
+                try {
+                    cons.listener.onPut(key, value, oldValue);
+                } catch (Throwable t) {
+                    if (error == null) error = new MultiFailureException();
+                    error.addFailure(t);
+                }
                 if (cons.oneShot) cons.disconnect();
             }
         } finally {
             finishNotify(lners);
         }
+        if (error != null) error.trigger();
     }
 
     protected void emitRemove (K key, V oldValue) {
@@ -388,14 +395,21 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
 
     protected void notifyRemove (K key, V oldValue) {
         Cons<Listener<K,V>> lners = prepareNotify();
+        MultiFailureException error = null;
         try {
             for (Cons<Listener<K,V>> cons = lners; cons != null; cons = cons.next) {
-                cons.listener.onRemove(key, oldValue);
+                try {
+                    cons.listener.onRemove(key, oldValue);
+                } catch (Throwable t) {
+                    if (error == null) error = new MultiFailureException();
+                    error.addFailure(t);
+                }
                 if (cons.oneShot) cons.disconnect();
             }
         } finally {
             finishNotify(lners);
         }
+        if (error != null) error.trigger();
     }
 
     /** Contains our underlying mappings. */

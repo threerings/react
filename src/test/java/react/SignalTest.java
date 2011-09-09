@@ -170,6 +170,33 @@ public class SignalTest
         assertTrue(fired[0]);
     }
 
+    @Test(expected=RuntimeException.class)
+    public void testSingleFailure () {
+        UnitSignal signal = new UnitSignal();
+        signal.connect(new UnitSlot() {
+            public void onEmit () {
+                throw new RuntimeException("Bang!");
+            }
+        });
+        signal.emit();
+    }
+
+    @Test(expected=MultiFailureException.class)
+    public void testMultiFailure () {
+        UnitSignal signal = new UnitSignal();
+        signal.connect(new UnitSlot() {
+            public void onEmit () {
+                throw new RuntimeException("Bing!");
+            }
+        });
+        signal.connect(new UnitSlot() {
+            public void onEmit () {
+                throw new RuntimeException("Bang!");
+            }
+        });
+        signal.emit();
+    }
+
     protected static class AccSlot<T> extends Slot<T> {
         public List<T> events = new ArrayList<T>();
         public void onEmit (T event) {

@@ -223,14 +223,21 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
 
     protected void notifyAdd (E elem) {
         Cons<Listener<E>> lners = prepareNotify();
+        MultiFailureException error = null;
         try {
             for (Cons<Listener<E>> cons = lners; cons != null; cons = cons.next) {
-                cons.listener.onAdd(elem);
+                try {
+                    cons.listener.onAdd(elem);
+                } catch (Throwable t) {
+                    if (error == null) error = new MultiFailureException();
+                    error.addFailure(t);
+                }
                 if (cons.oneShot) cons.disconnect();
             }
         } finally {
             finishNotify(lners);
         }
+        if (error != null) error.trigger();
     }
 
     protected void emitRemove (E elem) {
@@ -239,14 +246,21 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
 
     protected void notifyRemove (E elem) {
         Cons<Listener<E>> lners = prepareNotify();
+        MultiFailureException error = null;
         try {
             for (Cons<Listener<E>> cons = lners; cons != null; cons = cons.next) {
-                cons.listener.onRemove(elem);
+                try {
+                    cons.listener.onRemove(elem);
+                } catch (Throwable t) {
+                    if (error == null) error = new MultiFailureException();
+                    error.addFailure(t);
+                }
                 if (cons.oneShot) cons.disconnect();
             }
         } finally {
             finishNotify(lners);
         }
+        if (error != null) error.trigger();
     }
 
     /** Contains our underlying elements. */

@@ -24,13 +24,20 @@ public class AbstractSignal<T> extends Reactor<Slot<T>>
      */
     protected void notifyEmit (T event) {
         Cons<Slot<T>> lners = prepareNotify();
+        MultiFailureException error = null;
         try {
             for (Cons<Slot<T>> cons = lners; cons != null; cons = cons.next) {
-                cons.listener.onEmit(event);
+                try {
+                    cons.listener.onEmit(event);
+                } catch (Throwable t) {
+                    if (error == null) error = new MultiFailureException();
+                    error.addFailure(t);
+                }
                 if (cons.oneShot) cons.disconnect();
             }
         } finally {
             finishNotify(lners);
         }
+        if (error != null) error.trigger();
     }
 }

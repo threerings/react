@@ -117,14 +117,21 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
      */
     protected void notifyChange (T value, T ovalue) {
         Cons<ValueView.Listener<T>> lners = prepareNotify();
+        MultiFailureException error = null;
         try {
             for (Cons<ValueView.Listener<T>> cons = lners; cons != null; cons = cons.next) {
-                cons.listener.onChange(value, ovalue);
+                try {
+                    cons.listener.onChange(value, ovalue);
+                } catch (Throwable t) {
+                    if (error == null) error = new MultiFailureException();
+                    error.addFailure(t);
+                }
                 if (cons.oneShot) cons.disconnect();
             }
         } finally {
             finishNotify(lners);
         }
+        if (error != null) error.trigger();
     }
 
     /**
