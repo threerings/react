@@ -21,7 +21,7 @@ public abstract class Reactor<L extends Reactor.RListener>
         }
     }
 
-    protected Cons<L> addConnection (L listener) {
+    protected synchronized Cons<L> addConnection (L listener) {
         Cons<L> cons = new Cons<L>(this, listener);
         if (isDispatching()) {
             cons.next = _toAdd;
@@ -32,18 +32,14 @@ public abstract class Reactor<L extends Reactor.RListener>
         return cons;
     }
 
-    protected final boolean isDispatching () {
-        return _listeners == DISPATCHING;
-    }
-
-    protected Cons<L> prepareNotify () {
+    protected synchronized Cons<L> prepareNotify () {
         Cons<L> lners = _listeners;
         @SuppressWarnings("unchecked") Cons<L> sentinel = (Cons<L>)DISPATCHING;
         _listeners = sentinel;
         return lners;
     }
 
-    protected void finishNotify (Cons<L> lners) {
+    protected synchronized void finishNotify (Cons<L> lners) {
         // note that we're no longer dispatching
         _listeners = lners;
 
@@ -58,7 +54,7 @@ public abstract class Reactor<L extends Reactor.RListener>
         }
     }
 
-    protected void disconnect (Cons<L> cons) {
+    protected synchronized void disconnect (Cons<L> cons) {
         if (isDispatching()) {
             _toRemove = Cons.queueRemove(_toRemove, cons);
         } else {
@@ -67,8 +63,8 @@ public abstract class Reactor<L extends Reactor.RListener>
     }
 
     /**
-     * Returns true if both values are null, reference the same instance, or are {@link
-     * Object#equals}.
+     * Returns true if both values are null, reference the same instance, or are
+     * {@link Object#equals}.
      */
     protected static <T> boolean areEqual (T o1, T o2) {
         return (o1 == o2 || (o1 != null && o1.equals(o2)));
@@ -79,6 +75,11 @@ public abstract class Reactor<L extends Reactor.RListener>
      */
     protected void checkMutate () {
         // noop
+    }
+
+    // always called while lock is held on this reactor
+    private final boolean isDispatching () {
+        return _listeners == DISPATCHING;
     }
 
     protected Cons<L> _listeners;
