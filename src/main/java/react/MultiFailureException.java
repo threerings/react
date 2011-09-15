@@ -58,5 +58,6 @@ public class MultiFailureException extends RuntimeException
         return this; // no stack trace here
     }
 
-    protected final List<Throwable> _failures = new ArrayList<Throwable>();
+    // this must be non-final so that GWT can serialize it
+    protected List<Throwable> _failures = new ArrayList<Throwable>();
 }
