@@ -6,6 +6,8 @@ reactive programming]-like primitives. It can serve as the basis for a user
 interface toolkit, or any other library that has a model on which clients will
 listen and to which they will react.
 
+* [API docs](http://threerings.github.com/react/apidocs/) are available.
+
 Building
 --------
 
@@ -20,12 +22,6 @@ Artifacts
 To add a React dependency to a Maven project, add the following to your
 `pom.xml`:
 
-    <repositories>
-      <repository>
-        <id>ooo-repo</id>
-        <url>http://threerings.github.com/maven-repo</url>
-      </repository>
-    </repositories>
     <dependencies>
       <dependency>
         <groupId>com.threerings</groupId>
@@ -39,7 +35,7 @@ simply remove the vast majority of the boilerplate above.
 
 If you prefer to download a pre-built binary, that can be found here:
 
-* [react-1.0.jar](http://threerings.github.com/maven-repo/com/threerings/react/1.0/react-1.0.jar)
+* [react-1.0.jar](http://repo2.maven.org/maven2/com/threerings/react/1.0/react-1.0.jar)
 
 GWT
 ---
