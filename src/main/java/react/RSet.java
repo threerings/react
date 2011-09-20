@@ -50,7 +50,7 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
     }
 
     /**
-     * Connects the supplied listener to this sets, such that it will be notified on adds and
+     * Connects the supplied listener to this set, such that it will be notified on adds and
      * removes.
      * @return a connection instance which can be used to cancel the connection.
      */
