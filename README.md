@@ -11,10 +11,13 @@ listen and to which they will react.
 Building
 --------
 
-The library is built using [SBT](http://github.com/harrah/xsbt/wiki/Setup).
+The library is built using [SBT] or [Maven].
 
 Invoke `xsbt publish-local` to build and install the library to your local
-Maven repository (i.e. `~/.m2/repository`).
+Ivy repository (i.e. `~/.ivy2/cache`).
+
+Invoke `mvn install` to build and install the library to your local Maven
+repository (i.e. `~/.m2/repository`).
 
 Artifacts
 ---------
@@ -60,3 +63,5 @@ Rings Libraries](http://groups.google.com/group/ooo-libs) Google Group.
 
 [signal/slot]: http://en.wikipedia.org/wiki/Signals_and_slots
 [functional reactive programming]: http://en.wikipedia.org/wiki/Functional_reactive_programming
+[SBT]: http://github.com/harrah/xsbt/wiki/Setup
+[Maven]: http://maven.apache.org/
