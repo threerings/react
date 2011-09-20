@@ -3,7 +3,7 @@
 // Copyright (c) 2011, Three Rings Design, Inc. - All rights reserved.
 // http://github.com/threerings/react/blob/master/LICENSE
 
-package test.java.react;
+package react;
 
 import java.util.ListIterator;
 import react.RList;
