@@ -47,7 +47,7 @@ React is also usable from [GWT](http://code.google.com/webtoolkit/). Add the
 jar to your project per the above instructions and add the following to your
 `.gwt.xml` file:
 
-    <inherits name="react.React"/>
+    <inherits name="react"/>
 
 Distribution
 ------------
