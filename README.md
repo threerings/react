@@ -14,7 +14,7 @@ Building
 The library is built using [SBT] or [Maven].
 
 Invoke `xsbt publish-local` to build and install the library to your local
-Ivy repository (i.e. `~/.ivy2/cache`).
+Ivy repository (i.e. `~/.ivy2/local`).
 
 Invoke `mvn install` to build and install the library to your local Maven
 repository (i.e. `~/.m2/repository`).
