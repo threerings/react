@@ -243,7 +243,7 @@ public class RList<E> extends Reactor<RList.Listener<E>>
         return _impl.toArray();
     }
 
-    @Override public <E> E[] toArray(E[] array) {
+    @Override public <T> T[] toArray(T[] array) {
         return _impl.toArray(array);
     }
 
