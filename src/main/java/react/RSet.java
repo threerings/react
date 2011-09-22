@@ -7,6 +7,7 @@ package react;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -33,6 +34,13 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
         public void onRemove (E elem) {
             // noop
         }
+    }
+
+    /**
+     * Creates a reactive set backed by a @{link HashSet}.
+     */
+    public static <E> RSet<E> create () {
+        return create(new HashSet<E>());
     }
 
     /**

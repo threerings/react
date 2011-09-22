@@ -36,7 +36,7 @@ public class RList<E> extends Reactor<RList.Listener<E>>
     /**
      * Creates a reactive list backed by an {@link ArrayList}.
      */
-    public static <E> RList<E> createArrayRList () {
+    public static <E> RList<E> create () {
         return create(new ArrayList<E>());
     }
 

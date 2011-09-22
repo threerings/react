@@ -8,6 +8,7 @@ package react;
 import java.util.AbstractCollection;
 import java.util.AbstractSet;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -51,6 +52,13 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
         public void onRemove (K key) {
             // noop
         }
+    }
+
+    /**
+     * Creates a reactive map that uses a {@link HashMap} as its underlying implementation.
+     */
+    public static <K,V> RMap<K,V> create () {
+        return create(new HashMap<K,V>());
     }
 
     /**
