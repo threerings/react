@@ -175,6 +175,10 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
         return _impl.containsValue(value);
     }
 
+    @Override public String toString () {
+        return "RMap(" + _impl + ")";
+    }
+
     // from interface Map<K,V>
     public V get (Object key) {
         return _impl.get(key);

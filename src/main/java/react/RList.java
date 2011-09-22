@@ -202,6 +202,10 @@ public class RList<E> extends Reactor<RList.Listener<E>>
         return object == this || _impl.equals(object);
     }
 
+    @Override public String toString () {
+        return "RList(" + _impl + ")";
+    }
+
     // List methods that purely pass through to the underlying list
     @Override public int hashCode() {
         return _impl.hashCode();
