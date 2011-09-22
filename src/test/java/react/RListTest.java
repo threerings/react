@@ -23,7 +23,7 @@ public class RListTest
     }
 
     @Test public void addAndRemove () {
-        RList<String> list = RList.createArrayRList();
+        RList<String> list = RList.create();
         Counter counter = new Counter();
         list.listen(counter);
         list.listen(requireAdd("1")).once();
@@ -54,7 +54,7 @@ public class RListTest
     }
 
     @Test public void listIterate () {
-        RList<String> list = RList.createArrayRList();
+        RList<String> list = RList.create();
         list.add("1");
         list.add("2");
         Counter counter = new Counter();
