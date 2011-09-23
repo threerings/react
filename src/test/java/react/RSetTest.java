@@ -30,10 +30,10 @@ public class RSetTest
     @Test public void testBasicNotify () {
         RSet<Integer> set = RSet.create(new HashSet<Integer>());
         Counter counter = new Counter();
-        set.listen(counter);
+        set.connect(counter);
 
         // add an element, ensure that we're notified
-        set.listen(requireAdd(42)).once();
+        set.connect(requireAdd(42)).once();
         set.add(42);
         assertEquals(1, counter.notifies);
 
@@ -46,7 +46,7 @@ public class RSetTest
         assertEquals(2, counter.notifies);
 
         // remove an element, ensure that we're notified
-        set.listen(requireRemove(42)).once();
+        set.connect(requireRemove(42)).once();
         set.remove(42);
         assertEquals(3, counter.notifies);
 
@@ -66,7 +66,7 @@ public class RSetTest
     @Test public void testAggregatesEtc () {
         RSet<Integer> set = RSet.create(new HashSet<Integer>());
         Counter counter = new Counter();
-        set.listen(counter);
+        set.connect(counter);
 
         // test adding multiple entries
         set.addAll(Arrays.asList(1, 2, 3, 4));
@@ -108,8 +108,8 @@ public class RSetTest
 
         // listen for notifications
         ValueTest.Counter counter = new ValueTest.Counter();
-        containsOne.listen(counter);
-        containsTwo.listen(counter);
+        containsOne.connect(counter);
+        containsTwo.connect(counter);
 
         // remove the element for one and ensure that we're notified
         containsOne.connect(SignalTest.require(false)).once();

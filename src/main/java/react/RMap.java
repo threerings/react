@@ -80,7 +80,7 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
      * removes.
      * @return a connection instance which can be used to cancel the connection.
      */
-    public Connection listen (Listener<? super K, ? super V> listener) {
+    public Connection connect (Listener<? super K, ? super V> listener) {
         // alas, Java does not support higher kinded types; this cast is safe
         @SuppressWarnings("unchecked") Listener<K,V> casted = (Listener<K,V>)listener;
         return addConnection(casted);
@@ -131,7 +131,7 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
                 return containsKey(key);
             }
         };
-        model.setConnection(listen(new Listener<K,V>() {
+        model.setConnection(connect(new Listener<K,V>() {
             @Override public void onPut (K pkey, V value, V ovalue) {
                 if (key.equals(pkey) && ovalue == null) model.notifyChange(true, false);
             }
@@ -153,7 +153,7 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
                 return RMap.this.get(key);
             }
         };
-        model.setConnection(listen(new Listener<K,V>() {
+        model.setConnection(connect(new Listener<K,V>() {
             @Override public void onPut (K pkey, V value, V ovalue) {
                 if (key.equals(pkey)) model.notifyChange(value, ovalue);
             }

@@ -24,7 +24,7 @@ public class ValueTest
     @Test public void testSimpleListener () {
         Value<Integer> value = Value.create(42);
         final boolean[] fired = new boolean[] { false };
-        value.listen(new Value.Listener<Integer>() {
+        value.connect(new Value.Listener<Integer>() {
             public void onChange (Integer nvalue, Integer ovalue) {
                 assertEquals(42, ovalue.intValue());
                 assertEquals(15, nvalue.intValue());
@@ -63,7 +63,7 @@ public class ValueTest
         MappedValueView<String> mapped = value.map(Functions.TO_STRING);
 
         Counter counter = new Counter();
-        mapped.listen(counter);
+        mapped.connect(counter);
         mapped.connect(SignalTest.require("15"));
 
         value.update(15);
@@ -94,7 +94,7 @@ public class ValueTest
     @Test public void testListenNotify () {
         Value<Integer> value = Value.create(42);
         final boolean[] fired = new boolean[] { false };
-        value.listenNotify(new Value.Listener<Integer>() {
+        value.connectNotify(new Value.Listener<Integer>() {
             public void onChange (Integer value) {
                 assertEquals(42, value.intValue());
                 fired[0] = true;
@@ -114,20 +114,20 @@ public class ValueTest
                 value.disconnect(this);
             }
         };
-        Connection conn = value.listenNotify(listener);
+        Connection conn = value.connectNotify(listener);
         expectedValue[0] = 12;
         value.update(12);
         assertEquals("Disconnecting in listenNotify disconnects", 1, fired[0]);
         conn.disconnect();// Just see what happens when calling disconnect while disconnected
 
-        value.listen(listener);
-        value.listen(new Counter());
-        value.listen(listener);
+        value.connect(listener);
+        value.connect(new Counter());
+        value.connect(listener);
         value.update((expectedValue[0] = 13));
         value.update((expectedValue[0] = 14));
         assertEquals("Disconnecting in listen disconnects", 3, fired[0]);
 
-        value.listen(listener).disconnect();
+        value.connect(listener).disconnect();
         value.update((expectedValue[0] = 15));
         assertEquals("Disconnecting before geting an update still disconnects", 3, fired[0]);
     }

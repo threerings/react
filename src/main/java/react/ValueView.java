@@ -60,7 +60,7 @@ public interface ValueView<T>
      * changes.
      * @return a connection instance which can be used to cancel the connection.
      */
-    Connection listen (Listener<? super T> listener);
+    Connection connect (Listener<? super T> listener);
 
     /**
      * Connects this value to the supplied slot, such that when the value changes, the slot will
@@ -86,7 +86,7 @@ public interface ValueView<T>
      * worry about cleaning up after itself.
      * @return a connection instance which can be used to cancel the connection.
      */
-    Connection listenNotify (Listener<? super T> listener);
+    Connection connectNotify (Listener<? super T> listener);
 
     /**
      * Disconnects the supplied listener from this value if it's connected. If the listener has been

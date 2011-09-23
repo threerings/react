@@ -32,10 +32,10 @@ public class RMapTest
     @Test public void testBasicNotify () {
         RMap<Integer,String> map = RMap.create(new HashMap<Integer,String>());
         Counter counter = new Counter();
-        map.listen(counter);
+        map.connect(counter);
 
         // add a mapping, ensure that we're notified
-        map.listen(new RMap.Listener<Integer,String>() {
+        map.connect(new RMap.Listener<Integer,String>() {
             public void onPut (Integer key, String value, String ovalue) {
                 assertEquals(42, key.intValue());
                 assertEquals("LTUAE", value);
@@ -50,7 +50,7 @@ public class RMapTest
         assertEquals(1, counter.notifies);
 
         // remove a mapping, ensure that we're notified
-        map.listen(new RMap.Listener<Integer,String>() {
+        map.connect(new RMap.Listener<Integer,String>() {
             public void onRemove (Integer key, String ovalue) {
                 assertEquals(42, key.intValue());
                 assertEquals("LTUAE", ovalue);
@@ -67,10 +67,10 @@ public class RMapTest
     @Test public void testForceNotify () {
         RMap<Integer,String> map = RMap.create(new HashMap<Integer,String>());
         Counter counter = new Counter();
-        map.listen(counter);
+        map.connect(counter);
 
         // add a mapping, ensure that we're notified
-        map.listen(new RMap.Listener<Integer,String>() {
+        map.connect(new RMap.Listener<Integer,String>() {
             public void onPut (Integer key, String value, String ovalue) {
                 assertEquals(42, key.intValue());
                 assertEquals("LTUAE", value);
@@ -84,7 +84,7 @@ public class RMapTest
         assertEquals(2, counter.notifies);
 
         // remove a mapping, ensure that we're notified
-        map.listen(new RMap.Listener<Integer,String>() {
+        map.connect(new RMap.Listener<Integer,String>() {
             public void onRemove (Integer key, String ovalue) {
                 assertEquals(42, key.intValue());
             }
@@ -103,7 +103,7 @@ public class RMapTest
         map.put(1, "one");
 
         Counter counter = new Counter();
-        map.listen(counter);
+        map.connect(counter);
         Set<Integer> keys = map.keySet();
 
         // test basic keySet bits
@@ -140,7 +140,7 @@ public class RMapTest
         map.put(1, "one");
 
         Counter counter = new Counter();
-        map.listen(counter);
+        map.connect(counter);
 
         // test basic value bits
         Collection<String> values = map.values();
@@ -176,7 +176,7 @@ public class RMapTest
 
         final int[] puts = new int[] { 0 };
         final int[] removes = new int[] { 0 };
-        map.listen(new RMap.Listener<Integer,String>() {
+        map.connect(new RMap.Listener<Integer,String>() {
             public void onPut (Integer key, String value, String ovalue) {
                 puts[0]++;
             }
@@ -186,7 +186,7 @@ public class RMapTest
         });
 
         // test the update of a value from the entry set
-        map.listen(new RMap.Listener<Integer,String>() {
+        map.connect(new RMap.Listener<Integer,String>() {
             public void onPut (Integer key, String value, String ovalue) {
                 assertEquals(42, key.intValue());
                 assertEquals("Mu", value);
@@ -239,8 +239,8 @@ public class RMapTest
 
         // listen for notifications
         ValueTest.Counter counter = new ValueTest.Counter();
-        containsOne.listen(counter);
-        containsTwo.listen(counter);
+        containsOne.connect(counter);
+        containsTwo.connect(counter);
 
         // remove the mapping for one and ensure that we're notified
         containsOne.connect(SignalTest.require(false)).once();
@@ -273,8 +273,8 @@ public class RMapTest
 
         // listen for notifications
         ValueTest.Counter counter = new ValueTest.Counter();
-        oneView.listen(counter);
-        twoView.listen(counter);
+        oneView.connect(counter);
+        twoView.connect(counter);
 
         // remove the mapping for one and ensure that we're notified
         oneView.connect(SignalTest.<String>require(null)).once();

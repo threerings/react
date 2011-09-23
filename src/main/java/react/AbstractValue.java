@@ -21,7 +21,7 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
                 return func.apply(outer.get());
             }
         };
-        mapped.setConnection(listen(new Listener<T>() {
+        mapped.setConnection(connect(new Listener<T>() {
             @Override public void onChange (T value, T ovalue) {
                 mapped.notifyChange(func.apply(value), func.apply(ovalue));
             }
@@ -29,14 +29,14 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
         return mapped;
     }
 
-    @Override public Connection listen (Listener<? super T> listener) {
+    @Override public Connection connect (Listener<? super T> listener) {
         // alas, Java does not support higher kinded types; this cast is safe
         @SuppressWarnings("unchecked") Listener<T> casted = (Listener<T>)listener;
         return addConnection(casted);
     }
 
     @Override public Connection connect (final Slot<? super T> slot) {
-        return listen(new Listener<T>() {
+        return connect(new Listener<T>() {
             public void onChange (T value) {
                 slot.onEmit(value);
             }
@@ -64,12 +64,12 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
         }
     }
 
-    @Override public Connection listenNotify (Listener<? super T> listener) {
-        // listen before calling emit; if the listener changes the value in the body of onEmit, it
+    @Override public Connection connectNotify (Listener<? super T> listener) {
+        // connect before calling emit; if the listener changes the value in the body of onEmit, it
         // will expect to be notified of that change; however if onEmit throws a runtime exception,
         // we need to take care of disconnecting the listener because the returned connection
         // instance will never reach the caller
-        Connection conn = listen(listener);
+        Connection conn = connect(listener);
         try {
             listener.onChange(get(), null);
             return conn;

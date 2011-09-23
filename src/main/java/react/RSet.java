@@ -62,7 +62,7 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
      * removes.
      * @return a connection instance which can be used to cancel the connection.
      */
-    public Connection listen (Listener<? super E> listener) {
+    public Connection connect (Listener<? super E> listener) {
         // alas, Java does not support higher kinded types; this cast is safe
         @SuppressWarnings("unchecked") Listener<E> casted = (Listener<E>)listener;
         return addConnection(casted);
@@ -114,7 +114,7 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
                 return contains(elem);
             }
         };
-        model.setConnection(listen(new Listener<E>() {
+        model.setConnection(connect(new Listener<E>() {
             @Override public void onAdd (E aelem) {
                 if (elem.equals(aelem)) model.notifyChange(true, false);
             }

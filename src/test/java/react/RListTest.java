@@ -6,7 +6,9 @@
 package react;
 
 import java.util.ListIterator;
+
 import react.RList;
+
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -25,8 +27,8 @@ public class RListTest
     @Test public void addAndRemove () {
         RList<String> list = RList.create();
         Counter counter = new Counter();
-        list.listen(counter);
-        list.listen(requireAdd("1")).once();
+        list.connect(counter);
+        list.connect(requireAdd("1")).once();
         list.add("1");
         assertEquals(1, counter.notifies);
 
@@ -36,7 +38,7 @@ public class RListTest
 
         // remove elements, ensure that we're notified
         list.remove("1");
-        list.listen(requireRemove("2")).once();
+        list.connect(requireRemove("2")).once();
         list.remove(0);
         assertEquals(4, counter.notifies);
 
@@ -58,24 +60,24 @@ public class RListTest
         list.add("1");
         list.add("2");
         Counter counter = new Counter();
-        list.listen(counter);
+        list.connect(counter);
 
         ListIterator<String> literator = list.listIterator();
         literator.next();
         // removing the last next call makes one remove notification
-        list.listen(requireRemove("1")).once();
+        list.connect(requireRemove("1")).once();
         literator.remove();
         assertEquals(1, counter.notifies);
 
         // Setting the last next call makes two notifications
-        list.listen(requireRemove("2")).once();
-        list.listen(requireAdd("3")).once();
+        list.connect(requireRemove("2")).once();
+        list.connect(requireAdd("3")).once();
         literator.next();
         literator.set("3");
         assertEquals(3, counter.notifies);
 
         // Adding on the iterator makes one notification
-        list.listen(requireAdd("4")).once();
+        list.connect(requireAdd("4")).once();
         literator.add("4");
         assertEquals(4, counter.notifies);
 
