@@ -5,9 +5,6 @@
 
 package react;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * A base class for all reactive classes. This is an implementation detail, but is public so that
  * third parties may use it to create their own reactive classes, if desired.
