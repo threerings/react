@@ -25,7 +25,7 @@ public abstract class Reactor<L extends Reactor.RListener>
     protected synchronized Cons<L> addConnection (L listener) {
         final Cons<L> cons = new Cons<L>(this, listener);
         if (isDispatching()) {
-            doAfterDispatch(new Runnable() {
+            _pendingRuns = insert(_pendingRuns, new Runs() {
                 public void run () {
                     _listeners = Cons.insert(_listeners, cons);
                 }
@@ -48,17 +48,14 @@ public abstract class Reactor<L extends Reactor.RListener>
         _listeners = lners;
 
         // now remove listeners any queued for removing and add any queued for adding
-        if (_pendingActions != null) {
-            for (Runnable action : _pendingActions) {
-                action.run();
-            }
-            _pendingActions = null;
+        for (; _pendingRuns != null; _pendingRuns = _pendingRuns.next) {
+            _pendingRuns.run();
         }
     }
 
     protected synchronized void disconnect (final Cons<L> cons) {
         if (isDispatching()) {
-            doAfterDispatch(new Runnable() {
+            _pendingRuns = insert(_pendingRuns, new Runs() {
                 public void run () {
                     _listeners = Cons.remove(_listeners, cons);
                 }
@@ -70,7 +67,7 @@ public abstract class Reactor<L extends Reactor.RListener>
 
     protected synchronized void removeConnection (final L listener) {
         if (isDispatching()) {
-            doAfterDispatch(new Runnable() {
+            _pendingRuns = insert(_pendingRuns, new Runs() {
                 public void run () {
                     _listeners = Cons.removeAll(_listeners, listener);
                 }
@@ -95,10 +92,10 @@ public abstract class Reactor<L extends Reactor.RListener>
         // noop
     }
 
-    // always called while lock is held on this reactor
-    protected void doAfterDispatch (Runnable action) {
-        if (_pendingActions == null) _pendingActions = new ArrayList<Runnable>();
-        _pendingActions.add(action);
+    protected static Runs insert (Runs head, Runs action) {
+        if (head == null) return action;
+        head.next = insert(head.next, action);
+        return head;
     }
 
     // always called while lock is held on this reactor
@@ -107,7 +104,11 @@ public abstract class Reactor<L extends Reactor.RListener>
     }
 
     protected Cons<L> _listeners;
-    protected List<Runnable> _pendingActions;
+    protected Runs _pendingRuns;
+
+    protected static abstract class Runs implements Runnable {
+        public Runs next;
+    }
 
     protected static final Cons<RListener> DISPATCHING = new Cons<RListener>(null, null);
 }
