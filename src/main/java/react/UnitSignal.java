@@ -6,11 +6,11 @@
 package react;
 
 /**
- * A signal that emits an event with no associated data. It can be used with {@code Slot<Void>}
+ * A signal that emits an event with no associated data. It can be used with {@code UnitSlot}
  * like so:
  * <pre>{@code
  * UnitSignal signal = new UnitSignal();
- * signal.connect(new Slot<Void>() {
+ * signal.connect(new UnitSlot() {
  *   public void onEmit () {
  *     // ...
  *   }
