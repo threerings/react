@@ -47,19 +47,39 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
     }
 
     @Override public Connection connectNotify (Slot<? super T> slot) {
-        // Listen before calling emitting; if the slot changes the value when notified, it'll be
-        // notified of its change
+        // connect before calling emit; if the slot changes the value in the body of onEmit, it
+        // will expect to be notified of that change; however if onEmit throws a runtime exception,
+        // we need to take care of disconnecting the slot because the returned connection instance
+        // will never reach the caller
         Connection conn = connect(slot);
-        slot.onEmit(get());
-        return conn;
+        try {
+            slot.onEmit(get());
+            return conn;
+        } catch (RuntimeException re) {
+            conn.disconnect();
+            throw re;
+        } catch (Error e) {
+            conn.disconnect();
+            throw e;
+        }
     }
 
     @Override public Connection listenNotify (Listener<? super T> listener) {
-        // Listen before calling onChange; if the listener changes the value when notified, it'll
-        // be notified of its change
+        // listen before calling emit; if the listener changes the value in the body of onEmit, it
+        // will expect to be notified of that change; however if onEmit throws a runtime exception,
+        // we need to take care of disconnecting the listener because the returned connection
+        // instance will never reach the caller
         Connection conn = listen(listener);
-        listener.onChange(get(), get());
-        return conn;
+        try {
+            listener.onChange(get(), null);
+            return conn;
+        } catch (RuntimeException re) {
+            conn.disconnect();
+            throw re;
+        } catch (Error e) {
+            conn.disconnect();
+            throw e;
+        }
     }
 
     @Override public void disconnect (Listener<? super T> listener) {

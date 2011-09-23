@@ -71,7 +71,9 @@ public interface ValueView<T>
 
     /**
      * Connects this signal to the supplied value, such that when the value changes, the slot will
-     * be notified. Also immediately notifies the slot of the current value.
+     * be notified. Also immediately notifies the slot of the current value. If the notification
+     * triggers an unchecked exception, the slot will automatically be disconnected and the caller
+     * need not worry about cleaning up after itself.
      * @return a connection instance which can be used to cancel the connection.
      */
     Connection connectNotify (Slot<? super T> slot);
@@ -79,7 +81,9 @@ public interface ValueView<T>
     /**
      * Connects the supplied listener to this value, such that it will be notified when this value
      * changes. Also immediately notifies the listener of the current value. Note that the previous
-     * value supplied with this notification will be null.
+     * value supplied with this notification will be null. If the notification triggers an
+     * unchecked exception, the slot will automatically be disconnected and the caller need not
+     * worry about cleaning up after itself.
      * @return a connection instance which can be used to cancel the connection.
      */
     Connection listenNotify (Listener<? super T> listener);
