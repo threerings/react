@@ -44,9 +44,15 @@ public abstract class Reactor<L extends Reactor.RListener>
         _listeners = lners;
 
         // now remove listeners any queued for removing and add any queued for adding
-        if (_toRemove != null) {
-            _listeners = Cons.removeAll(_listeners, _toRemove);
-            _toRemove = null;
+        if (_consToRemove != null) {
+            _listeners = Cons.removeAll(_listeners, _consToRemove);
+            _consToRemove = null;
+        }
+        if (_listenersToRemove != null) {
+            for (L listener : _listenersToRemove) {
+                _listeners = Cons.removeAll(_listeners, listener);
+            }
+            _listenersToRemove = null;
         }
         if (_toAdd != null) {
             _listeners = Cons.insertAll(_listeners, _toAdd);
@@ -56,9 +62,17 @@ public abstract class Reactor<L extends Reactor.RListener>
 
     protected synchronized void disconnect (Cons<L> cons) {
         if (isDispatching()) {
-            _toRemove = Cons.queueRemove(_toRemove, cons);
+            _consToRemove = Cons.queueRemove(_consToRemove, cons);
         } else {
             _listeners = Cons.remove(_listeners, cons);
+        }
+    }
+
+    protected synchronized void removeConnection (L listener) {
+        if (isDispatching()) {
+            _listenersToRemove = Cons.queueRemove(_listenersToRemove, listener);
+        } else {
+            _listeners = Cons.removeAll(_listeners, listener);
         }
     }
 
@@ -84,7 +98,8 @@ public abstract class Reactor<L extends Reactor.RListener>
 
     protected Cons<L> _listeners;
     protected Cons<L> _toAdd;
-    protected Set<Cons<L>> _toRemove;
+    protected Set<Cons<L>> _consToRemove;
+    protected Set<L> _listenersToRemove;
 
     protected static final Cons<RListener> DISPATCHING = new Cons<RListener>(null, null);
 }

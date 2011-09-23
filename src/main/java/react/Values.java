@@ -16,7 +16,7 @@ public class Values
      * @param signal the signal that will trigger the toggling.
      * @param initial the initial value of the to be toggled value.
      */
-    public static <T> ValueView<Boolean> toggler (SignalView<T> signal, boolean initial) {
+    public static ValueView<Boolean> toggler (SignalView<?> signal, boolean initial) {
         final Value<Boolean> value = Value.create(initial);
         signal.connect(new UnitSlot() {
             @Override public void onEmit () {

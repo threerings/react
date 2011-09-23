@@ -19,6 +19,12 @@ public class AbstractSignal<T> extends Reactor<Slot<T>>
         return addConnection(casted);
     }
 
+    @Override public void disconnect (Slot<? super T> slot) {
+        // alas, Java does not support higher kinded types; this cast is safe
+        @SuppressWarnings("unchecked") Slot<T> casted = (Slot<T>)slot;
+        removeConnection(casted);
+    }
+
     /**
      * Emits the supplied event to all connected slots.
      */

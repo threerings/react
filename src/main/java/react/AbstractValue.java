@@ -47,13 +47,25 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
     }
 
     @Override public Connection connectNotify (Slot<? super T> slot) {
+        // Listen before calling emitting; if the slot changes the value when notified, it'll be
+        // notified of its change
+        Connection conn = connect(slot);
         slot.onEmit(get());
-        return connect(slot);
+        return conn;
     }
 
     @Override public Connection listenNotify (Listener<? super T> listener) {
-        listener.onChange(get(), null);
-        return listen(listener);
+        // Listen before calling onChange; if the listener changes the value when notified, it'll
+        // be notified of its change
+        Connection conn = listen(listener);
+        listener.onChange(get(), get());
+        return conn;
+    }
+
+    @Override public void disconnect (Listener<? super T> listener) {
+        // alas, Java does not support higher kinded types; this cast is safe
+        @SuppressWarnings("unchecked") Listener<T> casted = (Listener<T>)listener;
+        removeConnection(casted);
     }
 
     @Override public int hashCode () {

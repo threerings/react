@@ -6,6 +6,7 @@
 package react;
 
 import org.junit.*;
+
 import static org.junit.Assert.*;
 
 /**
@@ -100,5 +101,34 @@ public class ValueTest
             }
         });
         assertTrue(fired[0]);
+    }
+
+    @Test public void testDisconnect () {
+        final Value<Integer> value = Value.create(42);
+        final int[] expectedValue = { value.get() };
+        final int[] fired = { 0 };
+        Value.Listener<Integer> listener = new Value.Listener<Integer>() {
+            public void onChange (Integer newValue) {
+                assertEquals(expectedValue[0], newValue.intValue());
+                fired[0] += 1;
+                value.disconnect(this);
+            }
+        };
+        Connection conn = value.listenNotify(listener);
+        expectedValue[0] = 12;
+        value.update(12);
+        assertEquals("Disconnecting in listenNotify disconnects", 1, fired[0]);
+        conn.disconnect();// Just see what happens when calling disconnect while disconnected
+
+        value.listen(listener);
+        value.listen(new Counter());
+        value.listen(listener);
+        value.update((expectedValue[0] = 13));
+        value.update((expectedValue[0] = 14));
+        assertEquals("Disconnecting in listen disconnects", 3, fired[0]);
+
+        value.listen(listener).disconnect();
+        value.update((expectedValue[0] = 15));
+        assertEquals("Disconnecting before geting an update still disconnects", 3, fired[0]);
     }
 }

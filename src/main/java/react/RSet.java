@@ -69,6 +69,15 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
     }
 
     /**
+     * Disconnects the supplied listener from this set if listen was called with it.
+     */
+    public void disconnect (Listener<? super E> listener) {
+        // alas, Java does not support higher kinded types; this cast is safe
+        @SuppressWarnings("unchecked") Listener<E> casted = (Listener<E>)listener;
+        removeConnection(casted);
+    }
+
+    /**
      * Adds the supplied element to the set, forcing a notification to the listeners regardless of
      * whether the element was already in the set or not.
      * @return true if the element was added, false if it was already in the set.

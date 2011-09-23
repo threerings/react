@@ -87,6 +87,15 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
     }
 
     /**
+     * Disconnects the supplied listener from this map if listen was called with it.
+     */
+    public void disconnect (Listener<? super K, ? super V> listener) {
+        // alas, Java does not support higher kinded types; this cast is safe
+        @SuppressWarnings("unchecked") Listener<K,V> casted = (Listener<K,V>)listener;
+        removeConnection(casted);
+    }
+
+    /**
      * Updates the mapping with the supplied key and value, and notifies registered listeners
      * regardless of whether the new value is equal to the old value.
      * @return the previous value mapped to the supplied key, or null.

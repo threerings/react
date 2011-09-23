@@ -64,12 +64,20 @@ class Cons<L extends RListener> implements Connection
     }
 
     static <L extends RListener> Cons<L> remove (Cons<L> head, Cons<L> cons) {
+        if (head == null) return head;
         if (head == cons) return head.next;
         Cons<L> prev = head;
         while (prev.next != cons) {
             prev = prev.next;
         }
         prev.next = prev.next.next;
+        return head;
+    }
+
+    static <L extends RListener> Cons<L> removeAll (Cons<L> head, L listener) {
+        if (head == null) return null;
+        if (head.listener == listener) return removeAll(head.next, listener);
+        head.next = removeAll(head.next, listener);
         return head;
     }
 
@@ -80,9 +88,9 @@ class Cons<L extends RListener> implements Connection
         return head;
     }
 
-    static <L extends RListener> Set<Cons<L>> queueRemove (Set<Cons<L>> toRemove, Cons<L> cons) {
+    static <L> Set<L> queueRemove (Set<L> toRemove, L cons) {
         if (toRemove == null) {
-            toRemove = new HashSet<Cons<L>>();
+            toRemove = new HashSet<L>();
         }
         toRemove.add(cons);
         return toRemove;

@@ -18,4 +18,10 @@ public interface SignalView<T>
      * @return a connection instance which can be used to cancel the connection.
      */
     Connection connect (Slot<? super T> slot);
+
+    /**
+     * Disconnects the supplied slot from this signal if connect was called with it. If the slot has
+     * been connected multiple times, all connections are cancelled.
+     */
+    void disconnect (Slot<? super T> slot);
 }

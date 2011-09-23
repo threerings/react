@@ -65,7 +65,16 @@ public class RList<E> extends Reactor<RList.Listener<E>>
         return addConnection(casted);
     }
 
-    /**
+   /**
+    * Disconnects the supplied listener from this list if listen was called with it.
+    */
+   public void disconnect (Listener<? super E> listener) {
+       // alas, Java does not support higher kinded types; this cast is safe
+       @SuppressWarnings("unchecked") Listener<E> casted = (Listener<E>)listener;
+       removeConnection(casted);
+   }
+
+   /**
      * Removes the supplied element from the list, forcing a notification to the listeners
      * regardless of whether the element was in the list or not.
      * @return true if the element was in the list and was removed, false if it was not.
