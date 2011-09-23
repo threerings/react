@@ -5,7 +5,8 @@
 
 package react;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A base class for all reactive classes. This is an implementation detail, but is public so that
@@ -22,10 +23,13 @@ public abstract class Reactor<L extends Reactor.RListener>
     }
 
     protected synchronized Cons<L> addConnection (L listener) {
-        Cons<L> cons = new Cons<L>(this, listener);
+        final Cons<L> cons = new Cons<L>(this, listener);
         if (isDispatching()) {
-            cons.next = _toAdd;
-            _toAdd = cons;
+            doAfterDispatch(new Runnable() {
+                public void run () {
+                    _listeners = Cons.insert(_listeners, cons);
+                }
+            });
         } else {
             _listeners = Cons.insert(_listeners, cons);
         }
@@ -44,33 +48,33 @@ public abstract class Reactor<L extends Reactor.RListener>
         _listeners = lners;
 
         // now remove listeners any queued for removing and add any queued for adding
-        if (_consToRemove != null) {
-            _listeners = Cons.removeAll(_listeners, _consToRemove);
-            _consToRemove = null;
-        }
-        if (_listenersToRemove != null) {
-            for (L listener : _listenersToRemove) {
-                _listeners = Cons.removeAll(_listeners, listener);
+        if (_pendingActions != null) {
+            for (Runnable action : _pendingActions) {
+                action.run();
             }
-            _listenersToRemove = null;
-        }
-        if (_toAdd != null) {
-            _listeners = Cons.insertAll(_listeners, _toAdd);
-            _toAdd = null;
+            _pendingActions = null;
         }
     }
 
-    protected synchronized void disconnect (Cons<L> cons) {
+    protected synchronized void disconnect (final Cons<L> cons) {
         if (isDispatching()) {
-            _consToRemove = Cons.queueRemove(_consToRemove, cons);
+            doAfterDispatch(new Runnable() {
+                public void run () {
+                    _listeners = Cons.remove(_listeners, cons);
+                }
+            });
         } else {
             _listeners = Cons.remove(_listeners, cons);
         }
     }
 
-    protected synchronized void removeConnection (L listener) {
+    protected synchronized void removeConnection (final L listener) {
         if (isDispatching()) {
-            _listenersToRemove = Cons.queueRemove(_listenersToRemove, listener);
+            doAfterDispatch(new Runnable() {
+                public void run () {
+                    _listeners = Cons.removeAll(_listeners, listener);
+                }
+            });
         } else {
             _listeners = Cons.removeAll(_listeners, listener);
         }
@@ -92,14 +96,18 @@ public abstract class Reactor<L extends Reactor.RListener>
     }
 
     // always called while lock is held on this reactor
+    protected void doAfterDispatch (Runnable action) {
+        if (_pendingActions == null) _pendingActions = new ArrayList<Runnable>();
+        _pendingActions.add(action);
+    }
+
+    // always called while lock is held on this reactor
     private final boolean isDispatching () {
         return _listeners == DISPATCHING;
     }
 
     protected Cons<L> _listeners;
-    protected Cons<L> _toAdd;
-    protected Set<Cons<L>> _consToRemove;
-    protected Set<L> _listenersToRemove;
+    protected List<Runnable> _pendingActions;
 
     protected static final Cons<RListener> DISPATCHING = new Cons<RListener>(null, null);
 }

@@ -5,9 +5,6 @@
 
 package react;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import react.Reactor.RListener;
 
 /**
@@ -53,24 +50,10 @@ class Cons<L extends RListener> implements Connection
         }
     }
 
-    static <L extends RListener> Cons<L> insertAll (Cons<L> head, Cons<L> toAdd) {
-        while (toAdd != null) {
-            Cons<L> next = toAdd.next;
-            toAdd.next = null;
-            head = insert(head, toAdd);
-            toAdd = next;
-        }
-        return head;
-    }
-
     static <L extends RListener> Cons<L> remove (Cons<L> head, Cons<L> cons) {
         if (head == null) return head;
         if (head == cons) return head.next;
-        Cons<L> prev = head;
-        while (prev.next != cons) {
-            prev = prev.next;
-        }
-        prev.next = prev.next.next;
+        head.next = remove(head.next, cons);
         return head;
     }
 
@@ -79,20 +62,5 @@ class Cons<L extends RListener> implements Connection
         if (head.listener == listener) return removeAll(head.next, listener);
         head.next = removeAll(head.next, listener);
         return head;
-    }
-
-    static <L extends RListener> Cons<L> removeAll (Cons<L> head, Set<Cons<L>> toRemove) {
-        if (head == null) return null;
-        if (toRemove.contains(head)) return removeAll(head.next, toRemove);
-        head.next = removeAll(head.next, toRemove);
-        return head;
-    }
-
-    static <L> Set<L> queueRemove (Set<L> toRemove, L cons) {
-        if (toRemove == null) {
-            toRemove = new HashSet<L>();
-        }
-        toRemove.add(cons);
-        return toRemove;
     }
 }
