@@ -93,4 +93,10 @@ public interface ValueView<T>
      * connected multiple times, all connections are cancelled.
      */
     void disconnect (Listener<? super T> listener);
+
+    /**
+     * Disconnects the supplied slot from this value if it's connected. If the slot has been
+     * connected multiple times, all connections are cancelled.
+     */
+    void disconnect (Slot<? super T> slot);
 }

@@ -248,7 +248,7 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
         try {
             for (Cons<Listener<E>> cons = lners; cons != null; cons = cons.next) {
                 try {
-                    cons.listener.onAdd(elem);
+                    cons.receiver.onAdd(elem);
                 } catch (Throwable t) {
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);
@@ -271,7 +271,7 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
         try {
             for (Cons<Listener<E>> cons = lners; cons != null; cons = cons.next) {
                 try {
-                    cons.listener.onRemove(elem);
+                    cons.receiver.onRemove(elem);
                 } catch (Throwable t) {
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);

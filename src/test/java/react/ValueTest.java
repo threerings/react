@@ -115,8 +115,7 @@ public class ValueTest
             }
         };
         Connection conn = value.connectNotify(listener);
-        expectedValue[0] = 12;
-        value.update(12);
+        value.update((expectedValue[0] = 12));
         assertEquals("Disconnecting in listenNotify disconnects", 1, fired[0]);
         conn.disconnect();// Just see what happens when calling disconnect while disconnected
 
@@ -130,5 +129,25 @@ public class ValueTest
         value.connect(listener).disconnect();
         value.update((expectedValue[0] = 15));
         assertEquals("Disconnecting before geting an update still disconnects", 3, fired[0]);
+    }
+
+    @Test public void testSlot () {
+        final Value<Integer> value = Value.create(42);
+        final int[] expectedValue = { value.get() };
+        final int[] fired = { 0 };
+        Slot<Integer> listener = new Slot<Integer>() {
+            public void onEmit (Integer newValue) {
+                assertEquals(expectedValue[0], newValue.intValue());
+                fired[0] += 1;
+                value.disconnect(this);
+            }
+        };
+        value.connect(listener);
+        value.update((expectedValue[0] = 12));
+        assertEquals("Calling disconnect with a slot disconnects", 1, fired[0]);
+
+        value.connect(listener).disconnect();
+        value.update((expectedValue[0] = 14));
+        assertEquals(1, fired[0]);
     }
 }

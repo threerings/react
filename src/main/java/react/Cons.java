@@ -15,8 +15,8 @@ class Cons<L extends RListener> implements Connection
     /** The reactor that owns this cons cell. */
     public final Reactor<L> owner;
 
-    /** The listener being tracked by this cons cell. */
-    public final L listener;
+    /** Receives signals from the reactor. */
+    public final L receiver;
 
     /** The next connection in our chain. */
     public Cons<L> next;
@@ -24,9 +24,9 @@ class Cons<L extends RListener> implements Connection
     /** Indicates whether this connection is one-shot or persistent. */
     public boolean oneShot;
 
-    public Cons (Reactor<L> owner, L listener) {
+    public Cons (Reactor<L> owner, L receiver) {
         this.owner = owner;
-        this.listener = listener;
+        this.receiver = receiver;
     }
 
     @Override public Connection once () {
@@ -38,10 +38,15 @@ class Cons<L extends RListener> implements Connection
         owner.disconnect(this);
     }
 
+    /** The listener being tracked by this cons cell. */
+    Object listener () {
+        return receiver;
+    }
+
     static <L extends RListener> Cons<L> insert (Cons<L> head, Cons<L> cons) {
         if (head == null) {
             return cons;
-        } else if (head.listener.priority() > cons.listener.priority()) {
+        } else if (head.receiver.priority() > cons.receiver.priority()) {
             cons.next = head;
             return cons;
         } else {
@@ -57,9 +62,9 @@ class Cons<L extends RListener> implements Connection
         return head;
     }
 
-    static <L extends RListener> Cons<L> removeAll (Cons<L> head, L listener) {
+    static <L extends RListener> Cons<L> removeAll (Cons<L> head, Object listener) {
         if (head == null) return null;
-        if (head.listener == listener) return removeAll(head.next, listener);
+        if (head.listener() == listener) return removeAll(head.next, listener);
         head.next = removeAll(head.next, listener);
         return head;
     }

@@ -19,8 +19,15 @@ public abstract class Reactor<L extends Reactor.RListener>
         }
     }
 
+    protected synchronized Cons<L> addWrappedListener (Object listener, L wrapper) {
+        return addCons(new WrappingCons<L>(this, wrapper, listener));
+    }
+
     protected synchronized Cons<L> addConnection (L listener) {
-        final Cons<L> cons = new Cons<L>(this, listener);
+        return addCons(new Cons<L>(this, listener));
+    }
+
+    protected synchronized Cons<L> addCons (final Cons<L> cons) {
         if (isDispatching()) {
             _pendingRuns = insert(_pendingRuns, new Runs() {
                 public void run () {
@@ -62,7 +69,7 @@ public abstract class Reactor<L extends Reactor.RListener>
         }
     }
 
-    protected synchronized void removeConnection (final L listener) {
+    protected synchronized void removeConnection (final Object listener) {
         if (isDispatching()) {
             _pendingRuns = insert(_pendingRuns, new Runs() {
                 public void run () {

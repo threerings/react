@@ -36,7 +36,7 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
     }
 
     @Override public Connection connect (final Slot<? super T> slot) {
-        return connect(new Listener<T>() {
+        return addWrappedListener(slot, new Listener<T>() {
             public void onChange (T value) {
                 slot.onEmit(value);
             }
@@ -85,6 +85,12 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
     @Override public void disconnect (Listener<? super T> listener) {
         // alas, Java does not support higher kinded types; this cast is safe
         @SuppressWarnings("unchecked") Listener<T> casted = (Listener<T>)listener;
+        removeConnection(casted);
+    }
+
+    @Override public void disconnect (Slot<? super T> slot) {
+        // alas, Java does not support higher kinded types; this cast is safe
+        @SuppressWarnings("unchecked") Slot<T> casted = (Slot<T>)slot;
         removeConnection(casted);
     }
 
@@ -153,7 +159,7 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
         try {
             for (Cons<ValueView.Listener<T>> cons = lners; cons != null; cons = cons.next) {
                 try {
-                    cons.listener.onChange(value, ovalue);
+                    cons.receiver.onChange(value, ovalue);
                 } catch (Throwable t) {
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);
