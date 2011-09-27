@@ -11,7 +11,7 @@ package react;
  * entity which dispatches value changes in a custom manner (like over the network). Value
  * consumers should require only a view on a value, rather than a concrete value.
  */
-public interface ValueView<T>
+public interface ValueView<T> extends SignalView<T>
 {
     /**
      * Used to observe changes to a value. One must override only one of the {@link #onChange}
@@ -63,13 +63,6 @@ public interface ValueView<T>
     Connection connect (Listener<? super T> listener);
 
     /**
-     * Connects this value to the supplied slot, such that when the value changes, the slot will
-     * be notified of the new value.
-     * @return a connection instance which can be used to cancel the connection.
-     */
-    Connection connect (Slot<? super T> slot);
-
-    /**
      * Connects this signal to the supplied value, such that when the value changes, the slot will
      * be notified. Also immediately notifies the slot of the current value. If the notification
      * triggers an unchecked exception, the slot will automatically be disconnected and the caller
@@ -93,10 +86,4 @@ public interface ValueView<T>
      * connected multiple times, all connections are cancelled.
      */
     void disconnect (Listener<? super T> listener);
-
-    /**
-     * Disconnects the supplied slot from this value if it's connected. If the slot has been
-     * connected multiple times, all connections are cancelled.
-     */
-    void disconnect (Slot<? super T> slot);
 }
