@@ -19,8 +19,10 @@ public abstract class Reactor<L extends Reactor.RListener>
         }
     }
 
-    protected synchronized Cons<L> addWrappedListener (Object listener, L wrapper) {
-        return addCons(new WrappingCons<L>(this, wrapper, listener));
+    protected synchronized Cons<L> addWrappedListener (final Object listener, L wrapper) {
+        return addCons(new Cons<L>(this, wrapper) {
+            @Override Object listener () { return listener; }
+        });
     }
 
     protected synchronized Cons<L> addConnection (L listener) {
