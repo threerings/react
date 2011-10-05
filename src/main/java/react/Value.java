@@ -43,6 +43,18 @@ public class Value<T> extends AbstractValue<T>
         return updateAndNotify(value);
     }
 
+    /**
+     * Returns a slot which can be used to wire this value to the emissons of a {@link Signal} or
+     * another value.
+     */
+    public Slot<T> slot () {
+        return new Slot<T> () {
+            @Override public void onEmit (T value) {
+                update(value);
+            }
+        };
+    }
+
     @Override public T get () {
         return _value;
     }
