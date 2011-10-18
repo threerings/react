@@ -19,55 +19,15 @@ public interface ValueView<T>
      */
     abstract class Listener<T> extends Reactor.RListener {
         /**
-         * Called when the value to which this listener is bound has changed. This method will call
-         * the old-value-forgetting version ({@link #onChange(T)}) by default.
+         * Called when the value to which this listener is bound has changed.
          */
-        public void onChange (T value, T oldValue) {
-            onChange(value);
-        }
-
-        /**
-         * Called when the value to which this listener is bound has changed, unless the less
-         * forgetful {@link #onChange(T,T)} has been overridden. This method will call the
-         * all-values-forgetting version ({@link #onChange()}) by default.
-         */
-        public void onChange (T value) {
-            onChange();
-        }
-
-        /**
-         * Called when the value to which this listener is bound has changed, unless one of the
-         * less forgetful methods has been overridden.
-         */
-        public void onChange () {
-            // noop
-        }
-    }
-
-    /**
-     * Extends the {@link SignalView} interface with signal-related methods that are only
-     * appropriate for values viewed as signals. Returned by {@link #asSignal}.
-     */
-    public interface AsSignalView<T> extends SignalView<T> {
-        /**
-         * Connects this slot to this value, such that when the value changes, the slot will be
-         * notified. Also immediately notifies the slot of the current value. If the notification
-         * triggers an unchecked exception, the slot will automatically be disconnected and the
-         * caller need not worry about cleaning up after itself.
-         * @return a connection instance which can be used to cancel the connection.
-         */
-        Connection connectNotify (Slot<? super T> slot);
+        public abstract void onChange (T value, T oldValue);
     }
 
     /**
      * Returns the current value.
      */
     T get ();
-
-    /**
-     * Views this value as a signal, allowing slots to be connected to it.
-     */
-    AsSignalView<T> asSignal ();
 
     /**
      * Creates a value that maps this value via a function. When this value changes, the mapped

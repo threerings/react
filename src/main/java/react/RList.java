@@ -267,7 +267,7 @@ public class RList<E> extends Reactor<RList.Listener<E>>
         try {
             for (Cons<Listener<E>> cons = lners; cons != null; cons = cons.next) {
                 try {
-                    cons.receiver.onAdd(elem);
+                    cons.listener.onAdd(elem);
                 } catch (Throwable t) {
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);
@@ -286,7 +286,7 @@ public class RList<E> extends Reactor<RList.Listener<E>>
         try {
             for (Cons<Listener<E>> cons = lners; cons != null; cons = cons.next) {
                 try {
-                    cons.receiver.onRemove(elem);
+                    cons.listener.onRemove(elem);
                 } catch (Throwable t) {
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);

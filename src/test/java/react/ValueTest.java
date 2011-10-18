@@ -14,13 +14,6 @@ import static org.junit.Assert.*;
  */
 public class ValueTest
 {
-    public static class Counter extends Value.Listener<Object> {
-        public int notifies;
-        @Override public void onChange () {
-            notifies++;
-        }
-    }
-
     @Test public void testSimpleListener () {
         Value<Integer> value = Value.create(42);
         final boolean[] fired = new boolean[] { false };
@@ -39,7 +32,7 @@ public class ValueTest
     @Test public void testAsSignal () {
         Value<Integer> value = Value.create(42);
         final boolean[] fired = new boolean[] { false };
-        value.asSignal().connect(new Slot<Integer>() {
+        value.connect(new Slot<Integer>() {
             public void onEmit (Integer value) {
                 assertEquals(15, value.intValue());
                 fired[0] = true;
@@ -52,7 +45,7 @@ public class ValueTest
     @Test public void testAsOnceSignal () {
         Value<Integer> value = Value.create(42);
         SignalTest.Counter counter = new SignalTest.Counter();
-        value.asSignal().connect(counter).once();
+        value.connect(counter).once();
         value.update(15);
         value.update(42);
         assertEquals(1, counter.notifies);
@@ -62,9 +55,9 @@ public class ValueTest
         Value<Integer> value = Value.create(42);
         MappedValueView<String> mapped = value.map(Functions.TO_STRING);
 
-        Counter counter = new Counter();
+        SignalTest.Counter counter = new SignalTest.Counter();
         mapped.connect(counter);
-        mapped.asSignal().connect(SignalTest.require("15"));
+        mapped.connect(SignalTest.require("15"));
 
         value.update(15);
         assertEquals(1, counter.notifies);
@@ -82,7 +75,7 @@ public class ValueTest
     @Test public void testConnectNotify () {
         Value<Integer> value = Value.create(42);
         final boolean[] fired = new boolean[] { false };
-        value.asSignal().connectNotify(new Slot<Integer>() {
+        value.connectNotify(new Slot<Integer>() {
             public void onEmit (Integer value) {
                 assertEquals(42, value.intValue());
                 fired[0] = true;
@@ -94,8 +87,8 @@ public class ValueTest
     @Test public void testListenNotify () {
         Value<Integer> value = Value.create(42);
         final boolean[] fired = new boolean[] { false };
-        value.connectNotify(new Value.Listener<Integer>() {
-            public void onChange (Integer value) {
+        value.connectNotify(new Slot<Integer>() {
+            public void onEmit (Integer value) {
                 assertEquals(42, value.intValue());
                 fired[0] = true;
             }
@@ -107,8 +100,8 @@ public class ValueTest
         final Value<Integer> value = Value.create(42);
         final int[] expectedValue = { value.get() };
         final int[] fired = { 0 };
-        Value.Listener<Integer> listener = new Value.Listener<Integer>() {
-            public void onChange (Integer newValue) {
+        Slot<Integer> listener = new Slot<Integer>() {
+            public void onEmit (Integer newValue) {
                 assertEquals(expectedValue[0], newValue.intValue());
                 fired[0] += 1;
                 value.disconnect(this);
@@ -120,7 +113,7 @@ public class ValueTest
         conn.disconnect();// Just see what happens when calling disconnect while disconnected
 
         value.connect(listener);
-        value.connect(new Counter());
+        value.connect(new SignalTest.Counter());
         value.connect(listener);
         value.update((expectedValue[0] = 13));
         value.update((expectedValue[0] = 14));
@@ -139,14 +132,14 @@ public class ValueTest
             public void onEmit (Integer newValue) {
                 assertEquals(expectedValue[0], newValue.intValue());
                 fired[0] += 1;
-                value.asSignal().disconnect(this);
+                value.disconnect(this);
             }
         };
-        value.asSignal().connect(listener);
+        value.connect(listener);
         value.update((expectedValue[0] = 12));
         assertEquals("Calling disconnect with a slot disconnects", 1, fired[0]);
 
-        value.asSignal().connect(listener).disconnect();
+        value.connect(listener).disconnect();
         value.update((expectedValue[0] = 14));
         assertEquals(1, fired[0]);
     }

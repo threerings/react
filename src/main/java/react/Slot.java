@@ -9,7 +9,7 @@ package react;
  * Reacts to signal emissions. The priority of a slot can be changed from the default by overriding
  * {@link #priority}.
  */
-public abstract class Slot<T> extends Reactor.RListener
+public abstract class Slot<T> extends ValueView.Listener<T>
 {
     /**
      * Called when a signal to which this slot is connected has emitted an event.
@@ -25,12 +25,20 @@ public abstract class Slot<T> extends Reactor.RListener
     public Slot<T> atPriority (final int priority) {
         final Slot<T> outer = this;
         return new Slot<T>() {
-            public void onEmit (T event) {
+            @Override public void onEmit (T event) {
                 outer.onEmit(event);
             }
-            public int priority () {
+            @Override public int priority () {
                 return priority;
             }
         };
+    }
+
+    /**
+     * Allows a slot to be used as a {@link ValueView.Listener} by passing just the new value
+     * through to {@link #onEmit}.
+     */
+    @Override public void onChange (T value, T oldValue) {
+        onEmit(value);
     }
 }

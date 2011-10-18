@@ -44,7 +44,7 @@ public class AbstractSignal<T> extends Reactor<Slot<T>>
         try {
             for (Cons<Slot<T>> cons = lners; cons != null; cons = cons.next) {
                 try {
-                    cons.receiver.onEmit(event);
+                    cons.listener.onEmit(event);
                 } catch (Throwable t) {
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);

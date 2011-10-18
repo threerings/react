@@ -397,7 +397,7 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
         try {
             for (Cons<Listener<K,V>> cons = lners; cons != null; cons = cons.next) {
                 try {
-                    cons.receiver.onPut(key, value, oldValue);
+                    cons.listener.onPut(key, value, oldValue);
                 } catch (Throwable t) {
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);
@@ -420,7 +420,7 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
         try {
             for (Cons<Listener<K,V>> cons = lners; cons != null; cons = cons.next) {
                 try {
-                    cons.receiver.onRemove(key, oldValue);
+                    cons.listener.onRemove(key, oldValue);
                 } catch (Throwable t) {
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);

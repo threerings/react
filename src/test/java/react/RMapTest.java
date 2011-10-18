@@ -238,12 +238,12 @@ public class RMapTest
         assertFalse(containsTwo.get());
 
         // listen for notifications
-        ValueTest.Counter counter = new ValueTest.Counter();
+        SignalTest.Counter counter = new SignalTest.Counter();
         containsOne.connect(counter);
         containsTwo.connect(counter);
 
         // remove the mapping for one and ensure that we're notified
-        containsOne.asSignal().connect(SignalTest.require(false)).once();
+        containsOne.connect(SignalTest.require(false)).once();
         map.remove(1);
         assertEquals(1, counter.notifies);
 
@@ -252,7 +252,7 @@ public class RMapTest
         assertEquals(1, counter.notifies);
 
         // add a mapping for two and ensure that we're notified
-        containsTwo.asSignal().connect(SignalTest.require(true)).once();
+        containsTwo.connect(SignalTest.require(true)).once();
         map.put(2, "two");
         assertEquals(2, counter.notifies);
 
@@ -272,12 +272,12 @@ public class RMapTest
         assertNull(twoView.get());
 
         // listen for notifications
-        ValueTest.Counter counter = new ValueTest.Counter();
+        SignalTest.Counter counter = new SignalTest.Counter();
         oneView.connect(counter);
         twoView.connect(counter);
 
         // remove the mapping for one and ensure that we're notified
-        oneView.asSignal().connect(SignalTest.<String>require(null)).once();
+        oneView.connect(SignalTest.<String>require(null)).once();
         map.remove(1);
         assertEquals(1, counter.notifies);
 
@@ -286,7 +286,7 @@ public class RMapTest
         assertEquals(1, counter.notifies);
 
         // add a mapping for two and ensure that we're notified
-        twoView.asSignal().connect(SignalTest.require("two")).once();
+        twoView.connect(SignalTest.require("two")).once();
         map.put(2, "two");
         assertEquals(2, counter.notifies);
 
@@ -295,7 +295,7 @@ public class RMapTest
         assertEquals(2, counter.notifies);
 
         // make sure we are notified when the value changes
-        twoView.asSignal().connect(SignalTest.require("ii")).once();
+        twoView.connect(SignalTest.require("ii")).once();
         map.put(2, "ii");
         assertEquals(3, counter.notifies);
     }
