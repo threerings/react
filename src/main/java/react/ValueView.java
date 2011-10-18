@@ -11,7 +11,7 @@ package react;
  * entity which dispatches value changes in a custom manner (like over the network). Value
  * consumers should require only a view on a value, rather than a concrete value.
  */
-public interface ValueView<T> extends SignalView<T>
+public interface ValueView<T>
 {
     /**
      * Used to observe changes to a value. One must override only one of the {@link #onChange}
@@ -45,9 +45,29 @@ public interface ValueView<T> extends SignalView<T>
     }
 
     /**
+     * Extends the {@link SignalView} interface with signal-related methods that are only
+     * appropriate for values viewed as signals. Returned by {@link #asSignal}.
+     */
+    public interface AsSignalView<T> extends SignalView<T> {
+        /**
+         * Connects this slot to this value, such that when the value changes, the slot will be
+         * notified. Also immediately notifies the slot of the current value. If the notification
+         * triggers an unchecked exception, the slot will automatically be disconnected and the
+         * caller need not worry about cleaning up after itself.
+         * @return a connection instance which can be used to cancel the connection.
+         */
+        Connection connectNotify (Slot<? super T> slot);
+    }
+
+    /**
      * Returns the current value.
      */
     T get ();
+
+    /**
+     * Views this value as a signal, allowing slots to be connected to it.
+     */
+    AsSignalView<T> asSignal ();
 
     /**
      * Creates a value that maps this value via a function. When this value changes, the mapped
@@ -61,15 +81,6 @@ public interface ValueView<T> extends SignalView<T>
      * @return a connection instance which can be used to cancel the connection.
      */
     Connection connect (Listener<? super T> listener);
-
-    /**
-     * Connects this signal to the supplied value, such that when the value changes, the slot will
-     * be notified. Also immediately notifies the slot of the current value. If the notification
-     * triggers an unchecked exception, the slot will automatically be disconnected and the caller
-     * need not worry about cleaning up after itself.
-     * @return a connection instance which can be used to cancel the connection.
-     */
-    Connection connectNotify (Slot<? super T> slot);
 
     /**
      * Connects the supplied listener to this value, such that it will be notified when this value

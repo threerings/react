@@ -243,7 +243,7 @@ public class RMapTest
         containsTwo.connect(counter);
 
         // remove the mapping for one and ensure that we're notified
-        containsOne.connect(SignalTest.require(false)).once();
+        containsOne.asSignal().connect(SignalTest.require(false)).once();
         map.remove(1);
         assertEquals(1, counter.notifies);
 
@@ -252,7 +252,7 @@ public class RMapTest
         assertEquals(1, counter.notifies);
 
         // add a mapping for two and ensure that we're notified
-        containsTwo.connect(SignalTest.require(true)).once();
+        containsTwo.asSignal().connect(SignalTest.require(true)).once();
         map.put(2, "two");
         assertEquals(2, counter.notifies);
 
@@ -277,7 +277,7 @@ public class RMapTest
         twoView.connect(counter);
 
         // remove the mapping for one and ensure that we're notified
-        oneView.connect(SignalTest.<String>require(null)).once();
+        oneView.asSignal().connect(SignalTest.<String>require(null)).once();
         map.remove(1);
         assertEquals(1, counter.notifies);
 
@@ -286,7 +286,7 @@ public class RMapTest
         assertEquals(1, counter.notifies);
 
         // add a mapping for two and ensure that we're notified
-        twoView.connect(SignalTest.require("two")).once();
+        twoView.asSignal().connect(SignalTest.require("two")).once();
         map.put(2, "two");
         assertEquals(2, counter.notifies);
 
@@ -295,7 +295,7 @@ public class RMapTest
         assertEquals(2, counter.notifies);
 
         // make sure we are notified when the value changes
-        twoView.connect(SignalTest.require("ii")).once();
+        twoView.asSignal().connect(SignalTest.require("ii")).once();
         map.put(2, "ii");
         assertEquals(3, counter.notifies);
     }

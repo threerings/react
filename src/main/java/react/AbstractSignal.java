@@ -13,6 +13,16 @@ package react;
 public class AbstractSignal<T> extends Reactor<Slot<T>>
     implements SignalView<T>
 {
+    @Override public <M> MappedSignalView<M> map (final Function<? super T, M> func) {
+        final MappedSignal<M> mapped = new MappedSignal<M>();
+        mapped.setConnection(connect(new Slot<T>() {
+            @Override public void onEmit (T value) {
+                mapped.notifyEmit(func.apply(value));
+            }
+        }));
+        return mapped;
+    }
+
     @Override public Connection connect (Slot<? super T> slot) {
         // alas, Java does not support higher kinded types; this cast is safe
         @SuppressWarnings("unchecked") Slot<T> casted = (Slot<T>)slot;

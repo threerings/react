@@ -13,6 +13,12 @@ package react;
 public interface SignalView<T>
 {
     /**
+     * Creates a signal that maps this signal via a function. When this signal emits a value, the
+     * mapped signal will emit that value as transformed by the supplied function.
+     */
+    <M> MappedSignalView<M> map (final Function<? super T, M> func);
+
+    /**
      * Connects this signal to the supplied slot, such that when an event is emitted from this
      * signal, the slot will be notified.
      * @return a connection instance which can be used to cancel the connection.

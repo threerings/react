@@ -112,7 +112,7 @@ public class RSetTest
         containsTwo.connect(counter);
 
         // remove the element for one and ensure that we're notified
-        containsOne.connect(SignalTest.require(false)).once();
+        containsOne.asSignal().connect(SignalTest.require(false)).once();
         set.remove(1);
         assertEquals(1, counter.notifies);
 
@@ -125,7 +125,7 @@ public class RSetTest
         assertEquals(2, counter.notifies);
 
         // add an element for two and ensure that we're notified
-        containsTwo.connect(SignalTest.require(true)).once();
+        containsTwo.asSignal().connect(SignalTest.require(true)).once();
         set.add(2);
         assertEquals(3, counter.notifies);
 

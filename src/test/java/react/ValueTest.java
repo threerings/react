@@ -39,7 +39,7 @@ public class ValueTest
     @Test public void testAsSignal () {
         Value<Integer> value = Value.create(42);
         final boolean[] fired = new boolean[] { false };
-        value.connect(new Slot<Integer>() {
+        value.asSignal().connect(new Slot<Integer>() {
             public void onEmit (Integer value) {
                 assertEquals(15, value.intValue());
                 fired[0] = true;
@@ -52,7 +52,7 @@ public class ValueTest
     @Test public void testAsOnceSignal () {
         Value<Integer> value = Value.create(42);
         SignalTest.Counter counter = new SignalTest.Counter();
-        value.connect(counter).once();
+        value.asSignal().connect(counter).once();
         value.update(15);
         value.update(42);
         assertEquals(1, counter.notifies);
@@ -64,7 +64,7 @@ public class ValueTest
 
         Counter counter = new Counter();
         mapped.connect(counter);
-        mapped.connect(SignalTest.require("15"));
+        mapped.asSignal().connect(SignalTest.require("15"));
 
         value.update(15);
         assertEquals(1, counter.notifies);
@@ -82,7 +82,7 @@ public class ValueTest
     @Test public void testConnectNotify () {
         Value<Integer> value = Value.create(42);
         final boolean[] fired = new boolean[] { false };
-        value.connectNotify(new Slot<Integer>() {
+        value.asSignal().connectNotify(new Slot<Integer>() {
             public void onEmit (Integer value) {
                 assertEquals(42, value.intValue());
                 fired[0] = true;
@@ -139,14 +139,14 @@ public class ValueTest
             public void onEmit (Integer newValue) {
                 assertEquals(expectedValue[0], newValue.intValue());
                 fired[0] += 1;
-                value.disconnect(this);
+                value.asSignal().disconnect(this);
             }
         };
-        value.connect(listener);
+        value.asSignal().connect(listener);
         value.update((expectedValue[0] = 12));
         assertEquals("Calling disconnect with a slot disconnects", 1, fired[0]);
 
-        value.connect(listener).disconnect();
+        value.asSignal().connect(listener).disconnect();
         value.update((expectedValue[0] = 14));
         assertEquals(1, fired[0]);
     }

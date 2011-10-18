@@ -197,6 +197,25 @@ public class SignalTest
         signal.emit();
     }
 
+    @Test public void testMappedSignal () {
+        Signal<Integer> signal = Signal.create();
+        MappedSignalView<String> mapped = signal.map(Functions.TO_STRING);
+
+        Counter counter = new Counter();
+        mapped.connect(counter);
+        mapped.connect(SignalTest.require("15"));
+
+        signal.emit(15);
+        assertEquals(1, counter.notifies);
+        signal.emit(15);
+        assertEquals(2, counter.notifies);
+
+        // disconnect the mapped signal and ensure that it no longer updates
+        mapped.connection().disconnect();
+        signal.emit(25);
+        assertEquals(2, counter.notifies);
+    }
+
     protected static class AccSlot<T> extends Slot<T> {
         public List<T> events = new ArrayList<T>();
         public void onEmit (T event) {

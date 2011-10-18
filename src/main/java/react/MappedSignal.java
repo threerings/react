@@ -6,10 +6,10 @@
 package react;
 
 /**
- * Plumbing to implement mapped values in such a way that they can expose the {@link Connection}
+ * Plumbing to implement mapped signals in such a way that they can expose the {@link Connection}
  * that wires them up.
  */
-abstract class MappedValue<T> extends AbstractValue<T> implements MappedValueView<T>
+class MappedSignal<T> extends AbstractSignal<T> implements MappedSignalView<T>
 {
     @Override public Connection connection () {
         return _conn;

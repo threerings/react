@@ -14,6 +14,55 @@ package react;
 public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
     implements ValueView<T>
 {
+    @Override public AsSignalView<T> asSignal () {
+        return new AsSignalView<T>() {
+            @Override public <M> MappedSignalView<M> map (final Function<? super T, M> func) {
+                final MappedSignal<M> mapped = new MappedSignal<M>();
+                mapped.setConnection(AbstractValue.this.connect(new Listener<T>() {
+                    @Override public void onChange (T value, T ovalue) {
+                        mapped.notifyEmit(func.apply(value));
+                    }
+                }));
+                return mapped;
+            }
+
+            @Override public Connection connect (final Slot<? super T> slot) {
+                return addWrappedListener(slot, new Listener<T>() {
+                    public void onChange (T value) {
+                        slot.onEmit(value);
+                    }
+                    public int priority () {
+                        return slot.priority();
+                    }
+                });
+            }
+
+            @Override public Connection connectNotify (Slot<? super T> slot) {
+                // connect before calling emit; if the slot changes the value in the body of
+                // onEmit, it will expect to be notified of that change; however if onEmit throws a
+                // runtime exception, we need to take care of disconnecting the slot because the
+                // returned connection instance will never reach the caller
+                Connection conn = connect(slot);
+                try {
+                    slot.onEmit(get());
+                    return conn;
+                } catch (RuntimeException re) {
+                    conn.disconnect();
+                    throw re;
+                } catch (Error e) {
+                    conn.disconnect();
+                    throw e;
+                }
+            }
+
+            @Override public void disconnect (Slot<? super T> slot) {
+                // alas, Java does not support higher kinded types; this cast is safe
+                @SuppressWarnings("unchecked") Slot<T> casted = (Slot<T>)slot;
+                removeConnection(casted);
+            }
+        };
+    }
+
     @Override public <M> MappedValueView<M> map (final Function<? super T, M> func) {
         final AbstractValue<T> outer = this;
         final MappedValue<M> mapped = new MappedValue<M>() {
@@ -33,35 +82,6 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
         // alas, Java does not support higher kinded types; this cast is safe
         @SuppressWarnings("unchecked") Listener<T> casted = (Listener<T>)listener;
         return addConnection(casted);
-    }
-
-    @Override public Connection connect (final Slot<? super T> slot) {
-        return addWrappedListener(slot, new Listener<T>() {
-            public void onChange (T value) {
-                slot.onEmit(value);
-            }
-            public int priority () {
-                return slot.priority();
-            }
-        });
-    }
-
-    @Override public Connection connectNotify (Slot<? super T> slot) {
-        // connect before calling emit; if the slot changes the value in the body of onEmit, it
-        // will expect to be notified of that change; however if onEmit throws a runtime exception,
-        // we need to take care of disconnecting the slot because the returned connection instance
-        // will never reach the caller
-        Connection conn = connect(slot);
-        try {
-            slot.onEmit(get());
-            return conn;
-        } catch (RuntimeException re) {
-            conn.disconnect();
-            throw re;
-        } catch (Error e) {
-            conn.disconnect();
-            throw e;
-        }
     }
 
     @Override public Connection connectNotify (Listener<? super T> listener) {
@@ -85,12 +105,6 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
     @Override public void disconnect (Listener<? super T> listener) {
         // alas, Java does not support higher kinded types; this cast is safe
         @SuppressWarnings("unchecked") Listener<T> casted = (Listener<T>)listener;
-        removeConnection(casted);
-    }
-
-    @Override public void disconnect (Slot<? super T> slot) {
-        // alas, Java does not support higher kinded types; this cast is safe
-        @SuppressWarnings("unchecked") Slot<T> casted = (Slot<T>)slot;
         removeConnection(casted);
     }
 
