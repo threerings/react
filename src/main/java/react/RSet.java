@@ -216,7 +216,6 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
             }
             public void remove () {
                 checkMutate();
-                if (_current == null) throw new IllegalStateException();
                 iiter.remove();
                 emitRemove(_current);
             }

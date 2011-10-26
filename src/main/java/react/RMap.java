@@ -252,8 +252,8 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
                         return (_current = iiter.next());
                     }
                     public void remove () {
-                        if (_current == null) throw new IllegalStateException();
                         checkMutate();
+                        if (_current == null) throw new IllegalStateException();
                         V ovalue = RMap.this.get(_current);
                         iiter.remove();
                         emitRemove(_current, ovalue);
@@ -295,7 +295,6 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
                         return (_current = iiter.next()).getValue();
                     }
                     public void remove () {
-                        if (_current == null) throw new IllegalStateException();
                         checkMutate();
                         iiter.remove();
                         emitRemove(_current.getKey(), _current.getValue());
@@ -357,7 +356,6 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
                         };
                     }
                     public void remove () {
-                        if (_current == null) throw new IllegalStateException();
                         checkMutate();
                         iiter.remove();
                         emitRemove(_current.getKey(), _current.getValue());
