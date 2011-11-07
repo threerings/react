@@ -4,7 +4,7 @@
   <groupId>com.threerings</groupId>
   <artifactId>react</artifactId>
   <packaging>jar</packaging>
-  <version>1.1-SNAPSHOT</version>
+  <version>1.1</version>
   <name>react</name>
   <description>A signals/slots plus FRP-like library for Java.</description>
   <url>http://github.com/threerings/react/</url>
