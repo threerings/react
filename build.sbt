@@ -1,6 +1,6 @@
 name := "react"
 
-version := "1.1"
+version := "1.2-SNAPSHOT"
 
 organization := "com.threerings"
 
