@@ -21,7 +21,7 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
                 return func.apply(outer.get());
             }
         };
-        mapped.setConnection(connect(new Listener<T>() {
+        mapped.setConnection(connect(new ValueView.Listener<T>() {
             @Override public void onChange (T value, T ovalue) {
                 mapped.notifyChange(func.apply(value), func.apply(ovalue));
             }
@@ -29,13 +29,13 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
         return mapped;
     }
 
-    @Override public Connection connect (Listener<? super T> listener) {
+    @Override public Connection connect (ValueView.Listener<? super T> listener) {
         // alas, Java does not support higher kinded types; this cast is safe
-        @SuppressWarnings("unchecked") Listener<T> casted = (Listener<T>)listener;
+        @SuppressWarnings("unchecked") ValueView.Listener<T> casted = (ValueView.Listener<T>)listener;
         return addConnection(casted);
     }
 
-    @Override public Connection connectNotify (Listener<? super T> listener) {
+    @Override public Connection connectNotify (ValueView.Listener<? super T> listener) {
         // connect before calling emit; if the listener changes the value in the body of onEmit, it
         // will expect to be notified of that change; however if onEmit throws a runtime exception,
         // we need to take care of disconnecting the listener because the returned connection
@@ -53,9 +53,9 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
         }
     }
 
-    @Override public void disconnect (Listener<? super T> listener) {
+    @Override public void disconnect (ValueView.Listener<? super T> listener) {
         // alas, Java does not support higher kinded types; this cast is safe
-        @SuppressWarnings("unchecked") Listener<T> casted = (Listener<T>)listener;
+        @SuppressWarnings("unchecked") ValueView.Listener<T> casted = (ValueView.Listener<T>)listener;
         removeConnection(casted);
     }
 

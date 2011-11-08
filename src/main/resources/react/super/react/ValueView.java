@@ -14,17 +14,6 @@ package react;
 public interface ValueView<T>
 {
     /**
-     * Used to observe changes to a value. One must override only one of the {@link #onChange}
-     * methods, depending on how much information is desired.
-     */
-    abstract class Listener<T> extends Reactor.RListener {
-        /**
-         * Called when the value to which this listener is bound has changed.
-         */
-        public abstract void onChange (T value, T oldValue);
-    }
-
-    /**
      * Returns the current value.
      */
     T get ();
