@@ -87,22 +87,22 @@ public class RList<E> extends Reactor<RList.Listener<E>>
     }
 
     // List methods that perform reactive functions in addition to calling through
-    @Override public boolean add(E element) {
+    @Override public boolean add (E element) {
         add(size(), element);
         return true;
     }
 
-    @Override public void add(int index, E element) {
+    @Override public void add (int index, E element) {
         checkMutate();
         _impl.add(index, element);
         emitAdd(element);
     }
 
-    @Override public boolean addAll(Collection<? extends E> collection) {
+    @Override public boolean addAll (Collection<? extends E> collection) {
         return addAll(size(), collection);
     }
 
-    @Override public boolean addAll(int index, Collection<? extends E> elements) {
+    @Override public boolean addAll (int index, Collection<? extends E> elements) {
         checkMutate();
         // Call add instead of calling _impl.addAll so if a listener throws an exception on
         // emission, we don't have elements added without a corresponding emission
@@ -116,11 +116,11 @@ public class RList<E> extends Reactor<RList.Listener<E>>
         return listIterator();
     }
 
-    @Override public ListIterator<E> listIterator() {
+    @Override public ListIterator<E> listIterator () {
         return listIterator(0);
     }
 
-    @Override public ListIterator<E> listIterator(int index) {
+    @Override public ListIterator<E> listIterator (int index) {
         final ListIterator<E> iiter = _impl.listIterator();
         return new ListIterator<E> () {
             public void add (E elem) {
@@ -160,7 +160,7 @@ public class RList<E> extends Reactor<RList.Listener<E>>
         };
     }
 
-    @Override public boolean retainAll(Collection<?> collection) {
+    @Override public boolean retainAll (Collection<?> collection) {
         boolean modified = false;
         for (Iterator<E> iter = iterator(); iter.hasNext(); ) {
             if (!collection.contains(iter.next())) {
@@ -171,7 +171,7 @@ public class RList<E> extends Reactor<RList.Listener<E>>
         return modified;
     }
 
-    @Override public boolean removeAll(Collection<?> collection) {
+    @Override public boolean removeAll (Collection<?> collection) {
         boolean modified = false;
         for (Object o : collection) {
             modified |= remove(o);
@@ -179,7 +179,7 @@ public class RList<E> extends Reactor<RList.Listener<E>>
         return modified;
     }
 
-    @Override public boolean remove(Object object) {
+    @Override public boolean remove (Object object) {
         checkMutate();
         boolean removed = _impl.remove(object);
         if (removed) {
@@ -190,24 +190,24 @@ public class RList<E> extends Reactor<RList.Listener<E>>
         return removed;
     }
 
-    @Override public E remove(int index) {
+    @Override public E remove (int index) {
         E removed = _impl.remove(index);
         emitRemove(removed);
         return removed;
     }
 
-    @Override public E set(int index, E element) {
+    @Override public E set (int index, E element) {
         E removed = _impl.set(index, element);
         emitAdd(element);
         emitRemove(element);
         return removed;
     }
 
-    @Override public List<E> subList(int fromIndex, int toIndex) {
+    @Override public List<E> subList (int fromIndex, int toIndex) {
         return new RList<E>(_impl.subList(fromIndex, toIndex));
     }
 
-    @Override public boolean equals(Object object) {
+    @Override public boolean equals (Object object) {
         return object == this || _impl.equals(object);
     }
 
@@ -216,47 +216,47 @@ public class RList<E> extends Reactor<RList.Listener<E>>
     }
 
     // List methods that purely pass through to the underlying list
-    @Override public int hashCode() {
+    @Override public int hashCode () {
         return _impl.hashCode();
     }
 
-    @Override public int size() {
+    @Override public int size () {
         return _impl.size();
     }
 
-    @Override public boolean isEmpty() {
+    @Override public boolean isEmpty () {
         return _impl.isEmpty();
     }
 
-    @Override public E get(int index) {
+    @Override public E get (int index) {
         return _impl.get(index);
     }
 
-    @Override public int indexOf(Object element) {
+    @Override public int indexOf (Object element) {
         return _impl.indexOf(element);
     }
 
-    @Override public int lastIndexOf(Object element) {
+    @Override public int lastIndexOf (Object element) {
         return _impl.lastIndexOf(element);
     }
 
-    @Override public boolean contains(Object object) {
+    @Override public boolean contains (Object object) {
         return _impl.contains(object);
     }
 
-    @Override public boolean containsAll(Collection<?> collection) {
+    @Override public boolean containsAll (Collection<?> collection) {
         return _impl.containsAll(collection);
     }
 
-    @Override public void clear() {
+    @Override public void clear () {
         _impl.clear();
     }
 
-    @Override public Object[] toArray() {
+    @Override public Object[] toArray () {
         return _impl.toArray();
     }
 
-    @Override public <T> T[] toArray(T[] array) {
+    @Override public <T> T[] toArray (T[] array) {
         return _impl.toArray(array);
     }
 
