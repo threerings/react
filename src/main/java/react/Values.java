@@ -47,7 +47,7 @@ public class Values
     /**
      * Returns a value which is the logical AND of the supplied values.
      */
-    public static MappedValueView<Boolean> and (final Iterable<ValueView<Boolean>> values) {
+    public static MappedValueView<Boolean> and (final Iterable<? extends ValueView<Boolean>> values) {
         return aggValue(values, COMPUTE_AND);
     }
 
@@ -61,13 +61,13 @@ public class Values
     /**
      * Returns a value which is the logical OR of the supplied values.
      */
-    public static MappedValueView<Boolean> or (final Iterable<ValueView<Boolean>> values) {
+    public static MappedValueView<Boolean> or (final Iterable<? extends ValueView<Boolean>> values) {
         return aggValue(values, COMPUTE_OR);
     }
 
     protected static final MappedValueView<Boolean> aggValue (
-        final Iterable<ValueView<Boolean>> values,
-        final Function<Iterable<ValueView<Boolean>>,Boolean> aggOp) {
+        final Iterable<? extends ValueView<Boolean>> values,
+        final Function<Iterable<? extends ValueView<Boolean>>,Boolean> aggOp) {
         final MappedValue<Boolean> mapped = new MappedValue<Boolean>() {
             @Override public Boolean get () {
                 return aggOp.apply(values);
@@ -97,9 +97,9 @@ public class Values
         return mapped;
     }
 
-    protected static final Function<Iterable<ValueView<Boolean>>,Boolean> COMPUTE_AND =
-        new Function<Iterable<ValueView<Boolean>>,Boolean>() {
-            public Boolean apply (Iterable<ValueView<Boolean>> values) {
+    protected static final Function<Iterable<? extends ValueView<Boolean>>,Boolean> COMPUTE_AND =
+        new Function<Iterable<? extends ValueView<Boolean>>,Boolean>() {
+            public Boolean apply (Iterable<? extends ValueView<Boolean>> values) {
                 for (ValueView<Boolean> value : values) {
                     if (!value.get()) return false;
                 }
@@ -107,9 +107,9 @@ public class Values
             }
         };
 
-    protected static final Function<Iterable<ValueView<Boolean>>,Boolean> COMPUTE_OR =
-        new Function<Iterable<ValueView<Boolean>>,Boolean>() {
-            public Boolean apply (Iterable<ValueView<Boolean>> values) {
+    protected static final Function<Iterable<? extends ValueView<Boolean>>,Boolean> COMPUTE_OR =
+        new Function<Iterable<? extends ValueView<Boolean>>,Boolean>() {
+            public Boolean apply (Iterable<? extends ValueView<Boolean>> values) {
                 for (ValueView<Boolean> value : values) {
                     if (value.get()) return true;
                 }
