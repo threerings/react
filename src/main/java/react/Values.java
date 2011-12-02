@@ -69,7 +69,7 @@ public class Values
      * Returns a view of the supplied signal as a value. It will contain the value {@code initial}
      * until the signal fires, at which time the value will be updated with the emitted value.
      */
-    public static <T> MappedValueView<T> asValue (Signal<T> signal, final T initial) {
+    public static <T> MappedValueView<T> asValue (SignalView<T> signal, final T initial) {
         final MappedValue<T> sigval = new MappedValue<T>() {
             @Override public T get () {
                 return _value;
