@@ -56,4 +56,30 @@ public class ValuesTest
         assertTrue(fired[0]);
         fired[0] = false;
     }
+
+    @Test public void testSignalAsValue () {
+        Signal<Integer> intsig = Signal.create();
+        MappedValueView<Integer> intval = Values.asValue(intsig, 15);
+        assertEquals(15, intval.get().intValue());
+
+        final boolean[] fired = new boolean[] { false };
+        intval.connect(new Value.Listener<Integer>() {
+            public void onChange (Integer value, Integer ovalue) {
+                assertEquals(25, value.intValue());
+                assertEquals(15, ovalue.intValue());
+                fired[0] = true;
+            }
+        });
+
+        intsig.emit(25);
+        assertEquals(25, intval.get().intValue());
+        assertTrue(fired[0]);
+
+        // disconnect the internal listener and make sure no updates happen
+        intval.connection().disconnect();
+        fired[0] = false;
+        intsig.emit(15);
+        assertEquals(25, intval.get().intValue());
+        assertFalse(fired[0]);
+    }
 }

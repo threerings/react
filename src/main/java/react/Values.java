@@ -65,6 +65,30 @@ public class Values
         return aggValue(values, COMPUTE_OR);
     }
 
+    /**
+     * Returns a view of the supplied signal as a value. It will contain the value {@code initial}
+     * until the signal fires, at which time the value will be updated with the emitted value.
+     */
+    public static <T> MappedValueView<T> asValue (Signal<T> signal, final T initial) {
+        final MappedValue<T> sigval = new MappedValue<T>() {
+            @Override public T get () {
+                return _value;
+            }
+            @Override protected T updateLocal (T value) {
+                T ovalue = _value;
+                _value = value;
+                return ovalue;
+            }
+            protected T _value = initial;
+        };
+        sigval.setConnection(signal.connect(new Slot<T>() {
+            public void onEmit (T value) {
+                sigval.updateAndNotifyIf(value);
+            }
+        }));
+        return sigval;
+    }
+
     protected static final MappedValueView<Boolean> aggValue (
         final Iterable<? extends ValueView<Boolean>> values,
         final Function<Iterable<? extends ValueView<Boolean>>,Boolean> aggOp) {
