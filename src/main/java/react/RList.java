@@ -27,6 +27,11 @@ public class RList<E> extends Reactor<RList.Listener<E>>
             // noop
         }
 
+        /** Notifies listener of an updated element. */
+        public void onSet (int index, E newElem, E oldElem) {
+            // noop
+        }
+
         /** Notifies listener of a removed element. */
         public void onRemove (E elem) {
             // noop
@@ -124,6 +129,7 @@ public class RList<E> extends Reactor<RList.Listener<E>>
         final ListIterator<E> iiter = _impl.listIterator();
         return new ListIterator<E> () {
             public void add (E elem) {
+                checkMutate();
                 iiter.add(elem);
                 emitAdd(elem);
             }
@@ -151,12 +157,12 @@ public class RList<E> extends Reactor<RList.Listener<E>>
                 emitRemove(_current);
             }
             public void set (E elem) {
+                checkMutate();
                 iiter.set(elem);
-                emitRemove(_current);
+                emitSet(iiter.nextIndex()-1, elem, _current);
                 _current = elem;
-                emitAdd(_current);
             }
-            protected E _current;// The element targetted by remove or set
+            protected E _current; // the element targeted by remove or set
         };
     }
 
@@ -183,7 +189,7 @@ public class RList<E> extends Reactor<RList.Listener<E>>
         checkMutate();
         boolean removed = _impl.remove(object);
         if (removed) {
-            // The cast is safe if the element was removed
+            // the cast is safe if the element was removed
             @SuppressWarnings("unchecked") E elem = (E)object;
             emitRemove(elem);
         }
@@ -198,8 +204,7 @@ public class RList<E> extends Reactor<RList.Listener<E>>
 
     @Override public E set (int index, E element) {
         E removed = _impl.set(index, element);
-        emitRemove(removed);
-        emitAdd(element);
+        emitSet(index, element, removed);
         return removed;
     }
 
@@ -268,6 +273,25 @@ public class RList<E> extends Reactor<RList.Listener<E>>
             for (Cons<Listener<E>> cons = lners; cons != null; cons = cons.next) {
                 try {
                     cons.listener.onAdd(elem);
+                } catch (Throwable t) {
+                    if (error == null) error = new MultiFailureException();
+                    error.addFailure(t);
+                }
+                if (cons.oneShot) cons.disconnect();
+            }
+        } finally {
+            finishNotify(lners);
+        }
+        if (error != null) error.trigger();
+    }
+
+    protected void emitSet (int index, E newElem, E oldElem) {
+        Cons<Listener<E>> lners = prepareNotify();
+        MultiFailureException error = null;
+        try {
+            for (Cons<Listener<E>> cons = lners; cons != null; cons = cons.next) {
+                try {
+                    cons.listener.onSet(index, newElem, oldElem);
                 } catch (Throwable t) {
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);

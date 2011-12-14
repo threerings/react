@@ -19,6 +19,9 @@ public class RListTest
         @Override public void onAdd (Object elem) {
             notifies++;
         }
+        @Override public void onSet (int index, Object newElem, Object oldElem) {
+            notifies++;
+        }
         @Override public void onRemove (Object elem) {
             notifies++;
         }
@@ -64,15 +67,14 @@ public class RListTest
         list.connect(counter);
 
         list.connect(new RList.Listener<String>() {
-            public void onAdd (String elem) {
-                assertEquals("3", elem);
-            }
-            public void onRemove (String elem) {
-                assertEquals("2", elem);
+            public void onSet (int index, String newElem, String oldElem) {
+                assertEquals(1, index);
+                assertEquals("2", oldElem);
+                assertEquals("3", newElem);
             }
         });
         list.set(1, "3");
-        assertEquals(2, counter.notifies);
+        assertEquals(1, counter.notifies);
     }
 
     @Test public void listIterate () {
@@ -89,17 +91,22 @@ public class RListTest
         literator.remove();
         assertEquals(1, counter.notifies);
 
-        // Setting the last next call makes two notifications
-        list.connect(requireRemove("2")).once();
-        list.connect(requireAdd("3")).once();
+        // setting the last next call makes one set notification
         literator.next();
+        list.connect(new RList.Listener<String>() {
+            public void onSet (int index, String newElem, String oldElem) {
+                assertEquals(0, index);
+                assertEquals("2", oldElem);
+                assertEquals("3", newElem);
+            }
+        }).once();
         literator.set("3");
-        assertEquals(3, counter.notifies);
+        assertEquals(2, counter.notifies);
 
-        // Adding on the iterator makes one notification
+        // adding on the iterator makes one notification
         list.connect(requireAdd("4")).once();
         literator.add("4");
-        assertEquals(4, counter.notifies);
+        assertEquals(3, counter.notifies);
 
         // 3 and 4 in the list now
         assertEquals(2, list.size());
