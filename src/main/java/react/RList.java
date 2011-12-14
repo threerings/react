@@ -198,8 +198,8 @@ public class RList<E> extends Reactor<RList.Listener<E>>
 
     @Override public E set (int index, E element) {
         E removed = _impl.set(index, element);
+        emitRemove(removed);
         emitAdd(element);
-        emitRemove(element);
         return removed;
     }
 

@@ -55,6 +55,26 @@ public class RListTest
         assertEquals(5, counter.notifies);
     }
 
+    @Test public void testSet () {
+        RList<String> list = RList.create();
+        list.add("1");
+        list.add("2");
+
+        Counter counter = new Counter();
+        list.connect(counter);
+
+        list.connect(new RList.Listener<String>() {
+            public void onAdd (String elem) {
+                assertEquals("3", elem);
+            }
+            public void onRemove (String elem) {
+                assertEquals("2", elem);
+            }
+        });
+        list.set(1, "3");
+        assertEquals(2, counter.notifies);
+    }
+
     @Test public void listIterate () {
         RList<String> list = RList.create();
         list.add("1");
