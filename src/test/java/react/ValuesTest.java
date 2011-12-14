@@ -19,6 +19,7 @@ public class ValuesTest
         Value<Boolean> c = Value.create(false);
         final boolean[] fired = new boolean[] { false };
 
+        @SuppressWarnings("unchecked") // TODO: remove when we use JDK 1.7 @SafeVarargs
         MappedValueView<Boolean> anded = Values.and(a, b, c);
         assertFalse(anded.get());
         anded.connect(new Value.Listener<Boolean>() {

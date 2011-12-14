@@ -40,6 +40,14 @@ public class Values
     /**
      * Returns a value which is the logical AND of the supplied values.
      */
+    @SuppressWarnings("unchecked") // TODO: use new varargs suppression in JDK 1.7
+    public static MappedValueView<Boolean> and (ValueView<Boolean> one, ValueView<Boolean> two) {
+        return and(Arrays.asList(one, two));
+    }
+
+    /**
+     * Returns a value which is the logical AND of the supplied values.
+     */
     public static MappedValueView<Boolean> and (ValueView<Boolean>... values) {
         return and(Arrays.asList(values));
     }
@@ -49,6 +57,14 @@ public class Values
      */
     public static MappedValueView<Boolean> and (final Iterable<? extends ValueView<Boolean>> values) {
         return aggValue(values, COMPUTE_AND);
+    }
+
+    /**
+     * Returns a value which is the logical OR of the supplied values.
+     */
+    @SuppressWarnings("unchecked") // TODO: use new varargs suppression in JDK 1.7
+    public static MappedValueView<Boolean> or (ValueView<Boolean> one, ValueView<Boolean> two) {
+        return or(Arrays.asList(one, two));
     }
 
     /**
