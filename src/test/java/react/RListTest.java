@@ -16,13 +16,13 @@ public class RListTest
 {
     public static class Counter extends RList.Listener<Object> {
         public int notifies;
-        @Override public void onAdd (Object elem) {
+        @Override public void onAdd (int index, Object elem) {
             notifies++;
         }
         @Override public void onSet (int index, Object newElem, Object oldElem) {
             notifies++;
         }
-        @Override public void onRemove (Object elem) {
+        @Override public void onRemove (int index, Object elem) {
             notifies++;
         }
     }
