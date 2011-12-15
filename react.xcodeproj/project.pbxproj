@@ -1,0 +1,364 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CBD0F7C5149AAA0400427388 /* reactTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CBD0F7C4149AAA0400427388 /* reactTests.m */; };
+		CBD0F7C8149AAAB200427388 /* react.h in Headers */ = {isa = PBXBuildFile; fileRef = CBD0F7C6149AAAB200427388 /* react.h */; };
+		CBD0F7C9149AAAB200427388 /* react.m in Sources */ = {isa = PBXBuildFile; fileRef = CBD0F7C7149AAAB200427388 /* react.m */; };
+		CBFF4A70149AA9470003AC2B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBFF4A6F149AA9470003AC2B /* Foundation.framework */; };
+		CBFF4A7E149AA9470003AC2B /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBFF4A7D149AA9470003AC2B /* SenTestingKit.framework */; };
+		CBFF4A80149AA9470003AC2B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBFF4A7F149AA9470003AC2B /* UIKit.framework */; };
+		CBFF4A81149AA9470003AC2B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBFF4A6F149AA9470003AC2B /* Foundation.framework */; };
+		CBFF4A84149AA9470003AC2B /* libreact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CBFF4A6C149AA9470003AC2B /* libreact.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		CBFF4A82149AA9470003AC2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CBFF4A63149AA9470003AC2B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CBFF4A6B149AA9470003AC2B;
+			remoteInfo = react;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		CBD0F7C3149AAA0400427388 /* reactTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = reactTests.h; path = src/test/objc/reactTests.h; sourceTree = "<group>"; };
+		CBD0F7C4149AAA0400427388 /* reactTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = reactTests.m; path = src/test/objc/reactTests.m; sourceTree = "<group>"; };
+		CBD0F7C6149AAAB200427388 /* react.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = react.h; path = src/main/objc/react.h; sourceTree = "<group>"; };
+		CBD0F7C7149AAAB200427388 /* react.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = react.m; path = src/main/objc/react.m; sourceTree = "<group>"; };
+		CBFF4A6C149AA9470003AC2B /* libreact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libreact.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		CBFF4A6F149AA9470003AC2B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		CBFF4A7C149AA9470003AC2B /* reactTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = reactTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CBFF4A7D149AA9470003AC2B /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		CBFF4A7F149AA9470003AC2B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CBFF4A69149AA9470003AC2B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CBFF4A70149AA9470003AC2B /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CBFF4A78149AA9470003AC2B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CBFF4A7E149AA9470003AC2B /* SenTestingKit.framework in Frameworks */,
+				CBFF4A80149AA9470003AC2B /* UIKit.framework in Frameworks */,
+				CBFF4A81149AA9470003AC2B /* Foundation.framework in Frameworks */,
+				CBFF4A84149AA9470003AC2B /* libreact.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CBD0F7C1149AA9B000427388 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				CBD0F7C6149AAAB200427388 /* react.h */,
+				CBD0F7C7149AAAB200427388 /* react.m */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		CBD0F7C2149AA9B600427388 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				CBD0F7C3149AAA0400427388 /* reactTests.h */,
+				CBD0F7C4149AAA0400427388 /* reactTests.m */,
+			);
+			name = Tests;
+			sourceTree = "<group>";
+		};
+		CBFF4A61149AA9470003AC2B = {
+			isa = PBXGroup;
+			children = (
+				CBD0F7C1149AA9B000427388 /* Classes */,
+				CBD0F7C2149AA9B600427388 /* Tests */,
+				CBFF4A6E149AA9470003AC2B /* Frameworks */,
+				CBFF4A6D149AA9470003AC2B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CBFF4A6D149AA9470003AC2B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CBFF4A6C149AA9470003AC2B /* libreact.a */,
+				CBFF4A7C149AA9470003AC2B /* reactTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CBFF4A6E149AA9470003AC2B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CBFF4A6F149AA9470003AC2B /* Foundation.framework */,
+				CBFF4A7D149AA9470003AC2B /* SenTestingKit.framework */,
+				CBFF4A7F149AA9470003AC2B /* UIKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		CBFF4A6A149AA9470003AC2B /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CBD0F7C8149AAAB200427388 /* react.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		CBFF4A6B149AA9470003AC2B /* react */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CBFF4A90149AA9470003AC2B /* Build configuration list for PBXNativeTarget "react" */;
+			buildPhases = (
+				CBFF4A68149AA9470003AC2B /* Sources */,
+				CBFF4A69149AA9470003AC2B /* Frameworks */,
+				CBFF4A6A149AA9470003AC2B /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = react;
+			productName = react;
+			productReference = CBFF4A6C149AA9470003AC2B /* libreact.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		CBFF4A7B149AA9470003AC2B /* reactTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CBFF4A93149AA9470003AC2B /* Build configuration list for PBXNativeTarget "reactTests" */;
+			buildPhases = (
+				CBFF4A77149AA9470003AC2B /* Sources */,
+				CBFF4A78149AA9470003AC2B /* Frameworks */,
+				CBFF4A79149AA9470003AC2B /* Resources */,
+				CBFF4A7A149AA9470003AC2B /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CBFF4A83149AA9470003AC2B /* PBXTargetDependency */,
+			);
+			name = reactTests;
+			productName = reactTests;
+			productReference = CBFF4A7C149AA9470003AC2B /* reactTests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CBFF4A63149AA9470003AC2B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+				ORGANIZATIONNAME = "Three Rings Design";
+			};
+			buildConfigurationList = CBFF4A66149AA9470003AC2B /* Build configuration list for PBXProject "react" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = CBFF4A61149AA9470003AC2B;
+			productRefGroup = CBFF4A6D149AA9470003AC2B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CBFF4A6B149AA9470003AC2B /* react */,
+				CBFF4A7B149AA9470003AC2B /* reactTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CBFF4A79149AA9470003AC2B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		CBFF4A7A149AA9470003AC2B /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CBFF4A68149AA9470003AC2B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CBD0F7C9149AAAB200427388 /* react.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CBFF4A77149AA9470003AC2B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CBD0F7C5149AAA0400427388 /* reactTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CBFF4A83149AA9470003AC2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CBFF4A6B149AA9470003AC2B /* react */;
+			targetProxy = CBFF4A82149AA9470003AC2B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		CBFF4A8E149AA9470003AC2B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		CBFF4A8F149AA9470003AC2B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		CBFF4A91149AA9470003AC2B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/react.dst;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		CBFF4A92149AA9470003AC2B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/react.dst;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		CBFF4A94149AA9470003AC2B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				INFOPLIST_FILE = "src/test/objc/reactTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		CBFF4A95149AA9470003AC2B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				INFOPLIST_FILE = "src/test/objc/reactTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CBFF4A66149AA9470003AC2B /* Build configuration list for PBXProject "react" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CBFF4A8E149AA9470003AC2B /* Debug */,
+				CBFF4A8F149AA9470003AC2B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CBFF4A90149AA9470003AC2B /* Build configuration list for PBXNativeTarget "react" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CBFF4A91149AA9470003AC2B /* Debug */,
+				CBFF4A92149AA9470003AC2B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CBFF4A93149AA9470003AC2B /* Build configuration list for PBXNativeTarget "reactTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CBFF4A94149AA9470003AC2B /* Debug */,
+				CBFF4A95149AA9470003AC2B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CBFF4A63149AA9470003AC2B /* Project object */;
+}
