@@ -125,6 +125,25 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
         return model;
     }
 
+    /**
+     * Exposes the size of this set as a value.
+     */
+    public synchronized ValueView<Integer> sizeView () {
+        if (_sizeView == null) {
+            _sizeView = Value.create(size());
+            // wire up a listener that will keep this value up to date
+            connect(new Listener<E>() {
+                @Override public void onAdd (E elem) {
+                    _sizeView.update(size());
+                }
+                @Override public void onRemove (E elem) {
+                    _sizeView.update(size());
+                }
+            });
+        }
+        return _sizeView;
+    }
+
     // from interface Set<E>
     public int size () {
         return _impl.size();
@@ -285,4 +304,7 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
 
     /** Contains our underlying elements. */
     protected Set<E> _impl;
+
+    /** Used to expose the size of this set as a value. Initialized lazily. */
+    protected Value<Integer> _sizeView;
 }

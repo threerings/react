@@ -164,6 +164,25 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
         return model;
     }
 
+    /**
+     * Exposes the size of this map as a value.
+     */
+    public synchronized ValueView<Integer> sizeView () {
+        if (_sizeView == null) {
+            _sizeView = Value.create(size());
+            // wire up a listener that will keep this value up to date
+            connect(new Listener<K,V>() {
+                @Override public void onPut (K key, V value, V ovalue) {
+                    _sizeView.update(size());
+                }
+                @Override public void onRemove (K key) {
+                    _sizeView.update(size());
+                }
+            });
+        }
+        return _sizeView;
+    }
+
     // from interface Map<K,V>
     public int size () {
         return _impl.size();
@@ -433,4 +452,7 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
 
     /** Contains our underlying mappings. */
     protected Map<K, V> _impl;
+
+    /** Used to expose the size of this map as a value. Initialized lazily. */
+    protected Value<Integer> _sizeView;
 }

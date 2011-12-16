@@ -138,6 +138,28 @@ public class RSetTest
         assertEquals(4, counter.notifies);
     }
 
+    @Test public void testSizeView () {
+        RSet<String> set = RSet.create();
+        set.add("one");
+        assertEquals(1, set.sizeView().get().intValue());
+        set.remove("one");
+        assertEquals(0, set.sizeView().get().intValue());
+
+        SignalTest.Counter counter = new SignalTest.Counter();
+        set.sizeView().connect(counter);
+        set.add("two");
+        assertEquals(1, counter.notifies);
+        set.add("three");
+        assertEquals(2, counter.notifies);
+        set.remove("two");
+        assertEquals(3, counter.notifies);
+        // make sure noops don't trigger size view
+        set.remove("two");
+        assertEquals(3, counter.notifies);
+        set.add("three");
+        assertEquals(3, counter.notifies);
+    }
+
     protected static <T> RSet.Listener<T> requireAdd (final T reqElem) {
         return new RSet.Listener<T>() {
             public void onAdd (T elem) {

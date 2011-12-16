@@ -319,4 +319,21 @@ public class RMapTest
             // this is the expected behavior
         }
     }
+
+    @Test public void testSizeView () {
+        RMap<String,Integer> map = RMap.create();
+        map.put("one", 1);
+        assertEquals(1, map.sizeView().get().intValue());
+        map.remove("one");
+        assertEquals(0, map.sizeView().get().intValue());
+
+        SignalTest.Counter counter = new SignalTest.Counter();
+        map.sizeView().connect(counter);
+        map.put("two", 2);
+        assertEquals(1, counter.notifies);
+        map.put("three", 3);
+        assertEquals(2, counter.notifies);
+        map.remove("two");
+        assertEquals(3, counter.notifies);
+    }
 }
