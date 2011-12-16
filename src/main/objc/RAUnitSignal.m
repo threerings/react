@@ -4,31 +4,43 @@
 // http://github.com/threerings/react/blob/master/LICENSE
 
 #import "RAUnitSignal.h"
-
-@interface Cons : NSObject {
-    @public
-    void(^listener)(void);
-    Cons *next;
-}
-@end
-
-@implementation Cons
-@end
+#import "RAConnection.h"
 
 @implementation RAUnitSignal {
-    Cons *head;
+    RAConnection *head;
 }
 
 - (void) emit {
-    for (Cons *cur = head; cur != nil; cur = cur->next) cur->listener();
+    for (RAConnection *cur = head; cur != nil; cur = cur->next) {
+        cur->listener();
+        if (cur->oneShot) [cur disconnect];
+    }
+
 }
 
 - (RAConnection*) connectBlock:(void (^)(void))block {
-    Cons *cons = [[Cons alloc] init];
+    RAConnection *cons = [[RAConnection alloc] init];
     cons->listener = [block copy];
+    cons->signal = self;
     if (head) cons->next = head;
     head = cons;
-    return nil;
+    return head;
+}
+
+- (void) disconnect:(RAConnection*)conn {
+    // TODO - defer this if an emission is in progress
+    if (conn == head) {
+        head = head->next;
+        return;
+    }
+    RAConnection *prev = head;
+    for (RAConnection *cur = head->next; cur != nil; cur = cur->next) {
+        if (cur == conn) {
+            prev->next = cur->next;
+            return;
+        }
+    }
+
 }
 
 @end
