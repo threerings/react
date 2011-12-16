@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CBD0F7C5149AAA0400427388 /* reactTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CBD0F7C4149AAA0400427388 /* reactTests.m */; };
+		CB846ED4149AC77000B29795 /* RAUnitSignal.h in Headers */ = {isa = PBXBuildFile; fileRef = CB846ED2149AC77000B29795 /* RAUnitSignal.h */; };
+		CB846ED5149AC77000B29795 /* RAUnitSignal.m in Sources */ = {isa = PBXBuildFile; fileRef = CB846ED3149AC77000B29795 /* RAUnitSignal.m */; };
+		CB846ED9149AD47C00B29795 /* RAUnitSignalTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CB846ED8149AD47C00B29795 /* RAUnitSignalTest.m */; };
 		CBD0F7C8149AAAB200427388 /* react.h in Headers */ = {isa = PBXBuildFile; fileRef = CBD0F7C6149AAAB200427388 /* react.h */; };
 		CBD0F7C9149AAAB200427388 /* react.m in Sources */ = {isa = PBXBuildFile; fileRef = CBD0F7C7149AAAB200427388 /* react.m */; };
 		CBFF4A70149AA9470003AC2B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBFF4A6F149AA9470003AC2B /* Foundation.framework */; };
@@ -28,8 +30,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		CBD0F7C3149AAA0400427388 /* reactTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = reactTests.h; path = src/test/objc/reactTests.h; sourceTree = "<group>"; };
-		CBD0F7C4149AAA0400427388 /* reactTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = reactTests.m; path = src/test/objc/reactTests.m; sourceTree = "<group>"; };
+		CB846ED2149AC77000B29795 /* RAUnitSignal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAUnitSignal.h; path = src/main/objc/RAUnitSignal.h; sourceTree = "<group>"; };
+		CB846ED3149AC77000B29795 /* RAUnitSignal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RAUnitSignal.m; path = src/main/objc/RAUnitSignal.m; sourceTree = "<group>"; };
+		CB846ED7149AD47C00B29795 /* RAUnitSignalTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAUnitSignalTest.h; path = src/test/objc/RAUnitSignalTest.h; sourceTree = "<group>"; };
+		CB846ED8149AD47C00B29795 /* RAUnitSignalTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RAUnitSignalTest.m; path = src/test/objc/RAUnitSignalTest.m; sourceTree = "<group>"; };
 		CBD0F7C6149AAAB200427388 /* react.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = react.h; path = src/main/objc/react.h; sourceTree = "<group>"; };
 		CBD0F7C7149AAAB200427388 /* react.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = react.m; path = src/main/objc/react.m; sourceTree = "<group>"; };
 		CBFF4A6C149AA9470003AC2B /* libreact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libreact.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -65,6 +69,8 @@
 		CBD0F7C1149AA9B000427388 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				CB846ED2149AC77000B29795 /* RAUnitSignal.h */,
+				CB846ED3149AC77000B29795 /* RAUnitSignal.m */,
 				CBD0F7C6149AAAB200427388 /* react.h */,
 				CBD0F7C7149AAAB200427388 /* react.m */,
 			);
@@ -74,8 +80,8 @@
 		CBD0F7C2149AA9B600427388 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				CBD0F7C3149AAA0400427388 /* reactTests.h */,
-				CBD0F7C4149AAA0400427388 /* reactTests.m */,
+				CB846ED7149AD47C00B29795 /* RAUnitSignalTest.h */,
+				CB846ED8149AD47C00B29795 /* RAUnitSignalTest.m */,
 			);
 			name = Tests;
 			sourceTree = "<group>";
@@ -117,6 +123,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CBD0F7C8149AAAB200427388 /* react.h in Headers */,
+				CB846ED4149AC77000B29795 /* RAUnitSignal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -218,6 +225,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CBD0F7C9149AAAB200427388 /* react.m in Sources */,
+				CB846ED5149AC77000B29795 /* RAUnitSignal.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -225,7 +233,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CBD0F7C5149AAA0400427388 /* reactTests.m in Sources */,
+				CB846ED9149AD47C00B29795 /* RAUnitSignalTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
