@@ -112,6 +112,23 @@ public class RListTest
         assertEquals(2, list.size());
     }
 
+    @Test public void testSizeView () {
+        RList<String> list = RList.create();
+        list.add("one");
+        assertEquals(1, list.sizeView().get().intValue());
+        list.remove("one");
+        assertEquals(0, list.sizeView().get().intValue());
+
+        SignalTest.Counter counter = new SignalTest.Counter();
+        list.sizeView().connect(counter);
+        list.add("two");
+        assertEquals(1, counter.notifies);
+        list.add("three");
+        assertEquals(2, counter.notifies);
+        list.remove("two");
+        assertEquals(3, counter.notifies);
+    }
+
     protected static <T> RList.Listener<T> requireAdd (final T reqElem) {
         return new RList.Listener<T>() {
             public void onAdd (T elem) {

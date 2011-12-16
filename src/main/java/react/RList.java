@@ -22,18 +22,36 @@ public class RList<E> extends Reactor<RList.Listener<E>>
     /** Publishes list events to listeners. */
     public static abstract class Listener<E> extends Reactor.RListener
     {
-        /** Notifies listener of an added element. */
+        /** Notifies listener of an added element. This method will call the index-forgetting
+         * version ({@link #onAdd(E)}) by default. */
         public void onAdd (int index, E elem) {
+            onAdd(elem);
+        }
+
+        /** Notifies listener of an added element. */
+        public void onAdd (E elem) {
             // noop
+        }
+
+        /** Notifies listener of an updated element. This method will call the old-value-forgetting
+         * version ({@link #onSet(int,E)}) by default. */
+        public void onSet (int index, E newElem, E oldElem) {
+            onSet(index, newElem);
         }
 
         /** Notifies listener of an updated element. */
-        public void onSet (int index, E newElem, E oldElem) {
+        public void onSet (int index, E newElem) {
             // noop
         }
 
-        /** Notifies listener of a removed element. */
+        /** Notifies listener of a removed element. This method will call the index-forgetting
+         * version ({@link #onRemove(E)}) by default. */
         public void onRemove (int index, E elem) {
+            onRemove(elem);
+        }
+
+        /** Notifies listener of a removed element. */
+        public void onRemove (E elem) {
             // noop
         }
     }
@@ -90,6 +108,25 @@ public class RList<E> extends Reactor<RList.Listener<E>>
         if (index >= 0) _impl.remove(index);
         emitRemove(index, elem);
         return (index >= 0);
+    }
+
+    /**
+     * Exposes the size of this list as a value.
+     */
+    public synchronized ValueView<Integer> sizeView () {
+        if (_sizeView == null) {
+            _sizeView = Value.create(size());
+            // wire up a listener that will keep this value up to date
+            connect(new Listener<E>() {
+                @Override public void onAdd (int index, E elem) {
+                    _sizeView.update(size());
+                }
+                @Override public void onRemove (int index, E elem) {
+                    _sizeView.update(size());
+                }
+            });
+        }
+        return _sizeView;
     }
 
     // List methods that perform reactive functions in addition to calling through
@@ -328,4 +365,7 @@ public class RList<E> extends Reactor<RList.Listener<E>>
 
     /** Contains our underlying elements. */
     protected List<E> _impl;
+
+    /** Used to expose the size of this list as a value. Initialized lazily. */
+    protected Value<Integer> _sizeView;
 }
