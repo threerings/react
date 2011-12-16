@@ -5,17 +5,10 @@
 
 #import <Foundation/Foundation.h>
 
-@class RAUnitSignal;
+@class RAConnection;
 
-@interface RAConnection : NSObject {
-    @package
-        BOOL oneShot;
-        RAUnitSignal *signal;
-        RAConnection *next;
-        void (^listener)(void);
-}
-
--(RAConnection*) once;
--(void) disconnect;
-
+@interface RAConnectionGroup : NSObject
+- (void)addConnection:(RAConnection*)conn;
+- (void)removeConnection:(RAConnection*)conn;
+- (void)disconnectAll;
 @end

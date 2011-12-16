@@ -5,6 +5,7 @@
 
 #import "RAUnitSignalTest.h"
 #import "RAUnitSignal.h"
+#import "RAConnectionGroup.h"
 #import "RAConnection.h"
 
 @implementation RAUnitSignalTest
@@ -42,6 +43,20 @@
     [conn disconnect];
     [sig emit];
     STAssertEquals(x, 3, nil);
+}
+
+- (void)testGroup {
+    RAConnectionGroup *group = [[RAConnectionGroup alloc] init];
+    RAUnitSignal *sig = [[RAUnitSignal alloc] init];
+    __block int x = 0;
+    [group addConnection:[sig connectBlock:^{ x++; }]];
+    [group addConnection:[sig connectBlock:^{ x++; }]];
+    [sig connectBlock:^{ x++; }];
+    [sig emit];
+    STAssertEquals(x, 3, nil);
+    [group disconnectAll];
+    [sig emit];
+    STAssertEquals(x, 4, nil);
 }
 
 @end

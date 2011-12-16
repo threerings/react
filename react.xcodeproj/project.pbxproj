@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CB498BBC149BA7F800A20485 /* RAConnectionGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = CB498BBA149BA7F800A20485 /* RAConnectionGroup.h */; };
+		CB498BBD149BA7F800A20485 /* RAConnectionGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = CB498BBB149BA7F800A20485 /* RAConnectionGroup.m */; };
 		CB846ED4149AC77000B29795 /* RAUnitSignal.h in Headers */ = {isa = PBXBuildFile; fileRef = CB846ED2149AC77000B29795 /* RAUnitSignal.h */; };
 		CB846ED5149AC77000B29795 /* RAUnitSignal.m in Sources */ = {isa = PBXBuildFile; fileRef = CB846ED3149AC77000B29795 /* RAUnitSignal.m */; };
 		CB846ED9149AD47C00B29795 /* RAUnitSignalTest.m in Sources */ = {isa = PBXBuildFile; fileRef = CB846ED8149AD47C00B29795 /* RAUnitSignalTest.m */; };
 		CB846EDF149AD8A800B29795 /* RAConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = CB846EDD149AD8A800B29795 /* RAConnection.h */; };
 		CB846EE0149AD8A800B29795 /* RAConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = CB846EDE149AD8A800B29795 /* RAConnection.m */; };
-		CBD0F7C8149AAAB200427388 /* react.h in Headers */ = {isa = PBXBuildFile; fileRef = CBD0F7C6149AAAB200427388 /* react.h */; };
-		CBD0F7C9149AAAB200427388 /* react.m in Sources */ = {isa = PBXBuildFile; fileRef = CBD0F7C7149AAAB200427388 /* react.m */; };
 		CBFF4A70149AA9470003AC2B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBFF4A6F149AA9470003AC2B /* Foundation.framework */; };
 		CBFF4A7E149AA9470003AC2B /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBFF4A7D149AA9470003AC2B /* SenTestingKit.framework */; };
 		CBFF4A80149AA9470003AC2B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CBFF4A7F149AA9470003AC2B /* UIKit.framework */; };
@@ -32,14 +32,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CB498BBA149BA7F800A20485 /* RAConnectionGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAConnectionGroup.h; path = src/main/objc/RAConnectionGroup.h; sourceTree = "<group>"; };
+		CB498BBB149BA7F800A20485 /* RAConnectionGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RAConnectionGroup.m; path = src/main/objc/RAConnectionGroup.m; sourceTree = "<group>"; };
 		CB846ED2149AC77000B29795 /* RAUnitSignal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAUnitSignal.h; path = src/main/objc/RAUnitSignal.h; sourceTree = "<group>"; };
 		CB846ED3149AC77000B29795 /* RAUnitSignal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RAUnitSignal.m; path = src/main/objc/RAUnitSignal.m; sourceTree = "<group>"; };
 		CB846ED7149AD47C00B29795 /* RAUnitSignalTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAUnitSignalTest.h; path = src/test/objc/RAUnitSignalTest.h; sourceTree = "<group>"; };
 		CB846ED8149AD47C00B29795 /* RAUnitSignalTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RAUnitSignalTest.m; path = src/test/objc/RAUnitSignalTest.m; sourceTree = "<group>"; };
 		CB846EDD149AD8A800B29795 /* RAConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAConnection.h; path = src/main/objc/RAConnection.h; sourceTree = "<group>"; };
 		CB846EDE149AD8A800B29795 /* RAConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RAConnection.m; path = src/main/objc/RAConnection.m; sourceTree = "<group>"; };
-		CBD0F7C6149AAAB200427388 /* react.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = react.h; path = src/main/objc/react.h; sourceTree = "<group>"; };
-		CBD0F7C7149AAAB200427388 /* react.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = react.m; path = src/main/objc/react.m; sourceTree = "<group>"; };
 		CBFF4A6C149AA9470003AC2B /* libreact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libreact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CBFF4A6F149AA9470003AC2B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		CBFF4A7C149AA9470003AC2B /* reactTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = reactTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -75,10 +75,10 @@
 			children = (
 				CB846EDD149AD8A800B29795 /* RAConnection.h */,
 				CB846EDE149AD8A800B29795 /* RAConnection.m */,
+				CB498BBA149BA7F800A20485 /* RAConnectionGroup.h */,
+				CB498BBB149BA7F800A20485 /* RAConnectionGroup.m */,
 				CB846ED2149AC77000B29795 /* RAUnitSignal.h */,
 				CB846ED3149AC77000B29795 /* RAUnitSignal.m */,
-				CBD0F7C6149AAAB200427388 /* react.h */,
-				CBD0F7C7149AAAB200427388 /* react.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -128,9 +128,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CBD0F7C8149AAAB200427388 /* react.h in Headers */,
 				CB846ED4149AC77000B29795 /* RAUnitSignal.h in Headers */,
 				CB846EDF149AD8A800B29795 /* RAConnection.h in Headers */,
+				CB498BBC149BA7F800A20485 /* RAConnectionGroup.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -231,9 +231,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CBD0F7C9149AAAB200427388 /* react.m in Sources */,
 				CB846ED5149AC77000B29795 /* RAUnitSignal.m in Sources */,
 				CB846EE0149AD8A800B29795 /* RAConnection.m in Sources */,
+				CB498BBD149BA7F800A20485 /* RAConnectionGroup.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
