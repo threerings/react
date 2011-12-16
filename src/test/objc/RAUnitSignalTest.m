@@ -34,15 +34,20 @@
 {
     RAUnitSignal *sig = [[RAUnitSignal alloc] init];
     __block int x = 0;
-    RAConnection *conn = [sig connectBlock:^{ x++; }];
+    __block int y = 0;
     [[sig connectBlock:^{ x++; }] once];
+    [sig connectBlock:^{ y++; }];
+    RAConnection *conn = [sig connectBlock:^{ x++; }];
     [sig emit];
     STAssertEquals(x, 2, nil);
+    STAssertEquals(y, 1, nil);
     [sig emit];
     STAssertEquals(x, 3, nil);
+    STAssertEquals(y, 2, nil);
     [conn disconnect];
     [sig emit];
     STAssertEquals(x, 3, nil);
+    STAssertEquals(y, 3, nil);
 }
 
 - (void)testGroup {
@@ -57,6 +62,10 @@
     [group disconnectAll];
     [sig emit];
     STAssertEquals(x, 4, nil);
+}
+
+- (void)testDisconnectingProperBlock
+{
 }
 
 @end

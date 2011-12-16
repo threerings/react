@@ -39,6 +39,7 @@
             prev->next = cur->next;
             return;
         }
+        prev = cur;
     }
 
 }
