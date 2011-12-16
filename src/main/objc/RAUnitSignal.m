@@ -5,6 +5,7 @@
 
 #import "RAUnitSignal.h"
 #import "RAConnection.h"
+#import "RAConnectionGroup.h"
 
 @implementation RAUnitSignal {
     RAConnection *head;
@@ -18,7 +19,13 @@
 
 }
 
-- (RAConnection*) connectBlock:(void (^)(void))block {
+- (RAConnection*) inGroup:(RAConnectionGroup*)group connectBlock:(RAUnitBlock)block {
+    RAConnection* conn = [self connectBlock:block];
+    [group addConnection:conn];
+    return conn;
+}
+
+- (RAConnection*) connectBlock:(RAUnitBlock)block {
     RAConnection *cons = [[RAConnection alloc] init];
     cons->listener = [block copy];
     cons->signal = self;
