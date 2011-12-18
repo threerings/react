@@ -14,7 +14,7 @@
 {
     RAUnitSignal *sig = [[RAUnitSignal alloc] init];
     __block int x = 0;
-    [sig connectBlock:^{ x++; }];
+    [sig connectUnit:^{ x++; }];
     [sig emit];
     [sig emit];
     STAssertEquals(x, 2, nil);
@@ -24,8 +24,8 @@
 {
     RAUnitSignal *sig = [[RAUnitSignal alloc] init];
     __block int x = 0;
-    [sig connectBlock:^{ x++; }];
-    [sig connectBlock:^{ x++; }];
+    [sig connectUnit:^{ x++; }];
+    [sig connectUnit:^{ x++; }];
     [sig emit];
     STAssertEquals(x, 2, nil);
 }
@@ -35,9 +35,9 @@
     RAUnitSignal *sig = [[RAUnitSignal alloc] init];
     __block int x = 0;
     __block int y = 0;
-    [[sig connectBlock:^{ x++; }] once];
-    [sig connectBlock:^{ y++; }];
-    RAConnection *conn = [sig connectBlock:^{ x++; }];
+    [[sig connectUnit:^{ x++; }] once];
+    [sig connectUnit:^{ y++; }];
+    RAConnection *conn = [sig connectUnit:^{ x++; }];
     [sig emit];
     STAssertEquals(x, 2, nil);
     STAssertEquals(y, 1, nil);
@@ -54,9 +54,9 @@
     RAConnectionGroup *group = [[RAConnectionGroup alloc] init];
     RAUnitSignal *sig = [[RAUnitSignal alloc] init];
     __block int x = 0;
-    [group addConnection:[sig connectBlock:^{ x++; }]];
-    [group addConnection:[sig connectBlock:^{ x++; }]];
-    [sig connectBlock:^{ x++; }];
+    [group addConnection:[sig connectUnit:^{ x++; }]];
+    [group addConnection:[sig connectUnit:^{ x++; }]];
+    [sig connectUnit:^{ x++; }];
     [sig emit];
     STAssertEquals(x, 3, nil);
     [group disconnectAll];
@@ -67,12 +67,12 @@
 - (void)testAddInEmission {
     RAUnitSignal *sig = [[RAUnitSignal alloc] init];
     __block int x = 0;
-    [sig connectBlock:^{ x++; }];
-    [[sig connectBlock:^{
+    [sig connectUnit:^{ x++; }];
+    [[sig connectUnit:^{
         x++;
-        [[sig connectBlock:^{ x++; }] once];
+        [[sig connectUnit:^{ x++; }] once];
     }] once];
-    [[sig connectBlock:^{ x++; }] once];
+    [[sig connectUnit:^{ x++; }] once];
     [sig emit];
     STAssertEquals(x, 3, @"3 initially added fired");
     [sig emit];
@@ -84,9 +84,9 @@
 - (void)testPriority {
     RAUnitSignal *sig = [[RAUnitSignal alloc] init];
     __block int x = 0;
-    [sig withPriority:2 connectBlock:^{ STAssertEquals(x++, 0, nil); }];
-    [sig connectBlock:^{ x++; }];
-    [sig withPriority:1 connectBlock:^{ STAssertEquals(x++, 1, nil); }];
+    [sig withPriority:2 connectUnit:^{ STAssertEquals(x++, 0, nil); }];
+    [sig connectUnit:^{ x++; }];
+    [sig withPriority:1 connectUnit:^{ STAssertEquals(x++, 1, nil); }];
     [sig emit];
     STAssertEquals(x, 3, nil);
 

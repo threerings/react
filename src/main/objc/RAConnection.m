@@ -4,7 +4,7 @@
 // http://github.com/threerings/react/blob/master/LICENSE
 
 #import "RAConnection.h"
-#import "RAUnitSignal.h"
+#import "RAReactor.h"
 
 @implementation RAConnection
 

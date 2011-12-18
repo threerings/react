@@ -4,12 +4,9 @@
 // http://github.com/threerings/react/blob/master/LICENSE
 
 #import <Foundation/Foundation.h>
-#import "RAReactor.h"
 
-@class RAConnectionGroup;
 
-@interface RAUnitSignal : RAReactor
-- (void) emit;
-- (RAConnection*) connectUnit:(RAUnitBlock)block;
-- (RAConnection*) withPriority:(int)priority connectUnit:(RAUnitBlock)block;
-@end
+#define RA_DEFAULT_PRIORITY 0
+
+typedef void (^RASignalBlock)(id);
+typedef void (^RAUnitBlock)(void);

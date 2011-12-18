@@ -4,12 +4,11 @@
 // http://github.com/threerings/react/blob/master/LICENSE
 
 #import <Foundation/Foundation.h>
-#import "RAReactor.h"
 
-@class RAConnectionGroup;
+#import "RADefs.h"
 
-@interface RAUnitSignal : RAReactor
-- (void) emit;
-- (RAConnection*) connectUnit:(RAUnitBlock)block;
-- (RAConnection*) withPriority:(int)priority connectUnit:(RAUnitBlock)block;
+@class RAConnection;
+
+@interface RAReactor : NSObject
+- (void) disconnect:(RAConnection*)conn;
 @end

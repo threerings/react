@@ -5,12 +5,12 @@
 
 #import <Foundation/Foundation.h>
 
-@class RAUnitSignal;
+@class RAReactor;
 
 @interface RAConnection : NSObject {
     @package
         BOOL oneShot;
-        RAUnitSignal *signal;
+        RAReactor *signal;
         RAConnection *next;
         void (^listener)(void);
         int priority;

@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CB49661D149EA11500A6603D /* RADefs.h in Headers */ = {isa = PBXBuildFile; fileRef = CB496618149EA11500A6603D /* RADefs.h */; };
+		CB49661E149EA11500A6603D /* RAReactor.h in Headers */ = {isa = PBXBuildFile; fileRef = CB496619149EA11500A6603D /* RAReactor.h */; };
+		CB49661F149EA11500A6603D /* RAReactor+Protected.h in Headers */ = {isa = PBXBuildFile; fileRef = CB49661A149EA11500A6603D /* RAReactor+Protected.h */; };
+		CB496624149EA19000A6603D /* RAReactor.m in Sources */ = {isa = PBXBuildFile; fileRef = CB496623149EA19000A6603D /* RAReactor.m */; };
 		CB498BBC149BA7F800A20485 /* RAConnectionGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = CB498BBA149BA7F800A20485 /* RAConnectionGroup.h */; };
 		CB498BBD149BA7F800A20485 /* RAConnectionGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = CB498BBB149BA7F800A20485 /* RAConnectionGroup.m */; };
 		CB846ED4149AC77000B29795 /* RAUnitSignal.h in Headers */ = {isa = PBXBuildFile; fileRef = CB846ED2149AC77000B29795 /* RAUnitSignal.h */; };
@@ -32,6 +36,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CB496618149EA11500A6603D /* RADefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RADefs.h; path = src/main/objc/RADefs.h; sourceTree = "<group>"; };
+		CB496619149EA11500A6603D /* RAReactor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAReactor.h; path = src/main/objc/RAReactor.h; sourceTree = "<group>"; };
+		CB49661A149EA11500A6603D /* RAReactor+Protected.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "RAReactor+Protected.h"; path = "src/main/objc/RAReactor+Protected.h"; sourceTree = "<group>"; };
+		CB496623149EA19000A6603D /* RAReactor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RAReactor.m; path = src/main/objc/RAReactor.m; sourceTree = "<group>"; };
 		CB498BBA149BA7F800A20485 /* RAConnectionGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAConnectionGroup.h; path = src/main/objc/RAConnectionGroup.h; sourceTree = "<group>"; };
 		CB498BBB149BA7F800A20485 /* RAConnectionGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RAConnectionGroup.m; path = src/main/objc/RAConnectionGroup.m; sourceTree = "<group>"; };
 		CB846ED2149AC77000B29795 /* RAUnitSignal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAUnitSignal.h; path = src/main/objc/RAUnitSignal.h; sourceTree = "<group>"; };
@@ -73,10 +81,14 @@
 		CBD0F7C1149AA9B000427388 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				CB496618149EA11500A6603D /* RADefs.h */,
 				CB846EDD149AD8A800B29795 /* RAConnection.h */,
 				CB846EDE149AD8A800B29795 /* RAConnection.m */,
 				CB498BBA149BA7F800A20485 /* RAConnectionGroup.h */,
 				CB498BBB149BA7F800A20485 /* RAConnectionGroup.m */,
+				CB496619149EA11500A6603D /* RAReactor.h */,
+				CB49661A149EA11500A6603D /* RAReactor+Protected.h */,
+				CB496623149EA19000A6603D /* RAReactor.m */,
 				CB846ED2149AC77000B29795 /* RAUnitSignal.h */,
 				CB846ED3149AC77000B29795 /* RAUnitSignal.m */,
 			);
@@ -131,6 +143,9 @@
 				CB846ED4149AC77000B29795 /* RAUnitSignal.h in Headers */,
 				CB846EDF149AD8A800B29795 /* RAConnection.h in Headers */,
 				CB498BBC149BA7F800A20485 /* RAConnectionGroup.h in Headers */,
+				CB49661D149EA11500A6603D /* RADefs.h in Headers */,
+				CB49661E149EA11500A6603D /* RAReactor.h in Headers */,
+				CB49661F149EA11500A6603D /* RAReactor+Protected.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -234,6 +249,7 @@
 				CB846ED5149AC77000B29795 /* RAUnitSignal.m in Sources */,
 				CB846EE0149AD8A800B29795 /* RAConnection.m in Sources */,
 				CB498BBD149BA7F800A20485 /* RAConnectionGroup.m in Sources */,
+				CB496624149EA19000A6603D /* RAReactor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
