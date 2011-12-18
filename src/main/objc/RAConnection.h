@@ -13,6 +13,7 @@
         RAUnitSignal *signal;
         RAConnection *next;
         void (^listener)(void);
+        int priority;
 }
 
 -(RAConnection*) once;

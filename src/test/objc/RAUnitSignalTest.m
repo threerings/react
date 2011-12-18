@@ -80,4 +80,15 @@
     [sig emit];
     STAssertEquals(x, 6, @"Block adder fires");
 }
+
+- (void)testPriority {
+    RAUnitSignal *sig = [[RAUnitSignal alloc] init];
+    __block int x = 0;
+    [sig withPriority:2 connectBlock:^{ STAssertEquals(x++, 0, nil); }];
+    [sig connectBlock:^{ x++; }];
+    [sig withPriority:1 connectBlock:^{ STAssertEquals(x++, 1, nil); }];
+    [sig emit];
+    STAssertEquals(x, 3, nil);
+
+}
 @end

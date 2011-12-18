@@ -46,17 +46,27 @@
 
 void insertConn(RAConnection* conn,  RAConnection* head);
 void insertConn(RAConnection* conn,  RAConnection* head) {
-    if (head->next) insertConn(conn, head->next);
-    else head->next = conn;
+    if (head->next && head->next->priority >= conn->priority) insertConn(conn, head->next);
+    else {
+        conn->next = head->next;
+        head->next = conn;
+    }
 }
 
 - (void) insertConn:(RAConnection*)conn {
-    if (!head) head = conn;
-    else insertConn(conn, head);
+    if (!head || conn->priority > head->priority) {
+        conn->next = head;
+        head = conn;
+    } else insertConn(conn, head);
 }
 
-- (RAConnection*) connectBlock:(RAUnitBlock)block {
+- (RAConnection*)connectBlock:(RAUnitBlock)block {
+    return [self withPriority:RA_DEFAULT_PRIORITY connectBlock:block];
+
+}
+- (RAConnection*) withPriority:(int)priority connectBlock:(RAUnitBlock)block {
     RAConnection *cons = [[RAConnection alloc] init];
+    cons->priority = priority;
     cons->listener = [block copy];
     cons->signal = self;
     if (pending != nil) [pending insertAction:^{ [self insertConn:cons]; }];

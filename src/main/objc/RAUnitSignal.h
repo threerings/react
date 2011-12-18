@@ -10,8 +10,11 @@
 
 typedef void (^RAUnitBlock)(void);
 
+#define RA_DEFAULT_PRIORITY 0
+
 @interface RAUnitSignal : NSObject
 - (void) emit;
 - (RAConnection*) connectBlock:(RAUnitBlock)block;
+- (RAConnection*) withPriority:(int)priority connectBlock:(RAUnitBlock)block;
 - (void) disconnect:(RAConnection*)conn;
 @end
