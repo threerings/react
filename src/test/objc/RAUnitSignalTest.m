@@ -64,8 +64,20 @@
     STAssertEquals(x, 4, nil);
 }
 
-- (void)testDisconnectingProperBlock
-{
+- (void)testAddInEmission {
+    RAUnitSignal *sig = [[RAUnitSignal alloc] init];
+    __block int x = 0;
+    [sig connectBlock:^{ x++; }];
+    [[sig connectBlock:^{
+        x++;
+        [[sig connectBlock:^{ x++; }] once];
+    }] once];
+    [[sig connectBlock:^{ x++; }] once];
+    [sig emit];
+    STAssertEquals(x, 3, @"3 initially added fired");
+    [sig emit];
+    STAssertEquals(x, 5, @"Added in block and new added fired");
+    [sig emit];
+    STAssertEquals(x, 6, @"Block adder fires");
 }
-
 @end

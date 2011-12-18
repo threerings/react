@@ -13,6 +13,5 @@ typedef void (^RAUnitBlock)(void);
 @interface RAUnitSignal : NSObject
 - (void) emit;
 - (RAConnection*) connectBlock:(RAUnitBlock)block;
-- (RAConnection*) inGroup:(RAConnectionGroup*)group connectBlock:(RAUnitBlock)block;
 - (void) disconnect:(RAConnection*)conn;
 @end
