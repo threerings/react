@@ -11,7 +11,7 @@
 
 - (void) emit {
     for (RAConnection *cur = [self prepareForEmission]; cur != nil; cur = cur->next) {
-        cur->listener();
+        ((RAUnitBlock)cur->block)();
         if (cur->oneShot) [cur disconnect];
     }
     [self finishEmission];
@@ -23,8 +23,7 @@
 
 - (RAConnection*) withPriority:(int)priority connectUnit:(RAUnitBlock)block {
     RAConnection *cons = [[RAConnection alloc] init];
-    // TODO - copy necessary?
-    cons->listener = [block copy];
+    cons->block = [block copy];
     return [self withPriority:priority connectConnection:cons];
 }
 

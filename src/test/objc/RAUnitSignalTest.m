@@ -10,8 +10,7 @@
 
 @implementation RAUnitSignalTest
 
-- (void)testEmission
-{
+- (void)testEmission {
     RAUnitSignal *sig = [[RAUnitSignal alloc] init];
     __block int x = 0;
     [sig connectUnit:^{ x++; }];
@@ -20,8 +19,7 @@
     STAssertEquals(x, 2, nil);
 }
 
-- (void)testMultipleListeners
-{
+- (void)testMultipleListeners {
     RAUnitSignal *sig = [[RAUnitSignal alloc] init];
     __block int x = 0;
     [sig connectUnit:^{ x++; }];
@@ -30,8 +28,7 @@
     STAssertEquals(x, 2, nil);
 }
 
-- (void)testDisconnecting
-{
+- (void)testDisconnecting {
     RAUnitSignal *sig = [[RAUnitSignal alloc] init];
     __block int x = 0;
     __block int y = 0;

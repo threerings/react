@@ -12,7 +12,7 @@
         BOOL oneShot;
         RAReactor *signal;
         RAConnection *next;
-        void (^listener)(void);
+        id block;
         int priority;
 }
 
