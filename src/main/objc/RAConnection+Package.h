@@ -3,10 +3,8 @@
 // Copyright (c) 2011, Three Rings Design, Inc. - All rights reserved.
 // http://github.com/threerings/react/blob/master/LICENSE
 
-#import <Foundation/Foundation.h>
+#import "RAConnection.h"
 
-@interface RAReactor (protected)
--(RAConnection*)connectConnection:(RAConnection*)connection;
--(RAConnection*)prepareForEmission;
-- (void)finishEmission;
+@interface RAConnection (package)
+-(id) initWithBlock:(id)block atPriority:(int)priority onReactor:(RAReactor*)reactor;
 @end

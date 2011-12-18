@@ -5,7 +5,7 @@
 
 #import "RASignal.h"
 #import "RAReactor+Protected.h"
-#import "RAConnection.h"
+#import "RAConnection+Package.h"
 
 @implementation RASignal
 - (void) emitEvent:(id)event {
@@ -21,9 +21,7 @@
 }
 
 - (RAConnection*) withPriority:(int)priority connectSignal:(RASignalBlock)block {
-    RAConnection *cons = [[RAConnection alloc] init];
-    cons->block = [block copy];
-    return [self withPriority:priority connectConnection:cons];
+    return [self connectConnection:[[RAConnection alloc] initWithBlock:[block copy] atPriority:priority onReactor:self]];
 }
 
 - (RAConnection*) connectUnit:(RAUnitBlock)block {

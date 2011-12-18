@@ -10,7 +10,6 @@
 @interface RAConnection : NSObject {
     @package
         BOOL oneShot;
-        RAReactor *signal;
         RAConnection *next;
         id block;
         int priority;

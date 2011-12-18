@@ -68,9 +68,7 @@ void insertConn(RAConnection* conn,  RAConnection* head) {
 @end
 
 @implementation RAReactor (protected)
-- (RAConnection*) withPriority:(int)priority connectConnection:(RAConnection*)connection {
-    connection->priority = priority;
-    connection->signal = self;
+- (RAConnection*) connectConnection:(RAConnection*)connection {
     if (pending != nil) [pending insertAction:^{ [self insertConn:connection]; }];
     else [self insertConn:connection];
     return connection;
