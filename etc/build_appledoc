@@ -1,0 +1,2 @@
+#!/bin/sh
+appledoc --no-warn-missing-arg --company-id "com.threerings" -c "Three Rings Design" -p react -o target/appledoc src/main/objc/

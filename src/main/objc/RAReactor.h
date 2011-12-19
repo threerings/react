@@ -9,6 +9,12 @@
 
 @class RAConnection;
 
+/**
+ * Handles the basics of connection and dispatching management.
+ */
 @interface RAReactor : NSObject
+
+/** Keeps the given connection from receiving further emissions. */
 - (void) disconnect:(RAConnection*)conn;
+
 @end
