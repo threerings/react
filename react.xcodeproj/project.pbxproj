@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CB24CBC214A004D9004BAA57 /* RADoubleSignal.h in Headers */ = {isa = PBXBuildFile; fileRef = CB24CBC014A004D9004BAA57 /* RADoubleSignal.h */; };
+		CB24CBC314A004D9004BAA57 /* RADoubleSignal.m in Sources */ = {isa = PBXBuildFile; fileRef = CB24CBC114A004D9004BAA57 /* RADoubleSignal.m */; };
 		CB49661D149EA11500A6603D /* RADefs.h in Headers */ = {isa = PBXBuildFile; fileRef = CB496618149EA11500A6603D /* RADefs.h */; };
 		CB49661E149EA11500A6603D /* RAReactor.h in Headers */ = {isa = PBXBuildFile; fileRef = CB496619149EA11500A6603D /* RAReactor.h */; };
 		CB49661F149EA11500A6603D /* RAReactor+Protected.h in Headers */ = {isa = PBXBuildFile; fileRef = CB49661A149EA11500A6603D /* RAReactor+Protected.h */; };
@@ -39,6 +41,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CB24CBC014A004D9004BAA57 /* RADoubleSignal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RADoubleSignal.h; path = src/main/objc/RADoubleSignal.h; sourceTree = "<group>"; };
+		CB24CBC114A004D9004BAA57 /* RADoubleSignal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RADoubleSignal.m; path = src/main/objc/RADoubleSignal.m; sourceTree = "<group>"; };
 		CB496618149EA11500A6603D /* RADefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RADefs.h; path = src/main/objc/RADefs.h; sourceTree = "<group>"; };
 		CB496619149EA11500A6603D /* RAReactor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAReactor.h; path = src/main/objc/RAReactor.h; sourceTree = "<group>"; };
 		CB49661A149EA11500A6603D /* RAReactor+Protected.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "RAReactor+Protected.h"; path = "src/main/objc/RAReactor+Protected.h"; sourceTree = "<group>"; };
@@ -93,6 +97,8 @@
 				CB846EDE149AD8A800B29795 /* RAConnection.m */,
 				CB498BBA149BA7F800A20485 /* RAConnectionGroup.h */,
 				CB498BBB149BA7F800A20485 /* RAConnectionGroup.m */,
+				CB24CBC014A004D9004BAA57 /* RADoubleSignal.h */,
+				CB24CBC114A004D9004BAA57 /* RADoubleSignal.m */,
 				CB496619149EA11500A6603D /* RAReactor.h */,
 				CB49661A149EA11500A6603D /* RAReactor+Protected.h */,
 				CB496623149EA19000A6603D /* RAReactor.m */,
@@ -158,6 +164,7 @@
 				CB49661E149EA11500A6603D /* RAReactor.h in Headers */,
 				CB49661F149EA11500A6603D /* RAReactor+Protected.h in Headers */,
 				CB49662A149EA6D700A6603D /* RASignal.h in Headers */,
+				CB24CBC214A004D9004BAA57 /* RADoubleSignal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -263,6 +270,7 @@
 				CB498BBD149BA7F800A20485 /* RAConnectionGroup.m in Sources */,
 				CB496624149EA19000A6603D /* RAReactor.m in Sources */,
 				CB49662B149EA6D700A6603D /* RASignal.m in Sources */,
+				CB24CBC314A004D9004BAA57 /* RADoubleSignal.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
