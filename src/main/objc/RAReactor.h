@@ -15,6 +15,9 @@
 @interface RAReactor : NSObject
 
 /** Keeps the given connection from receiving further emissions. */
-- (void) disconnect:(RAConnection*)conn;
+- (void)disconnect:(RAConnection*)conn;
+
+/** Disconnects all connections. */
+- (void)disconnectAll;
 
 @end

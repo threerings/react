@@ -47,7 +47,8 @@ void insertConn(RAConnection* conn,  RAConnection* head) {
 }
 
 - (void) removeConn:(RAConnection*)conn {
-    if (conn == head) {
+    if (head == nil) return;
+    else if (conn == head) {
         head = head->next;
         return;
     }
@@ -64,6 +65,11 @@ void insertConn(RAConnection* conn,  RAConnection* head) {
 - (void) disconnect:(RAConnection*)conn {
     if (pending != nil) [pending insertAction:^{ [self removeConn:conn]; }];
     else [self removeConn:conn];
+}
+
+- (void)disconnectAll {
+    if (pending != nil) [pending insertAction:^{ head = nil; }];
+    else head = nil;
 }
 @end
 
