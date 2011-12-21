@@ -27,6 +27,50 @@ public class Functions
     };
 
     /**
+     * Returns a function that computes whether a value is greater than {@code target}.
+     */
+    public static Function<Integer,Boolean> greaterThan (final int target) {
+        return new Function<Integer,Boolean>() {
+            public Boolean apply (Integer value) {
+                return value > target;
+            }
+        };
+    }
+
+    /**
+     * Returns a function that computes whether a value is greater than or equal to {@code value}.
+     */
+    public static Function<Integer,Boolean> greaterThanEqual (final int target) {
+        return new Function<Integer,Boolean>() {
+            public Boolean apply (Integer value) {
+                return value >= target;
+            }
+        };
+    }
+
+    /**
+     * Returns a function that computes whether a value is less than {@code target}.
+     */
+    public static Function<Integer,Boolean> lessThan (final int target) {
+        return new Function<Integer,Boolean>() {
+            public Boolean apply (Integer value) {
+                return value < target;
+            }
+        };
+    }
+
+    /**
+     * Returns a function that computes whether a value is less than or equal to {@code target}.
+     */
+    public static Function<Integer,Boolean> lessThanEqual (final int target) {
+        return new Function<Integer,Boolean>() {
+            public Boolean apply (Integer value) {
+                return value <= target;
+            }
+        };
+    }
+
+    /**
      * Returns a function which performs a map lookup with a default value. The function created by
      * this method returns defaultValue for all inputs that do not belong to the map's key set.
      */
