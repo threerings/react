@@ -40,10 +40,9 @@ public class MultiFailureException extends RuntimeException
         StringBuilder buf = new StringBuilder();
         for (Throwable failure : _failures) {
             if (buf.length() > 0) buf.append(", ");
-            buf.append(failure.getMessage());
+            buf.append(failure.getClass().getName()).append(": ").append(failure.getMessage());
         }
-        buf.insert(0, _failures.size() + " failures: ");
-        return buf.toString();
+        return _failures.size() + " failures: " + buf;
     }
 
     @Override
