@@ -31,7 +31,7 @@ public class MultiFailureException extends RuntimeException
         } else if (t instanceof Error) {
             throw (Error)t;
         } else {
-            throw this;
+            throw (MultiFailureException)initCause(t);
         }
     }
 
