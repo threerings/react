@@ -5,6 +5,9 @@
 
 #import "RAConnection.h"
 #import "RAConnectionGroup.h"
+#import "RABoolSignal.h"
 #import "RADoubleSignal.h"
+#import "RAFloatSignal.h"
+#import "RAIntSignal.h"
 #import "RASignal.h"
 #import "RAUnitSignal.h"
