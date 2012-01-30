@@ -5,9 +5,6 @@
 
 #import "RAIntReactor.h"
 
-@interface RAIntSignal : RAIntReactor
-/** @name Emission */
-
-/** Emits the supplied value to all connected slots. */
-- (void) emitEvent:(int)event;
+@interface RAIntValue : RAIntReactor
+@property(nonatomic,readwrite) int value;
 @end

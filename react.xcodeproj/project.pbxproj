@@ -13,6 +13,11 @@
 		2221988214C8D504009B764F /* RAIntSignal.m in Sources */ = {isa = PBXBuildFile; fileRef = 2221988014C8D504009B764F /* RAIntSignal.m */; };
 		2221988514C8D516009B764F /* RABoolSignal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2221988314C8D516009B764F /* RABoolSignal.h */; };
 		2221988614C8D516009B764F /* RABoolSignal.m in Sources */ = {isa = PBXBuildFile; fileRef = 2221988414C8D516009B764F /* RABoolSignal.m */; };
+		CB15859D14D73EF30025AF65 /* RAIntReactor.h in Headers */ = {isa = PBXBuildFile; fileRef = CB15859814D73EF30025AF65 /* RAIntReactor.h */; };
+		CB15859E14D73EF30025AF65 /* RAIntReactor.m in Sources */ = {isa = PBXBuildFile; fileRef = CB15859914D73EF30025AF65 /* RAIntReactor.m */; };
+		CB15859F14D73EF30025AF65 /* RAIntReactor+Protected.h in Headers */ = {isa = PBXBuildFile; fileRef = CB15859A14D73EF30025AF65 /* RAIntReactor+Protected.h */; };
+		CB1585A014D73EF30025AF65 /* RAIntValue.h in Headers */ = {isa = PBXBuildFile; fileRef = CB15859B14D73EF30025AF65 /* RAIntValue.h */; };
+		CB1585A114D73EF30025AF65 /* RAIntValue.m in Sources */ = {isa = PBXBuildFile; fileRef = CB15859C14D73EF30025AF65 /* RAIntValue.m */; };
 		CB24CBC214A004D9004BAA57 /* RADoubleSignal.h in Headers */ = {isa = PBXBuildFile; fileRef = CB24CBC014A004D9004BAA57 /* RADoubleSignal.h */; };
 		CB24CBC314A004D9004BAA57 /* RADoubleSignal.m in Sources */ = {isa = PBXBuildFile; fileRef = CB24CBC114A004D9004BAA57 /* RADoubleSignal.m */; };
 		CB49661D149EA11500A6603D /* RADefs.h in Headers */ = {isa = PBXBuildFile; fileRef = CB496618149EA11500A6603D /* RADefs.h */; };
@@ -55,6 +60,11 @@
 		2221988014C8D504009B764F /* RAIntSignal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RAIntSignal.m; path = src/main/objc/RAIntSignal.m; sourceTree = "<group>"; };
 		2221988314C8D516009B764F /* RABoolSignal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RABoolSignal.h; path = src/main/objc/RABoolSignal.h; sourceTree = "<group>"; };
 		2221988414C8D516009B764F /* RABoolSignal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RABoolSignal.m; path = src/main/objc/RABoolSignal.m; sourceTree = "<group>"; };
+		CB15859814D73EF30025AF65 /* RAIntReactor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAIntReactor.h; path = src/main/objc/RAIntReactor.h; sourceTree = "<group>"; };
+		CB15859914D73EF30025AF65 /* RAIntReactor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RAIntReactor.m; path = src/main/objc/RAIntReactor.m; sourceTree = "<group>"; };
+		CB15859A14D73EF30025AF65 /* RAIntReactor+Protected.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "RAIntReactor+Protected.h"; path = "src/main/objc/RAIntReactor+Protected.h"; sourceTree = "<group>"; };
+		CB15859B14D73EF30025AF65 /* RAIntValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAIntValue.h; path = src/main/objc/RAIntValue.h; sourceTree = "<group>"; };
+		CB15859C14D73EF30025AF65 /* RAIntValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RAIntValue.m; path = src/main/objc/RAIntValue.m; sourceTree = "<group>"; };
 		CB24CBC014A004D9004BAA57 /* RADoubleSignal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RADoubleSignal.h; path = src/main/objc/RADoubleSignal.h; sourceTree = "<group>"; };
 		CB24CBC114A004D9004BAA57 /* RADoubleSignal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RADoubleSignal.m; path = src/main/objc/RADoubleSignal.m; sourceTree = "<group>"; };
 		CB496618149EA11500A6603D /* RADefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RADefs.h; path = src/main/objc/RADefs.h; sourceTree = "<group>"; };
@@ -121,8 +131,13 @@
 				CB24CBC114A004D9004BAA57 /* RADoubleSignal.m */,
 				2221987A14C8D470009B764F /* RAFloatSignal.h */,
 				2221987B14C8D470009B764F /* RAFloatSignal.m */,
+				CB15859814D73EF30025AF65 /* RAIntReactor.h */,
+				CB15859914D73EF30025AF65 /* RAIntReactor.m */,
+				CB15859A14D73EF30025AF65 /* RAIntReactor+Protected.h */,
 				2221987F14C8D504009B764F /* RAIntSignal.h */,
 				2221988014C8D504009B764F /* RAIntSignal.m */,
+				CB15859B14D73EF30025AF65 /* RAIntValue.h */,
+				CB15859C14D73EF30025AF65 /* RAIntValue.m */,
 				CB496619149EA11500A6603D /* RAReactor.h */,
 				CB49661A149EA11500A6603D /* RAReactor+Protected.h */,
 				CB496623149EA19000A6603D /* RAReactor.m */,
@@ -194,6 +209,9 @@
 				2221987C14C8D470009B764F /* RAFloatSignal.h in Headers */,
 				2221988114C8D504009B764F /* RAIntSignal.h in Headers */,
 				2221988514C8D516009B764F /* RABoolSignal.h in Headers */,
+				CB15859D14D73EF30025AF65 /* RAIntReactor.h in Headers */,
+				CB15859F14D73EF30025AF65 /* RAIntReactor+Protected.h in Headers */,
+				CB1585A014D73EF30025AF65 /* RAIntValue.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -303,6 +321,8 @@
 				2221987D14C8D470009B764F /* RAFloatSignal.m in Sources */,
 				2221988214C8D504009B764F /* RAIntSignal.m in Sources */,
 				2221988614C8D516009B764F /* RABoolSignal.m in Sources */,
+				CB15859E14D73EF30025AF65 /* RAIntReactor.m in Sources */,
+				CB1585A114D73EF30025AF65 /* RAIntValue.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

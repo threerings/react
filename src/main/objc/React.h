@@ -9,5 +9,6 @@
 #import "RADoubleSignal.h"
 #import "RAFloatSignal.h"
 #import "RAIntSignal.h"
+#import "RAIntValue.h"
 #import "RASignal.h"
 #import "RAUnitSignal.h"
