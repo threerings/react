@@ -3,24 +3,25 @@
 // Copyright (c) 2011, Three Rings Design, Inc. - All rights reserved.
 // http://github.com/threerings/react/blob/master/LICENSE
 
-#import "RASignal.h"
+#import "RAFloatReactor.h"
 #import "RAReactor+Protected.h"
 #import "RAConnection+Package.h"
+#import "RAFloatReactor+Protected.h"
 
-@implementation RASignal
-- (void) emitEvent:(id)event {
+@implementation RAFloatReactor
+- (void) dispatchEvent:(float)event {
     for (RAConnection *cur = [self prepareForEmission]; cur != nil; cur = cur->next) {
-        ((RASignalBlock)cur->block)(event);
+        ((RAFloatSlot)cur->block)(event);
         if (cur->oneShot) [cur disconnect];
     }
     [self finishEmission];
 }
 
-- (RAConnection*) connectSignal:(RASignalBlock)block {
-      return [self withPriority:RA_DEFAULT_PRIORITY connectSignal:block];
+- (RAConnection*) connectSlot:(RAFloatSlot)block {
+    return [self withPriority:RA_DEFAULT_PRIORITY connectSlot:block];
 }
 
-- (RAConnection*) withPriority:(int)priority connectSignal:(RASignalBlock)block {
+- (RAConnection*) withPriority:(int)priority connectSlot:(RAFloatSlot)block {
     return [self connectConnection:[[RAConnection alloc] initWithBlock:[block copy] atPriority:priority onReactor:self]];
 }
 
@@ -29,6 +30,6 @@
 }
 
 - (RAConnection*) withPriority:(int)priority connectUnit:(RAUnitBlock)block {
-     return [self withPriority:priority connectSignal:^(id event) { block(); }];
+    return [self withPriority:priority connectSlot:^(float event) { block(); }];
 }
 @end

@@ -3,11 +3,11 @@
 // Copyright (c) 2011, Three Rings Design, Inc. - All rights reserved.
 // http://github.com/threerings/react/blob/master/LICENSE
 
-#import "RAFloatSignal.h"
-#import "RAFloatReactor+Protected.h"
+#import "RAObjectReactor.h"
 
-@implementation RAFloatSignal
-- (void)emitEvent:(float)event {
-    [self dispatchEvent:event];
-}
+@interface RAObjectSignal : RAObjectReactor
+/** @name Emission */
+
+/** Emits the supplied value to all connected slots. */
+- (void) emitEvent:(id)event;
 @end

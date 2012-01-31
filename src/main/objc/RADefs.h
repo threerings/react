@@ -8,5 +8,4 @@
 
 #define RA_DEFAULT_PRIORITY 0
 
-typedef void (^RASignalBlock)(id);
 typedef void (^RAUnitBlock)(void);
