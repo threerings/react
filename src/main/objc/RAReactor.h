@@ -3,8 +3,6 @@
 // Copyright (c) 2011, Three Rings Design, Inc. - All rights reserved.
 // http://github.com/threerings/react/blob/master/LICENSE
 
-#import <Foundation/Foundation.h>
-
 #import "RADefs.h"
 
 @class RAConnection;
@@ -20,4 +18,9 @@
 /** Disconnects all connections. */
 - (void)disconnectAll;
 
+/** Connects the given unit at the default priority.  */
+- (RAConnection*) connectUnit:(RAUnitBlock)block;
+
+/** Connects the given unit at the given priority.  */
+- (RAConnection*) withPriority:(int)priority connectUnit:(RAUnitBlock)block;
 @end

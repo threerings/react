@@ -71,6 +71,18 @@ void insertConn(RAConnection* conn,  RAConnection* head) {
     if (pending != nil) [pending insertAction:^{ head = nil; }];
     else head = nil;
 }
+
+- (RAConnection*) connectUnit:(RAUnitBlock)block {
+    @throw [NSException exceptionWithName:NSInternalInconsistencyException
+        reason:[NSString stringWithFormat:@"You must override %@ in a subclass",
+        NSStringFromSelector(_cmd)] userInfo:nil];
+}
+
+- (RAConnection*) withPriority:(int)priority connectUnit:(RAUnitBlock)block {
+    @throw [NSException exceptionWithName:NSInternalInconsistencyException
+        reason:[NSString stringWithFormat:@"You must override %@ in a subclass",
+        NSStringFromSelector(_cmd)] userInfo:nil];
+}
 @end
 
 @implementation RAReactor (protected)

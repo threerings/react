@@ -5,8 +5,6 @@
 
 #import "RAReactor.h"
 
-typedef void (^RADoubleSlot)(double);
-
 @interface RADoubleReactor : RAReactor
 /** @name Connection */
 
@@ -15,10 +13,4 @@ typedef void (^RADoubleSlot)(double);
 
 /** Connects the given block at the given priority.  */
 - (RAConnection*) withPriority:(int)priority connectSlot:(RADoubleSlot)block;
-
-/** Connects the given unit at the default priority.  */
-- (RAConnection*) connectUnit:(RAUnitBlock)block;
-
-/** Connects the given unit at the given priority.  */
-- (RAConnection*) withPriority:(int)priority connectUnit:(RAUnitBlock)block;
 @end

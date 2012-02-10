@@ -5,8 +5,6 @@
 
 #import "RAReactor.h"
 
-typedef void (^RAObjectSlot)(id);
-
 @interface RAObjectReactor : RAReactor
 /** @name Connection */
 
@@ -15,10 +13,4 @@ typedef void (^RAObjectSlot)(id);
 
 /** Connects the given block at the given priority.  */
 - (RAConnection*) withPriority:(int)priority connectSlot:(RAObjectSlot)block;
-
-/** Connects the given unit at the default priority.  */
-- (RAConnection*) connectUnit:(RAUnitBlock)block;
-
-/** Connects the given unit at the given priority.  */
-- (RAConnection*) withPriority:(int)priority connectUnit:(RAUnitBlock)block;
 @end
