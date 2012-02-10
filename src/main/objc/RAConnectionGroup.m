@@ -29,59 +29,61 @@
     [_conns removeAllObjects];
 }
 
-- (void)addConnection:(RAConnection*)conn {
+- (RAConnection*)addConnection:(RAConnection*)conn {
     [_conns addObject:conn];
+    return conn;
 }
 
-- (void)removeConnection:(RAConnection*)conn {
+- (RAConnection*)removeConnection:(RAConnection*)conn {
     [_conns removeObject:conn];
+    return conn;
 }
 
 - (RAConnection*) onReactor:(RAReactor*)reactor connectUnit:(RAUnitBlock)block {
-    return [reactor connectUnit:block];
+    return [self addConnection:[reactor connectUnit:block]];
 }
 
 - (RAConnection*) onReactor:(RAReactor*)reactor withPriority:(int)priority connectUnit:(RAUnitBlock)block {
-    return [reactor withPriority:priority connectUnit:block];
+    return [self addConnection:[reactor withPriority:priority connectUnit:block]];
 }
 
 - (RAConnection*) onBoolReactor:(RABoolReactor*)reactor connectSlot:(RABoolSlot)block {
-    return [reactor connectSlot:block];
+    return [self addConnection:[reactor connectSlot:block]];
 }
 
 - (RAConnection*) onBoolReactor:(RABoolReactor*)reactor withPriority:(int)priority connectSlot:(RABoolSlot)block {
-    return [reactor withPriority:priority connectSlot:block];
+    return [self addConnection:[reactor withPriority:priority connectSlot:block]];
 }
 
 - (RAConnection*) onDoubleReactor:(RADoubleReactor*)reactor connectSlot:(RADoubleSlot)block {
-      return [reactor connectSlot:block];
+      return [self addConnection:[reactor connectSlot:block]];
 }
 
 - (RAConnection*) onDoubleReactor:(RADoubleReactor*)reactor withPriority:(int)priority connectSlot:(RADoubleSlot)block {
-    return [reactor withPriority:priority connectSlot:block];
+    return [self addConnection:[reactor withPriority:priority connectSlot:block]];
 }
 
 - (RAConnection*) onFloatReactor:(RAFloatReactor*)reactor connectSlot:(RAFloatSlot)block {
-     return [reactor connectSlot:block];
+     return [self addConnection:[reactor connectSlot:block]];
 }
 
 - (RAConnection*) onFloatReactor:(RAFloatReactor*)reactor withPriority:(int)priority connectSlot:(RAFloatSlot)block {
-    return [reactor withPriority:priority connectSlot:block];
+    return [self addConnection:[reactor withPriority:priority connectSlot:block]];
 }
 
 - (RAConnection*) onIntReactor:(RAIntReactor*)reactor connectSlot:(RAIntSlot)block {
-    return [reactor connectSlot:block];
+    return [self addConnection:[reactor connectSlot:block]];
 }
 
 - (RAConnection*) onIntReactor:(RAIntReactor*)reactor withPriority:(int)priority connectSlot:(RAIntSlot)block {
-    return [reactor withPriority:priority connectSlot:block];
+    return [self addConnection:[reactor withPriority:priority connectSlot:block]];
 }
 
 - (RAConnection*) onObjectReactor:(RAObjectReactor*)reactor connectSlot:(RAObjectSlot)block {
-    return [reactor connectSlot:block];
+    return [self addConnection:[reactor connectSlot:block]];
 }
 
 - (RAConnection*) onObjectReactor:(RAObjectReactor*)reactor withPriority:(int)priority connectSlot:(RAObjectSlot)block {
-   return [reactor withPriority:priority connectSlot:block];
+   return [self addConnection:[reactor withPriority:priority connectSlot:block]];
 }
 @end

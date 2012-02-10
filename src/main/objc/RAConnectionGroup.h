@@ -19,10 +19,10 @@
 @interface RAConnectionGroup : NSObject
 
 /** Adds a connection to this group. */
-- (void)addConnection:(RAConnection*)conn;
+- (RAConnection*)addConnection:(RAConnection*)conn;
 
 /** Removes a connection from this group. */
-- (void)removeConnection:(RAConnection*)conn;
+- (RAConnection*)removeConnection:(RAConnection*)conn;
 
 /** Disconnects all connections in this group, and then removes them from the group. */
 - (void)disconnectAll;
