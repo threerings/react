@@ -7,9 +7,7 @@
 #import "RAConnection+Package.h"
 #import "RAReactor.h"
 
-@implementation RAConnection {
-    RAReactor *reactor;
-}
+@implementation RAConnection
 
 - (RAConnection*)once {
     oneShot = YES;
@@ -19,6 +17,7 @@
 - (void)disconnect {
     [reactor disconnect:self];
 }
+
 @end
 
 @implementation RAConnection(package)

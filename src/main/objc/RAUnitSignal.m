@@ -11,8 +11,10 @@
 
 - (void)emit {
     for (RAConnection *cur = [self prepareForEmission]; cur != nil; cur = cur->next) {
-        ((RAUnitBlock)cur->block)();
-        if (cur->oneShot) [cur disconnect];
+        if ([self isConnected:cur]) {
+            ((RAUnitBlock)cur->block)();
+            if (cur->oneShot) [cur disconnect];
+        }
     }
     [self finishEmission];
 }

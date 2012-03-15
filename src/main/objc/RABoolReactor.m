@@ -11,8 +11,10 @@
 @implementation RABoolReactor
 - (void)dispatchEvent:(BOOL)event {
     for (RAConnection *cur = [self prepareForEmission]; cur != nil; cur = cur->next) {
-        ((RABoolSlot)cur->block)(event);
-        if (cur->oneShot) [cur disconnect];
+        if ([self isConnected:cur]) {
+            ((RABoolSlot)cur->block)(event);
+            if (cur->oneShot) [cur disconnect];
+        }
     }
     [self finishEmission];
 }

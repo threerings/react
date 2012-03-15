@@ -11,8 +11,10 @@
 @implementation RADoubleReactor
 - (void)dispatchEvent:(double)event {
     for (RAConnection *cur = [self prepareForEmission]; cur != nil; cur = cur->next) {
-        ((RADoubleSlot)cur->block)(event);
-        if (cur->oneShot) [cur disconnect];
+        if ([self isConnected:cur]) {
+            ((RADoubleSlot)cur->block)(event);
+            if (cur->oneShot) [cur disconnect];
+        }
     }
     [self finishEmission];
 }

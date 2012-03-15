@@ -9,11 +9,12 @@
 
 /** Manages the connection between a signal and a listener. */
 @interface RAConnection : NSObject {
-    @package
-        BOOL oneShot;
-        RAConnection *next;
-        id block;
-        int priority;
+@package
+    BOOL oneShot;
+    RAConnection *next;
+    id block;
+    int priority;
+    RAReactor *reactor;
 }
 
 /**

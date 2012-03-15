@@ -11,8 +11,10 @@
 @implementation RAFloatReactor
 - (void)dispatchEvent:(float)event {
     for (RAConnection *cur = [self prepareForEmission]; cur != nil; cur = cur->next) {
-        ((RAFloatSlot)cur->block)(event);
-        if (cur->oneShot) [cur disconnect];
+        if ([self isConnected:cur]) {
+            ((RAFloatSlot)cur->block)(event);
+            if (cur->oneShot) [cur disconnect];
+        }
     }
     [self finishEmission];
 }

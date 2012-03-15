@@ -11,8 +11,10 @@
 @implementation RAIntReactor
 - (void) dispatchEvent:(int)event {
     for (RAConnection *cur = [self prepareForEmission]; cur != nil; cur = cur->next) {
-        ((RAIntSlot)cur->block)(event);
-        if (cur->oneShot) [cur disconnect];
+        if ([self isConnected:cur]) {
+            ((RAIntSlot)cur->block)(event);
+            if (cur->oneShot) [cur disconnect];
+        }
     }
     [self finishEmission];
 }

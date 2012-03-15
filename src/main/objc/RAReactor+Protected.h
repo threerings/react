@@ -9,4 +9,5 @@
 - (RAConnection*)connectConnection:(RAConnection*)connection;
 - (RAConnection*)prepareForEmission;
 - (void)finishEmission;
+- (BOOL)isConnected:(RAConnection*)connection;
 @end

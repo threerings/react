@@ -11,8 +11,10 @@
 @implementation RAObjectReactor
 - (void) dispatchEvent:(id)event {
     for (RAConnection *cur = [self prepareForEmission]; cur != nil; cur = cur->next) {
-        ((RAObjectSlot)cur->block)(event);
-        if (cur->oneShot) [cur disconnect];
+        if ([self isConnected:cur]) {
+            ((RAObjectSlot)cur->block)(event);
+            if (cur->oneShot) [cur disconnect];
+        }
     }
     [self finishEmission];
 }

@@ -63,11 +63,18 @@ void insertConn(RAConnection* conn,  RAConnection* head) {
 }
 
 - (void)disconnect:(RAConnection*)conn {
+    // mark the connection as disconnected by nilling out the reactor reference
+    conn->reactor = nil;
+    
     if (pending != nil) [pending insertAction:^{ [self removeConn:conn]; }];
     else [self removeConn:conn];
 }
 
 - (void)disconnectAll {
+    for (RAConnection* cur = head; cur != nil; cur = cur->next) {
+        cur->reactor = nil;
+    }
+    
     if (pending != nil) [pending insertAction:^{ head = nil; }];
     else head = nil;
 }
@@ -102,4 +109,9 @@ void insertConn(RAConnection* conn,  RAConnection* head) {
     for (; pending != nil; pending = pending->next) pending->action();
     pending = nil;
 }
+
+- (BOOL)isConnected:(RAConnection*)connection {
+    return (connection->reactor != nil);
+}
+
 @end
