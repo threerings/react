@@ -88,4 +88,20 @@
     STAssertEquals(x, 3, nil);
 }
 
+- (void)testDisconnectDuringEmission {
+    RAUnitSignal *sig = [[RAUnitSignal alloc] init];
+    __block int x = 0;
+    
+    RAConnection* conn = [sig connectUnit:^{ x++; }];
+    [sig withPriority:1 connectUnit:^{ [conn disconnect]; }];
+    [sig emit];
+    STAssertEquals(x, 0, nil);
+    [sig disconnectAll];
+    
+    [sig connectUnit:^{ [sig disconnectAll]; }];
+    [sig connectUnit:^{ x++; }];
+    [sig emit];
+    STAssertEquals(x, 0, nil);
+}
+
 @end
