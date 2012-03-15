@@ -9,8 +9,8 @@
 /** @name Connection */
 
 /** Connects the given block to receieve emissions from this signal at the default priority.  */
-- (RAConnection*) connectSlot:(RAObjectSlot)block;
+- (RAConnection*)connectSlot:(RAObjectSlot)block;
 
 /** Connects the given block at the given priority.  */
-- (RAConnection*) withPriority:(int)priority connectSlot:(RAObjectSlot)block;
+- (RAConnection*)withPriority:(int)priority connectSlot:(RAObjectSlot)block;
 @end

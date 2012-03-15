@@ -39,14 +39,14 @@ void insertConn(RAConnection* conn,  RAConnection* head) {
     }
 }
 
-- (void) insertConn:(RAConnection*)conn {
+- (void)insertConn:(RAConnection*)conn {
     if (!head || conn->priority > head->priority) {
         conn->next = head;
         head = conn;
     } else insertConn(conn, head);
 }
 
-- (void) removeConn:(RAConnection*)conn {
+- (void)removeConn:(RAConnection*)conn {
     if (head == nil) return;
     else if (conn == head) {
         head = head->next;
@@ -62,7 +62,7 @@ void insertConn(RAConnection* conn,  RAConnection* head) {
     }
 }
 
-- (void) disconnect:(RAConnection*)conn {
+- (void)disconnect:(RAConnection*)conn {
     if (pending != nil) [pending insertAction:^{ [self removeConn:conn]; }];
     else [self removeConn:conn];
 }
@@ -72,13 +72,13 @@ void insertConn(RAConnection* conn,  RAConnection* head) {
     else head = nil;
 }
 
-- (RAConnection*) connectUnit:(RAUnitBlock)block {
+- (RAConnection*)connectUnit:(RAUnitBlock)block {
     @throw [NSException exceptionWithName:NSInternalInconsistencyException
         reason:[NSString stringWithFormat:@"You must override %@ in a subclass",
         NSStringFromSelector(_cmd)] userInfo:nil];
 }
 
-- (RAConnection*) withPriority:(int)priority connectUnit:(RAUnitBlock)block {
+- (RAConnection*)withPriority:(int)priority connectUnit:(RAUnitBlock)block {
     @throw [NSException exceptionWithName:NSInternalInconsistencyException
         reason:[NSString stringWithFormat:@"You must override %@ in a subclass",
         NSStringFromSelector(_cmd)] userInfo:nil];
@@ -86,7 +86,7 @@ void insertConn(RAConnection* conn,  RAConnection* head) {
 @end
 
 @implementation RAReactor (protected)
-- (RAConnection*) connectConnection:(RAConnection*)connection {
+- (RAConnection*)connectConnection:(RAConnection*)connection {
     if (pending != nil) [pending insertAction:^{ [self insertConn:connection]; }];
     else [self insertConn:connection];
     return connection;

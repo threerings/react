@@ -10,11 +10,11 @@
 @interface RAUnitSignal : RAReactor
 
 /** Invokes all connected blocks. */
-- (void) emit;
+- (void)emit;
 
 /** Connects the given block to be called on future emissions. */
-- (RAConnection*) connectUnit:(RAUnitBlock)block;
+- (RAConnection*)connectUnit:(RAUnitBlock)block;
 
 /** Connects the given block at the given priority to receive future emissions. */
-- (RAConnection*) withPriority:(int)priority connectUnit:(RAUnitBlock)block;
+- (RAConnection*)withPriority:(int)priority connectUnit:(RAUnitBlock)block;
 @end

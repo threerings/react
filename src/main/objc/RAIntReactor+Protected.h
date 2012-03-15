@@ -4,5 +4,5 @@
 // http://github.com/threerings/react/blob/master/LICENSE
 
 @interface RAIntReactor (protected)
-- (void) dispatchEvent:(int)event;
+- (void)dispatchEvent:(int)event;
 @end

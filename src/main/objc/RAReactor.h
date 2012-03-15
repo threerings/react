@@ -19,8 +19,8 @@
 - (void)disconnectAll;
 
 /** Connects the given unit at the default priority.  */
-- (RAConnection*) connectUnit:(RAUnitBlock)block;
+- (RAConnection*)connectUnit:(RAUnitBlock)block;
 
 /** Connects the given unit at the given priority.  */
-- (RAConnection*) withPriority:(int)priority connectUnit:(RAUnitBlock)block;
+- (RAConnection*)withPriority:(int)priority connectUnit:(RAUnitBlock)block;
 @end

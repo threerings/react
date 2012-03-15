@@ -9,7 +9,7 @@
 
 @implementation RAUnitSignal
 
-- (void) emit {
+- (void)emit {
     for (RAConnection *cur = [self prepareForEmission]; cur != nil; cur = cur->next) {
         ((RAUnitBlock)cur->block)();
         if (cur->oneShot) [cur disconnect];
@@ -21,7 +21,7 @@
     return [self withPriority:RA_DEFAULT_PRIORITY connectUnit:block];
 }
 
-- (RAConnection*) withPriority:(int)priority connectUnit:(RAUnitBlock)block {
+- (RAConnection*)withPriority:(int)priority connectUnit:(RAUnitBlock)block {
     return [self connectConnection:[[RAConnection alloc] initWithBlock:[block copy] atPriority:priority onReactor:self]];
 }
 

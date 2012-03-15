@@ -86,6 +86,6 @@
     [sig withPriority:1 connectUnit:^{ STAssertEquals(x++, 1, nil); }];
     [sig emit];
     STAssertEquals(x, 3, nil);
-
 }
+
 @end

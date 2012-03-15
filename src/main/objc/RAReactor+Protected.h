@@ -6,7 +6,7 @@
 #import <Foundation/Foundation.h>
 
 @interface RAReactor (protected)
--(RAConnection*)connectConnection:(RAConnection*)connection;
--(RAConnection*)prepareForEmission;
+- (RAConnection*)connectConnection:(RAConnection*)connection;
+- (RAConnection*)prepareForEmission;
 - (void)finishEmission;
 @end

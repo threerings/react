@@ -4,5 +4,5 @@
 // http://github.com/threerings/react/blob/master/LICENSE
 
 @interface RAFloatReactor (protected)
-- (void) dispatchEvent:(float)event;
+- (void)dispatchEvent:(float)event;
 @end

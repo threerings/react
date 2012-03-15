@@ -4,5 +4,5 @@
 // http://github.com/threerings/react/blob/master/LICENSE
 
 @interface RADoubleReactor (protected)
-- (void) dispatchEvent:(double)event;
+- (void)dispatchEvent:(double)event;
 @end

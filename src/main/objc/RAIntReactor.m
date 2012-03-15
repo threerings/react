@@ -17,19 +17,19 @@
     [self finishEmission];
 }
 
-- (RAConnection*) connectSlot:(RAIntSlot)block {
+- (RAConnection*)connectSlot:(RAIntSlot)block {
     return [self withPriority:RA_DEFAULT_PRIORITY connectSlot:block];
 }
 
-- (RAConnection*) withPriority:(int)priority connectSlot:(RAIntSlot)block {
+- (RAConnection*)withPriority:(int)priority connectSlot:(RAIntSlot)block {
     return [self connectConnection:[[RAConnection alloc] initWithBlock:[block copy] atPriority:priority onReactor:self]];
 }
 
-- (RAConnection*) connectUnit:(RAUnitBlock)block {
+- (RAConnection*)connectUnit:(RAUnitBlock)block {
     return [self withPriority:RA_DEFAULT_PRIORITY connectUnit:block];
 }
 
-- (RAConnection*) withPriority:(int)priority connectUnit:(RAUnitBlock)block {
+- (RAConnection*)withPriority:(int)priority connectUnit:(RAUnitBlock)block {
     return [self withPriority:priority connectSlot:^(int event) { block(); }];
 }
 @end

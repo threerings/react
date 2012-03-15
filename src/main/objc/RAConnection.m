@@ -10,18 +10,19 @@
 @implementation RAConnection {
     RAReactor *reactor;
 }
--(RAConnection*) once {
+
+- (RAConnection*)once {
     oneShot = YES;
     return self;
 }
 
--(void) disconnect {
+- (void)disconnect {
     [reactor disconnect:self];
 }
 @end
 
 @implementation RAConnection(package)
--(id) initWithBlock:(id)newblock atPriority:(int)newpriority onReactor:(RAReactor*)newreactor {
+- (id)initWithBlock:(id)newblock atPriority:(int)newpriority onReactor:(RAReactor*)newreactor {
     if (!(self = [super init])) return nil;
     block = newblock;
     priority = newpriority;

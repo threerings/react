@@ -19,12 +19,12 @@
 /**
  * Makes this connection one-shot. After the next notification, it will automatically disconnect.
  */
--(RAConnection*) once;
+- (RAConnection*)once;
 
 /**
 * Disconnects this connection from the signal. Subsequent emissions won't be passed on to the
 * listener.
 */
--(void) disconnect;
+- (void)disconnect;
 
 @end

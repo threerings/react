@@ -6,5 +6,5 @@
 #import "RAConnection.h"
 
 @interface RAConnection (package)
--(id) initWithBlock:(id)block atPriority:(int)priority onReactor:(RAReactor*)reactor;
+- (id)initWithBlock:(id)block atPriority:(int)priority onReactor:(RAReactor*)reactor;
 @end

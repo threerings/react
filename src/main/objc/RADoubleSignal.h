@@ -9,5 +9,5 @@
 /** @name Emission */
 
 /** Emits the supplied value to all connected slots. */
-- (void) emitEvent:(double)event;
+- (void)emitEvent:(double)event;
 @end

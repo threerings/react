@@ -4,5 +4,5 @@
 // http://github.com/threerings/react/blob/master/LICENSE
 
 @interface RABoolReactor (protected)
-- (void) dispatchEvent:(BOOL)event;
+- (void)dispatchEvent:(BOOL)event;
 @end
