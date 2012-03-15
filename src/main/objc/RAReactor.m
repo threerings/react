@@ -110,8 +110,4 @@ void insertConn(RAConnection* conn,  RAConnection* head) {
     pending = nil;
 }
 
-- (BOOL)isConnected:(RAConnection*)connection {
-    return (connection->reactor != nil);
-}
-
 @end

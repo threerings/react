@@ -5,9 +5,10 @@
 
 #import <Foundation/Foundation.h>
 
+#define RA_IS_CONNECTED(connection) (connection->reactor != nil)
+
 @interface RAReactor (protected)
 - (RAConnection*)connectConnection:(RAConnection*)connection;
 - (RAConnection*)prepareForEmission;
 - (void)finishEmission;
-- (BOOL)isConnected:(RAConnection*)connection;
 @end
