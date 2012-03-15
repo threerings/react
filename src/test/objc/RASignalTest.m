@@ -5,14 +5,14 @@
 
 #import "RASignalTest.h"
 
-#import "RASignal.h"
+#import "RAObjectSignal.h"
 
 @implementation RASignalTest
 - (void)testEmission {
-    RASignal *sig = [[RASignal alloc] init];
+    RAObjectSignal *sig = [[RAObjectSignal alloc] init];
     __block int x = 0;
     [sig connectUnit:^{ x++; }];
-    [sig connectSignal:^(id value){ STAssertEquals(value, @"Hello", nil); x++; }];
+    [sig connectSlot:^(id value){ STAssertEquals(value, @"Hello", nil); x++; }];
     [sig emitEvent:@"Hello"];
     STAssertEquals(x, 2, nil);
 }
