@@ -23,7 +23,7 @@ public class RList<E> extends Reactor<RList.Listener<E>>
     public static abstract class Listener<E> extends Reactor.RListener
     {
         /** Notifies listener of an added element. This method will call the index-forgetting
-         * version ({@link #onAdd(E)}) by default. */
+         * version ({@link #onAdd(Object)}) by default. */
         public void onAdd (int index, E elem) {
             onAdd(elem);
         }
@@ -34,7 +34,7 @@ public class RList<E> extends Reactor<RList.Listener<E>>
         }
 
         /** Notifies listener of an updated element. This method will call the old-value-forgetting
-         * version ({@link #onSet(int,E)}) by default. */
+         * version ({@link #onSet(int,Object)}) by default. */
         public void onSet (int index, E newElem, E oldElem) {
             onSet(index, newElem);
         }
@@ -45,7 +45,7 @@ public class RList<E> extends Reactor<RList.Listener<E>>
         }
 
         /** Notifies listener of a removed element. This method will call the index-forgetting
-         * version ({@link #onRemove(E)}) by default. */
+         * version ({@link #onRemove(Object)}) by default. */
         public void onRemove (int index, E elem) {
             onRemove(elem);
         }

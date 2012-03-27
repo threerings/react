@@ -29,7 +29,7 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
     {
         /**
          * Notifies listener of an added or updated mapping. This method will call the
-         * old-value-forgetting version ({@link #onPut(K,V)}) by default.
+         * old-value-forgetting version ({@link #onPut(Object,Object)}) by default.
          */
         public void onPut (K key, V value, V oldValue) {
             onPut(key, value);
@@ -42,7 +42,7 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
 
         /**
          * Notifies listener of a removed mapping. This method will call the old-value-forgetting
-         * version ({@link #onRemove(K)}) by default.
+         * version ({@link #onRemove(Object)}) by default.
          */
         public void onRemove (K key, V oldValue) {
             onRemove(key);
