@@ -10,6 +10,16 @@
     double _value;
 }
 
+- (id)init {
+    return [self initWithValue:0];
+}
+
+- (id)initWithValue:(double)value {
+    if (!(self = [super init])) return nil;
+    _value = value;
+    return self;
+}
+
 - (double)value { return _value; }
 
 - (void)setValue:(double)value {

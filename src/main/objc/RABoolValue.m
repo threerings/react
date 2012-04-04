@@ -10,6 +10,16 @@
     BOOL _value;
 }
 
+- (id)init {
+    return [self initWithValue:NO];
+}
+
+- (id)initWithValue:(BOOL)value {
+    if (!(self = [super init])) return nil;
+    _value = value;
+    return self;
+}
+
 - (BOOL)value { return _value; }
 
 - (void)setValue:(BOOL)value {

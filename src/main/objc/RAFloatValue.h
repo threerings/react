@@ -7,4 +7,6 @@
 
 @interface RAFloatValue : RAFloatReactor
 @property(nonatomic,readwrite) float value;
+- (id)init;
+- (id)initWithValue:(float)value;
 @end

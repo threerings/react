@@ -7,4 +7,6 @@
 
 @interface RAIntValue : RAIntReactor
 @property(nonatomic,readwrite) int value;
+- (id)init;
+- (id)initWithValue:(int)value;
 @end

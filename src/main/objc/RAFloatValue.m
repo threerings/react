@@ -10,6 +10,16 @@
     float _value;
 }
 
+- (id)init {
+    return [self initWithValue:0];
+}
+
+- (id)initWithValue:(float)value {
+    if (!(self = [super init])) return nil;
+    _value = value;
+    return self;
+}
+
 - (float)value { return _value; }
 
 - (void)setValue:(float)value {

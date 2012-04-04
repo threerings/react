@@ -7,4 +7,6 @@
 
 @interface RABoolValue : RABoolReactor
 @property(nonatomic,readwrite) BOOL value;
+- (id)init;
+- (id)initWithValue:(BOOL)value;
 @end

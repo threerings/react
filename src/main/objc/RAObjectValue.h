@@ -7,4 +7,6 @@
 
 @interface RAObjectValue : RAObjectReactor
 @property(nonatomic,readwrite,strong) id value;
+- (id)init;
+- (id)initWithValue:(id)value;
 @end

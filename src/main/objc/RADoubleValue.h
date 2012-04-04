@@ -7,4 +7,6 @@
 
 @interface RADoubleValue : RADoubleReactor
 @property(nonatomic,readwrite) double value;
+- (id)init;
+- (id)initWithValue:(double)value;
 @end
