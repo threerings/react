@@ -35,7 +35,6 @@
 		CB09044D14D778B8000CD3FB /* RAObjectSignal.m in Sources */ = {isa = PBXBuildFile; fileRef = CB09043614D778B8000CD3FB /* RAObjectSignal.m */; };
 		CB09044E14D778B8000CD3FB /* RAObjectValue.h in Headers */ = {isa = PBXBuildFile; fileRef = CB09043714D778B8000CD3FB /* RAObjectValue.h */; };
 		CB09044F14D778B8000CD3FB /* RAObjectValue.m in Sources */ = {isa = PBXBuildFile; fileRef = CB09043814D778B8000CD3FB /* RAObjectValue.m */; };
-		CB09045014D778B8000CD3FB /* RAValue.h in Headers */ = {isa = PBXBuildFile; fileRef = CB09043914D778B8000CD3FB /* RAValue.h */; };
 		CB09045514D7792F000CD3FB /* RAReactor.h in Headers */ = {isa = PBXBuildFile; fileRef = CB09045214D7792F000CD3FB /* RAReactor.h */; };
 		CB09045614D7792F000CD3FB /* RAReactor.m in Sources */ = {isa = PBXBuildFile; fileRef = CB09045314D7792F000CD3FB /* RAReactor.m */; };
 		CB09045714D7792F000CD3FB /* RAReactor+Protected.h in Headers */ = {isa = PBXBuildFile; fileRef = CB09045414D7792F000CD3FB /* RAReactor+Protected.h */; };
@@ -103,7 +102,6 @@
 		CB09043614D778B8000CD3FB /* RAObjectSignal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RAObjectSignal.m; path = src/main/objc/RAObjectSignal.m; sourceTree = "<group>"; };
 		CB09043714D778B8000CD3FB /* RAObjectValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAObjectValue.h; path = src/main/objc/RAObjectValue.h; sourceTree = "<group>"; };
 		CB09043814D778B8000CD3FB /* RAObjectValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RAObjectValue.m; path = src/main/objc/RAObjectValue.m; sourceTree = "<group>"; };
-		CB09043914D778B8000CD3FB /* RAValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAValue.h; path = src/main/objc/RAValue.h; sourceTree = "<group>"; };
 		CB09045214D7792F000CD3FB /* RAReactor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RAReactor.h; path = src/main/objc/RAReactor.h; sourceTree = "<group>"; };
 		CB09045314D7792F000CD3FB /* RAReactor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RAReactor.m; path = src/main/objc/RAReactor.m; sourceTree = "<group>"; };
 		CB09045414D7792F000CD3FB /* RAReactor+Protected.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "RAReactor+Protected.h"; path = "src/main/objc/RAReactor+Protected.h"; sourceTree = "<group>"; };
@@ -206,7 +204,6 @@
 				CB09045314D7792F000CD3FB /* RAReactor.m */,
 				CB846ED2149AC77000B29795 /* RAUnitSignal.h */,
 				CB846ED3149AC77000B29795 /* RAUnitSignal.m */,
-				CB09043914D778B8000CD3FB /* RAValue.h */,
 				CBE1F0D414A147C900B82344 /* React.h */,
 			);
 			name = Classes;
@@ -285,7 +282,6 @@
 				CB09044B14D778B8000CD3FB /* RAObjectReactor+Protected.h in Headers */,
 				CB09044C14D778B8000CD3FB /* RAObjectSignal.h in Headers */,
 				CB09044E14D778B8000CD3FB /* RAObjectValue.h in Headers */,
-				CB09045014D778B8000CD3FB /* RAValue.h in Headers */,
 				CB09045514D7792F000CD3FB /* RAReactor.h in Headers */,
 				CB09045714D7792F000CD3FB /* RAReactor+Protected.h in Headers */,
 			);
