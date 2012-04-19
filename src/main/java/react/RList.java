@@ -219,9 +219,7 @@ public class RList<E> extends Reactor<RList.Listener<E>>
 
     @Override public boolean removeAll (Collection<?> collection) {
         boolean modified = false;
-        for (Object o : collection) {
-            modified |= remove(o);
-        }
+        for (Object o : collection) modified |= remove(o);
         return modified;
     }
 
@@ -237,12 +235,14 @@ public class RList<E> extends Reactor<RList.Listener<E>>
     }
 
     @Override public E remove (int index) {
+        checkMutate();
         E removed = _impl.remove(index);
         emitRemove(index, removed);
         return removed;
     }
 
     @Override public E set (int index, E element) {
+        checkMutate();
         E removed = _impl.set(index, element);
         emitSet(index, element, removed);
         return removed;
@@ -294,7 +294,8 @@ public class RList<E> extends Reactor<RList.Listener<E>>
     }
 
     @Override public void clear () {
-        _impl.clear();
+        // clear in such a way as to emit events
+        while (!isEmpty()) remove(0);
     }
 
     @Override public Object[] toArray () {
