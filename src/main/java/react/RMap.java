@@ -252,9 +252,7 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
         // our underlying map before any of the published events are processed)
         Set<Map.Entry<K,V>> entries = new HashSet<Map.Entry<K,V>>(_impl.entrySet());
         _impl.clear();
-        for (Map.Entry<K,V> entry : entries) {
-            emitRemove(entry.getKey(), entry.getValue());
-        }
+        for (Map.Entry<K,V> entry : entries) emitRemove(entry.getKey(), entry.getValue());
     }
 
     // from interface Map<K,V>

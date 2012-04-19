@@ -218,9 +218,7 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
         // our underlying set before any of the published events are processed)
         List<E> elems = new ArrayList<E>(_impl);
         _impl.clear();
-        for (E elem : elems) {
-            emitRemove(elem);
-        }
+        for (E elem : elems) emitRemove(elem);
     }
 
     // from interface Set<E>
