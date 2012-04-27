@@ -107,22 +107,23 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
      * #addForce} or {@link #removeForce} will cause this view to trigger and incorrectly report
      * that the element was not or was previously contained in the set. Caveat user.
      */
-    public MappedValueView<Boolean> containsView (final E elem) {
+    public ValueView<Boolean> containsView (final E elem) {
         if (elem == null) throw new NullPointerException("Must supply non-null 'elem'.");
-        final MappedValue<Boolean> model = new MappedValue<Boolean>() {
-            public Boolean get () {
+        return new MappedValue<Boolean>() {
+            @Override public Boolean get () {
                 return contains(elem);
             }
+            @Override protected Connection connect () {
+                return RSet.this.connect(new RSet.Listener<E>() {
+                    @Override public void onAdd (E aelem) {
+                        if (elem.equals(aelem)) notifyChange(true, false);
+                    }
+                    @Override public void onRemove (E relem) {
+                        if (elem.equals(relem)) notifyChange(false, true);
+                    }
+                });
+            }
         };
-        model.setConnection(connect(new Listener<E>() {
-            @Override public void onAdd (E aelem) {
-                if (elem.equals(aelem)) model.notifyChange(true, false);
-            }
-            @Override public void onRemove (E relem) {
-                if (elem.equals(relem)) model.notifyChange(false, true);
-            }
-        }));
-        return model;
     }
 
     /**

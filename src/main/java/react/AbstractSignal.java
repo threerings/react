@@ -13,14 +13,17 @@ package react;
 public class AbstractSignal<T> extends Reactor<Slot<T>>
     implements SignalView<T>
 {
-    @Override public <M> MappedSignalView<M> map (final Function<? super T, M> func) {
-        final MappedSignal<M> mapped = new MappedSignal<M>();
-        mapped.setConnection(connect(new Slot<T>() {
-            @Override public void onEmit (T value) {
-                mapped.notifyEmit(func.apply(value));
+    @Override public <M> SignalView<M> map (final Function<? super T, M> func) {
+        final AbstractSignal<T> outer = this;
+        return new MappedSignal<M>() {
+            @Override protected Connection connect () {
+                return outer.connect(new Slot<T>() {
+                    @Override public void onEmit (T value) {
+                        notifyEmit(func.apply(value));
+                    }
+                });
             }
-        }));
-        return mapped;
+        };
     }
 
     @Override public Connection connect (Slot<? super T> slot) {

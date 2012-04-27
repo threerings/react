@@ -14,9 +14,10 @@ public interface SignalView<T>
 {
     /**
      * Creates a signal that maps this signal via a function. When this signal emits a value, the
-     * mapped signal will emit that value as transformed by the supplied function.
+     * mapped signal will emit that value as transformed by the supplied function. The mapped value
+     * will retain a connection to this signal for as long as it has connections of its own.
      */
-    <M> MappedSignalView<M> map (final Function<? super T, M> func);
+    <M> SignalView<M> map (final Function<? super T, M> func);
 
     /**
      * Connects this signal to the supplied slot, such that when an event is emitted from this

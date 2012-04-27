@@ -52,11 +52,11 @@ public class ValueTest
 
     @Test public void testMappedValue () {
         Value<Integer> value = Value.create(42);
-        MappedValueView<String> mapped = value.map(Functions.TO_STRING);
+        ValueView<String> mapped = value.map(Functions.TO_STRING);
 
         SignalTest.Counter counter = new SignalTest.Counter();
-        mapped.connect(counter);
-        mapped.connect(SignalTest.require("15"));
+        Connection c1 = mapped.connect(counter);
+        Connection c2 = mapped.connect(SignalTest.require("15"));
 
         value.update(15);
         assertEquals(1, counter.notifies);
@@ -65,10 +65,10 @@ public class ValueTest
         value.updateForce(15);
         assertEquals(2, counter.notifies);
 
-        // disconnect the mapped value and ensure that it no longer updates
-        mapped.connection().disconnect();
-        value.update(25);
-        assertEquals(2, counter.notifies);
+        // disconnect from the mapped value and ensure that it disconnects in turn
+        c1.disconnect();
+        c2.disconnect();
+        assertFalse(value.hasConnections());
     }
 
     @Test public void testConnectNotify () {

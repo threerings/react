@@ -101,8 +101,8 @@ public class RSetTest
         set.add(1);
 
         // create some contains key views and ensure their initial values are correct
-        MappedValueView<Boolean> containsOne = set.containsView(1);
-        MappedValueView<Boolean> containsTwo = set.containsView(2);
+        ValueView<Boolean> containsOne = set.containsView(1);
+        ValueView<Boolean> containsTwo = set.containsView(2);
         assertTrue(containsOne.get());
         assertFalse(containsTwo.get());
 

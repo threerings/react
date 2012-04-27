@@ -199,21 +199,21 @@ public class SignalTest
 
     @Test public void testMappedSignal () {
         Signal<Integer> signal = Signal.create();
-        MappedSignalView<String> mapped = signal.map(Functions.TO_STRING);
+        SignalView<String> mapped = signal.map(Functions.TO_STRING);
 
         Counter counter = new Counter();
-        mapped.connect(counter);
-        mapped.connect(SignalTest.require("15"));
+        Connection c1 = mapped.connect(counter);
+        Connection c2 = mapped.connect(SignalTest.require("15"));
 
         signal.emit(15);
         assertEquals(1, counter.notifies);
         signal.emit(15);
         assertEquals(2, counter.notifies);
 
-        // disconnect the mapped signal and ensure that it no longer updates
-        mapped.connection().disconnect();
-        signal.emit(25);
-        assertEquals(2, counter.notifies);
+        // disconnect from the mapped signal and ensure that it clears its connection
+        c1.disconnect();
+        c2.disconnect();
+        assertFalse(signal.hasConnections());
     }
 
     protected static class AccSlot<T> extends Slot<T> {

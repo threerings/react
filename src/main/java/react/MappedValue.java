@@ -6,17 +6,34 @@
 package react;
 
 /**
- * Plumbing to implement mapped values in such a way that they can expose the {@link Connection}
- * that wires them up.
+ * Plumbing to implement mapped values in such a way that they automatically manage a connection to
+ * their underlying value. When the mapped value adds its first connection, it establishes a
+ * connection to the underlying value, and when it removes its last connection it clears its
+ * connection from the underlying value.
  */
-abstract class MappedValue<T> extends AbstractValue<T> implements MappedValueView<T>
+abstract class MappedValue<T> extends AbstractValue<T>
 {
-    @Override public Connection connection () {
-        return _conn;
+    /**
+     * Establishes a connection to our source value. Called when go from zero to one listeners.
+     * When we go from one to zero listeners, the connection will automatically be cleared.
+     *
+     * @return the newly established connection.
+     */
+    protected abstract Connection connect ();
+
+    @Override
+    protected void connectionAdded () {
+        super.connectionAdded();
+        if (_conn == null) _conn = connect();
     }
 
-    protected void setConnection (Connection conn) {
-        _conn = conn;
+    @Override
+    protected void connectionRemoved () {
+        super.connectionRemoved();
+        if (!hasConnections() && _conn != null) {
+            _conn.disconnect();
+            _conn = null;
+        }
     }
 
     protected Connection _conn;

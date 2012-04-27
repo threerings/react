@@ -28,10 +28,12 @@ public abstract class Reactor<L extends Reactor.RListener>
             _pendingRuns = insert(_pendingRuns, new Runs() {
                 public void run () {
                     _listeners = Cons.insert(_listeners, cons);
+                    connectionAdded();
                 }
             });
         } else {
             _listeners = Cons.insert(_listeners, cons);
+            connectionAdded();
         }
         return cons;
     }
@@ -58,10 +60,12 @@ public abstract class Reactor<L extends Reactor.RListener>
             _pendingRuns = insert(_pendingRuns, new Runs() {
                 public void run () {
                     _listeners = Cons.remove(_listeners, cons);
+                    connectionRemoved();
                 }
             });
         } else {
             _listeners = Cons.remove(_listeners, cons);
+            connectionRemoved();
         }
     }
 
@@ -70,10 +74,12 @@ public abstract class Reactor<L extends Reactor.RListener>
             _pendingRuns = insert(_pendingRuns, new Runs() {
                 public void run () {
                     _listeners = Cons.removeAll(_listeners, listener);
+                    connectionRemoved();
                 }
             });
         } else {
             _listeners = Cons.removeAll(_listeners, listener);
+            connectionRemoved();
         }
     }
 
@@ -90,6 +96,27 @@ public abstract class Reactor<L extends Reactor.RListener>
      */
     protected void checkMutate () {
         // noop
+    }
+
+    /**
+     * Called when a connection has been added to this reactor.
+     */
+    protected void connectionAdded () {
+        // noop
+    }
+
+    /**
+     * Called when a connection may have been removed from this reactor.
+     */
+    protected void connectionRemoved () {
+        // noop
+    }
+
+    /**
+     * Returns true if this reactor has at least one connection.
+     */
+    protected boolean hasConnections () {
+        return _listeners != null;
     }
 
     protected static Runs insert (Runs head, Runs action) {

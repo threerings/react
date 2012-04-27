@@ -232,8 +232,8 @@ public class RMapTest
         map.put(1, "one");
 
         // create some contains key views and ensure their initial values are correct
-        MappedValueView<Boolean> containsOne = map.containsKeyView(1);
-        MappedValueView<Boolean> containsTwo = map.containsKeyView(2);
+        ValueView<Boolean> containsOne = map.containsKeyView(1);
+        ValueView<Boolean> containsTwo = map.containsKeyView(2);
         assertTrue(containsOne.get());
         assertFalse(containsTwo.get());
 
@@ -266,8 +266,8 @@ public class RMapTest
         map.put(1, "one");
 
         // create some views and ensure their initial values are correct
-        MappedValueView<String> oneView = map.getView(1);
-        MappedValueView<String> twoView = map.getView(2);
+        ValueView<String> oneView = map.getView(1);
+        ValueView<String> twoView = map.getView(2);
         assertEquals("one", oneView.get());
         assertNull(twoView.get());
 

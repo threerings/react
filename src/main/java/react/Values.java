@@ -20,20 +20,27 @@ public class Values
      * @param signal the signal that will trigger the toggling.
      * @param initial the initial value of the to be toggled value.
      */
-    public static ValueView<Boolean> toggler (SignalView<?> signal, boolean initial) {
-        final Value<Boolean> value = Value.create(initial);
-        signal.connect(new UnitSlot() {
-            @Override public void onEmit () {
-                value.update(!value.get());
+    public static ValueView<Boolean> toggler (final SignalView<?> signal, final boolean initial) {
+        return new MappedValue<Boolean>() {
+            @Override public Boolean get () {
+                return _current;
             }
-        });
-        return value;
+            @Override protected Connection connect () {
+                return signal.connect(new UnitSlot() {
+                    @Override public void onEmit () {
+                        boolean old = _current;
+                        notifyChange(_current = !old, old);
+                    }
+                });
+            }
+            protected boolean _current = initial;
+        };
     }
 
     /**
      * Returns a value which is the logical NOT of the supplied value.
      */
-    public static MappedValueView<Boolean> not (ValueView<Boolean> value) {
+    public static ValueView<Boolean> not (ValueView<Boolean> value) {
         return value.map(Functions.NOT);
     }
 
@@ -41,21 +48,21 @@ public class Values
      * Returns a value which is the logical AND of the supplied values.
      */
     @SuppressWarnings("unchecked") // TODO: use new varargs suppression in JDK 1.7
-    public static MappedValueView<Boolean> and (ValueView<Boolean> one, ValueView<Boolean> two) {
+    public static ValueView<Boolean> and (ValueView<Boolean> one, ValueView<Boolean> two) {
         return and(Arrays.asList(one, two));
     }
 
     /**
      * Returns a value which is the logical AND of the supplied values.
      */
-    public static MappedValueView<Boolean> and (ValueView<Boolean>... values) {
+    public static ValueView<Boolean> and (ValueView<Boolean>... values) {
         return and(Arrays.asList(values));
     }
 
     /**
      * Returns a value which is the logical AND of the supplied values.
      */
-    public static MappedValueView<Boolean> and (final Iterable<? extends ValueView<Boolean>> values) {
+    public static ValueView<Boolean> and (final Iterable<? extends ValueView<Boolean>> values) {
         return aggValue(values, COMPUTE_AND);
     }
 
@@ -63,21 +70,21 @@ public class Values
      * Returns a value which is the logical OR of the supplied values.
      */
     @SuppressWarnings("unchecked") // TODO: use new varargs suppression in JDK 1.7
-    public static MappedValueView<Boolean> or (ValueView<Boolean> one, ValueView<Boolean> two) {
+    public static ValueView<Boolean> or (ValueView<Boolean> one, ValueView<Boolean> two) {
         return or(Arrays.asList(one, two));
     }
 
     /**
      * Returns a value which is the logical OR of the supplied values.
      */
-    public static MappedValueView<Boolean> or (ValueView<Boolean>... values) {
+    public static ValueView<Boolean> or (ValueView<Boolean>... values) {
         return or(Arrays.asList(values));
     }
 
     /**
      * Returns a value which is the logical OR of the supplied values.
      */
-    public static MappedValueView<Boolean> or (final Iterable<? extends ValueView<Boolean>> values) {
+    public static ValueView<Boolean> or (final Iterable<? extends ValueView<Boolean>> values) {
         return aggValue(values, COMPUTE_OR);
     }
 
@@ -85,8 +92,8 @@ public class Values
      * Returns a view of the supplied signal as a value. It will contain the value {@code initial}
      * until the signal fires, at which time the value will be updated with the emitted value.
      */
-    public static <T> MappedValueView<T> asValue (SignalView<T> signal, final T initial) {
-        final MappedValue<T> sigval = new MappedValue<T>() {
+    public static <T> ValueView<T> asValue (final SignalView<T> signal, final T initial) {
+        return new MappedValue<T>() {
             @Override public T get () {
                 return _value;
             }
@@ -95,46 +102,51 @@ public class Values
                 _value = value;
                 return ovalue;
             }
+            @Override protected Connection connect () {
+                return signal.connect(new Slot<T>() {
+                    public void onEmit (T value) {
+                        updateAndNotifyIf(value);
+                    }
+                });
+            }
             protected T _value = initial;
         };
-        sigval.setConnection(signal.connect(new Slot<T>() {
-            public void onEmit (T value) {
-                sigval.updateAndNotifyIf(value);
-            }
-        }));
-        return sigval;
     }
 
-    protected static final MappedValueView<Boolean> aggValue (
+    protected static final ValueView<Boolean> aggValue (
         final Iterable<? extends ValueView<Boolean>> values,
         final Function<Iterable<? extends ValueView<Boolean>>,Boolean> aggOp) {
-        final MappedValue<Boolean> mapped = new MappedValue<Boolean>() {
+
+        return new MappedValue<Boolean>() {
             @Override public Boolean get () {
                 return aggOp.apply(values);
             }
+
+            @Override protected Connection connect () {
+                final List<Connection> conns = new ArrayList<Connection>();
+                for (ValueView<Boolean> value : values) {
+                    conns.add(value.connect(_trigger));
+                }
+                return new Connection() {
+                    public void disconnect () {
+                        for (Connection conn : conns) conn.disconnect();
+                    }
+                    public Connection once () {
+                        for (Connection conn : conns) conn.once();
+                        return this;
+                    }
+                };
+            }
+
+            protected final UnitSlot _trigger = new UnitSlot() {
+                public void onEmit () {
+                    boolean ovalue = _current;
+                    _current = aggOp.apply(values);
+                    notifyChange(_current, ovalue);
+                }
+                protected boolean _current = aggOp.apply(values);
+            };
         };
-        final List<Connection> conns = new ArrayList<Connection>();
-        final UnitSlot trigger = new UnitSlot() {
-            public void onEmit () {
-                boolean ovalue = _current;
-                _current = aggOp.apply(values);
-                mapped.notifyChange(_current, ovalue);
-            }
-            protected boolean _current = aggOp.apply(values);
-        };
-        for (ValueView<Boolean> value : values) {
-            conns.add(value.connect(trigger));
-        }
-        mapped.setConnection(new Connection() {
-            public void disconnect () {
-                for (Connection conn : conns) conn.disconnect();
-            }
-            public Connection once () {
-                for (Connection conn : conns) conn.once();
-                return this;
-            }
-        });
-        return mapped;
     }
 
     protected static final Function<Iterable<? extends ValueView<Boolean>>,Boolean> COMPUTE_AND =

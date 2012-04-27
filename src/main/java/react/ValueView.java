@@ -31,9 +31,11 @@ public interface ValueView<T>
 
     /**
      * Creates a value that maps this value via a function. When this value changes, the mapped
-     * listeners will be notified, regardless of whether the new and old mapped values differ.
+     * listeners will be notified, regardless of whether the new and old mapped values differ. The
+     * mapped value will retain a connection to this value for as long as it has connections of its
+     * own.
      */
-    <M> MappedValueView<M> map (final Function<? super T, M> func);
+    <M> ValueView<M> map (final Function<? super T, M> func);
 
     /**
      * Connects the supplied listener to this value, such that it will be notified when this value

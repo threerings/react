@@ -14,19 +14,20 @@ package react;
 public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
     implements ValueView<T>
 {
-    @Override public <M> MappedValueView<M> map (final Function<? super T, M> func) {
+    @Override public <M> ValueView<M> map (final Function<? super T, M> func) {
         final AbstractValue<T> outer = this;
-        final MappedValue<M> mapped = new MappedValue<M>() {
+        return new MappedValue<M>() {
             @Override public M get () {
                 return func.apply(outer.get());
             }
-        };
-        mapped.setConnection(connect(new Listener<T>() {
-            @Override public void onChange (T value, T ovalue) {
-                mapped.notifyChange(func.apply(value), func.apply(ovalue));
+            @Override protected Connection connect () {
+                return outer.connect(new Listener<T>() {
+                    @Override public void onChange (T value, T ovalue) {
+                        notifyChange(func.apply(value), func.apply(ovalue));
+                    }
+                });
             }
-        }));
-        return mapped;
+        };
     }
 
     @Override public Connection connect (Listener<? super T> listener) {

@@ -20,7 +20,7 @@ public class ValuesTest
         final boolean[] fired = new boolean[] { false };
 
         @SuppressWarnings("unchecked") // TODO: remove when we use JDK 1.7 @SafeVarargs
-        MappedValueView<Boolean> anded = Values.and(a, b, c);
+        ValueView<Boolean> anded = Values.and(a, b, c);
         assertFalse(anded.get());
         anded.connect(new Value.Listener<Boolean>() {
             public void onChange (Boolean value, Boolean oldValue) {
@@ -60,11 +60,11 @@ public class ValuesTest
 
     @Test public void testSignalAsValue () {
         Signal<Integer> intsig = Signal.create();
-        MappedValueView<Integer> intval = Values.asValue(intsig, 15);
+        ValueView<Integer> intval = Values.asValue(intsig, 15);
         assertEquals(15, intval.get().intValue());
 
         final boolean[] fired = new boolean[] { false };
-        intval.connect(new Value.Listener<Integer>() {
+        Connection conn = intval.connect(new Value.Listener<Integer>() {
             public void onChange (Integer value, Integer ovalue) {
                 assertEquals(25, value.intValue());
                 assertEquals(15, ovalue.intValue());
@@ -76,11 +76,8 @@ public class ValuesTest
         assertEquals(25, intval.get().intValue());
         assertTrue(fired[0]);
 
-        // disconnect the internal listener and make sure no updates happen
-        intval.connection().disconnect();
-        fired[0] = false;
-        intsig.emit(15);
-        assertEquals(25, intval.get().intValue());
-        assertFalse(fired[0]);
+        // disconnect from the view and make sure the view disconnects from the signal
+        conn.disconnect();
+        assertFalse(intsig.hasConnections());
     }
 }

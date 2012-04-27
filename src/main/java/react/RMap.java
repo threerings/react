@@ -120,48 +120,52 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
     }
 
     /**
-     * Returns a value that models whether the specified key is contained in this map. The value
-     * will report a change when a mapping for the specified key is added or removed. Note: this
-     * view only works on maps that <em>do not</em> contain mappings to {@code null}.
+     * Returns a value view that models whether the specified key is contained in this map. The
+     * view will report a change when a mapping for the specified key is added or removed. Note:
+     * this view only works on maps that <em>do not</em> contain mappings to {@code null}. The view
+     * will retain a connection to this map for as long as it has connections of its own.
      */
-    public MappedValueView<Boolean> containsKeyView (final K key) {
+    public ValueView<Boolean> containsKeyView (final K key) {
         if (key == null) throw new NullPointerException("Must supply non-null 'key'.");
-        final MappedValue<Boolean> model = new MappedValue<Boolean>() {
-            public Boolean get () {
+        return new MappedValue<Boolean>() {
+            @Override public Boolean get () {
                 return containsKey(key);
             }
+            @Override protected Connection connect () {
+                return RMap.this.connect(new RMap.Listener<K,V>() {
+                    @Override public void onPut (K pkey, V value, V ovalue) {
+                        if (key.equals(pkey) && ovalue == null) notifyChange(true, false);
+                    }
+                    @Override public void onRemove (K rkey, V ovalue) {
+                        if (key.equals(rkey)) notifyChange(false, true);
+                    }
+                });
+            }
         };
-        model.setConnection(connect(new Listener<K,V>() {
-            @Override public void onPut (K pkey, V value, V ovalue) {
-                if (key.equals(pkey) && ovalue == null) model.notifyChange(true, false);
-            }
-            @Override public void onRemove (K rkey, V ovalue) {
-                if (key.equals(rkey)) model.notifyChange(false, true);
-            }
-        }));
-        return model;
     }
 
     /**
-     * Returns a value that models the mapping of the specified key in this map. The value will
-     * report a change when the mapping for the specified key is changed or removed.
+     * Returns a value view that models the mapping of the specified key in this map. The view will
+     * report a change when the mapping for the specified key is changed or removed. The view will
+     * retain a connection to this map for as long as it has connections of its own.
      */
-    public MappedValueView<V> getView (final K key) {
+    public ValueView<V> getView (final K key) {
         if (key == null) throw new NullPointerException("Must supply non-null 'key'.");
-        final MappedValue<V> model = new MappedValue<V>() {
-            public V get () {
+        return new MappedValue<V>() {
+            @Override public V get () {
                 return RMap.this.get(key);
             }
+            @Override protected Connection connect () {
+                return RMap.this.connect(new RMap.Listener<K,V>() {
+                    @Override public void onPut (K pkey, V value, V ovalue) {
+                        if (key.equals(pkey)) notifyChange(value, ovalue);
+                    }
+                    @Override public void onRemove (K pkey, V ovalue) {
+                        if (key.equals(pkey)) notifyChange(null, ovalue);
+                    }
+                });
+            }
         };
-        model.setConnection(connect(new Listener<K,V>() {
-            @Override public void onPut (K pkey, V value, V ovalue) {
-                if (key.equals(pkey)) model.notifyChange(value, ovalue);
-            }
-            @Override public void onRemove (K pkey, V ovalue) {
-                if (key.equals(pkey)) model.notifyChange(null, ovalue);
-            }
-        }));
-        return model;
     }
 
     /**
