@@ -12,9 +12,7 @@
 #import "RAIntReactor.h"
 #import "RAObjectReactor.h"
 
-@implementation RAConnectionGroup {
-    NSMutableSet *_conns;
-}
+@implementation RAConnectionGroup
 
 - (id)init {
     if (!(self = [super init])) return nil;

@@ -25,10 +25,15 @@
 }
 @end
 
-@implementation RAReactor {
+@interface RAReactor () {
+@protected
     RAConnection *head;
     PostDispatchAction *pending;
 }
+
+@end
+
+@implementation RAReactor
 
 void insertConn(RAConnection* conn,  RAConnection* head);
 void insertConn(RAConnection* conn,  RAConnection* head) {

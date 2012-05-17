@@ -5,7 +5,11 @@
 
 #import "RADoubleReactor.h"
 
-@interface RADoubleValue : RADoubleReactor
+@interface RADoubleValue : RADoubleReactor {
+@protected
+    double _value;
+}
+
 @property(nonatomic,readwrite) double value;
 - (id)init;
 - (id)initWithValue:(double)value;

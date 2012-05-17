@@ -16,7 +16,10 @@
 @class RAObjectReactor;
 
 /** Holds on to multiple connections to allow for simultaneous disconnection. */
-@interface RAConnectionGroup : NSObject
+@interface RAConnectionGroup : NSObject {
+@protected
+    NSMutableSet *_conns;
+}
 
 /** Adds a connection to this group. */
 - (RAConnection*)addConnection:(RAConnection*)conn;

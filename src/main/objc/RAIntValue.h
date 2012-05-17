@@ -5,7 +5,11 @@
 
 #import "RAIntReactor.h"
 
-@interface RAIntValue : RAIntReactor
+@interface RAIntValue : RAIntReactor {
+@protected
+    int _value;
+}
+
 @property(nonatomic,readwrite) int value;
 - (id)init;
 - (id)initWithValue:(int)value;

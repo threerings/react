@@ -6,9 +6,7 @@
 #import "RADoubleValue.h"
 #import "RADoubleReactor+Protected.h"
 
-@implementation RADoubleValue {
-    double _value;
-}
+@implementation RADoubleValue
 
 - (id)init {
     return [self initWithValue:0];

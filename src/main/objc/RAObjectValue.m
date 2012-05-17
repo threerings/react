@@ -6,9 +6,7 @@
 #import "RAObjectValue.h"
 #import "RAObjectReactor+Protected.h"
 
-@implementation RAObjectValue {
-    id _value;
-}
+@implementation RAObjectValue
 
 - (id)init {
     return [self initWithValue:nil];

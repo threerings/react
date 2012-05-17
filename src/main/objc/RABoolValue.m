@@ -6,9 +6,7 @@
 #import "RABoolValue.h"
 #import "RABoolReactor+Protected.h"
 
-@implementation RABoolValue {
-    BOOL _value;
-}
+@implementation RABoolValue
 
 - (id)init {
     return [self initWithValue:NO];

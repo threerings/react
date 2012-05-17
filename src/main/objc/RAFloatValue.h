@@ -5,7 +5,11 @@
 
 #import "RAFloatReactor.h"
 
-@interface RAFloatValue : RAFloatReactor
+@interface RAFloatValue : RAFloatReactor {
+@protected
+    float _value;
+}
+
 @property(nonatomic,readwrite) float value;
 - (id)init;
 - (id)initWithValue:(float)value;

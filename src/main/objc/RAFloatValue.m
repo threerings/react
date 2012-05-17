@@ -6,9 +6,7 @@
 #import "RAFloatValue.h"
 #import "RAFloatReactor+Protected.h"
 
-@implementation RAFloatValue {
-    float _value;
-}
+@implementation RAFloatValue
 
 - (id)init {
     return [self initWithValue:0];

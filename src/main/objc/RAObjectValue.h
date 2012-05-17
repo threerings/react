@@ -5,7 +5,11 @@
 
 #import "RAObjectReactor.h"
 
-@interface RAObjectValue : RAObjectReactor
+@interface RAObjectValue : RAObjectReactor {
+@protected
+    id _value;
+}
+
 @property(nonatomic,readwrite,strong) id value;
 - (id)init;
 - (id)initWithValue:(id)value;

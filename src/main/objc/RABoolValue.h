@@ -5,7 +5,11 @@
 
 #import "RABoolReactor.h"
 
-@interface RABoolValue : RABoolReactor
+@interface RABoolValue : RABoolReactor {
+@protected
+    BOOL _value;
+}
+
 @property(nonatomic,readwrite) BOOL value;
 - (id)init;
 - (id)initWithValue:(BOOL)value;

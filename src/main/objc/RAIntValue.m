@@ -6,9 +6,7 @@
 #import "RAIntValue.h"
 #import "RAIntReactor+Protected.h"
 
-@implementation RAIntValue {
-    int _value;
-}
+@implementation RAIntValue
 
 - (id)init {
     return [self initWithValue:0];
