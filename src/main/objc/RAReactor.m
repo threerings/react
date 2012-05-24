@@ -8,15 +8,15 @@
 #import "RAConnection.h"
 
 @interface PostDispatchAction : NSObject {
-    @public
-    void (^action)(void);
+@public
+    RAUnitBlock action;
     PostDispatchAction *next;
 }
 @end
 @implementation PostDispatchAction
 - (id)initWithAction:(RAUnitBlock)postaction {
     if (!(self = [super init])) return nil;
-    self->action = postaction;
+    self->action = [postaction copy];
     return self;
 }
 - (void)insertAction:(RAUnitBlock)newaction {
@@ -33,16 +33,15 @@
 
 @end
 
-@implementation RAReactor
-
-void insertConn(RAConnection* conn,  RAConnection* head);
-void insertConn(RAConnection* conn,  RAConnection* head) {
+static void insertConn(RAConnection* conn,  RAConnection* head) {
     if (head->next && head->next->priority >= conn->priority) insertConn(conn, head->next);
     else {
         conn->next = head->next;
         head->next = conn;
     }
 }
+
+@implementation RAReactor
 
 - (void)insertConn:(RAConnection*)conn {
     if (!head || conn->priority > head->priority) {
@@ -68,11 +67,16 @@ void insertConn(RAConnection* conn,  RAConnection* head) {
 }
 
 - (void)disconnect:(RAConnection*)conn {
-    // mark the connection as disconnected by nilling out the reactor reference
-    conn->reactor = nil;
-    
-    if (pending != nil) [pending insertAction:^{ [self removeConn:conn]; }];
-    else [self removeConn:conn];
+    if (RA_IS_CONNECTED(conn)) {
+        // mark the connection as disconnected by nilling out the reactor reference
+        conn->reactor = nil;
+        
+        if (pending != nil) {
+            __weak RAReactor* this = self;
+            [pending insertAction:^{ if (this) [this removeConn:conn]; }];
+        }
+        else [self removeConn:conn];
+    }
 }
 
 - (void)disconnectAll {
@@ -80,7 +84,10 @@ void insertConn(RAConnection* conn,  RAConnection* head) {
         cur->reactor = nil;
     }
     
-    if (pending != nil) [pending insertAction:^{ head = nil; }];
+    if (pending != nil) {
+        __weak RAReactor* this = self;
+        [pending insertAction:^{ if (this) this->head = nil; }];
+    }
     else head = nil;
 }
 
@@ -99,7 +106,15 @@ void insertConn(RAConnection* conn,  RAConnection* head) {
 
 @implementation RAReactor (protected)
 - (RAConnection*)connectConnection:(RAConnection*)connection {
-    if (pending != nil) [pending insertAction:^{ [self insertConn:connection]; }];
+    if (pending != nil) {
+        __weak RAReactor* this = self;
+        [pending insertAction:^{
+            // ensure the connection hasn't already been disconnected
+            if (this && RA_IS_CONNECTED(connection)) {
+                [this insertConn:connection];
+            }
+        }];
+    }
     else [self insertConn:connection];
     return connection;
 
