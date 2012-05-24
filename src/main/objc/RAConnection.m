@@ -23,7 +23,7 @@
 @implementation RAConnection(package)
 - (id)initWithBlock:(id)newblock atPriority:(int)newpriority onReactor:(RAReactor*)newreactor {
     if (!(self = [super init])) return nil;
-    block = newblock;
+    block = [newblock copy];
     priority = newpriority;
     reactor = newreactor;
     return self;

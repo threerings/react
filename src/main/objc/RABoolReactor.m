@@ -24,7 +24,7 @@
 }
 
 - (RAConnection*)withPriority:(int)priority connectSlot:(RABoolSlot)block {
-    return [self connectConnection:[[RAConnection alloc] initWithBlock:[block copy] atPriority:priority onReactor:self]];
+    return [self connectConnection:[[RAConnection alloc] initWithBlock:block atPriority:priority onReactor:self]];
 }
 
 - (RAConnection*)connectUnit:(RAUnitBlock)block {
