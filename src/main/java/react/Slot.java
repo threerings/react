@@ -35,6 +35,19 @@ public abstract class Slot<T> extends ValueView.Listener<T>
     }
 
     /**
+     * Returns a new slot that invokes this slot and then evokes {@code after}.
+     */
+    public <S extends T> Slot<S> andThen (final Slot<S> after) {
+        final Slot<T> before = this;
+        return new Slot<S>() {
+            public void onEmit (S event) {
+                before.onEmit(event);
+                after.onEmit(event);
+            }
+        };
+    }
+
+    /**
      * Allows a slot to be used as a {@link ValueView.Listener} by passing just the new value
      * through to {@link #onEmit}.
      */
