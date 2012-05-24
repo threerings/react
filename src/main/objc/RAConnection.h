@@ -11,10 +11,10 @@
 @interface RAConnection : NSObject {
 @package
     BOOL oneShot;
-    RAConnection *next;
+    RAConnection* next;
     id block;
     int priority;
-    RAReactor *reactor;
+    __weak RAReactor* reactor;
 }
 
 /**
@@ -23,9 +23,9 @@
 - (RAConnection*)once;
 
 /**
-* Disconnects this connection from the signal. Subsequent emissions won't be passed on to the
-* listener.
-*/
+ * Disconnects this connection from the signal. Subsequent emissions won't be passed on to the
+ * listener.
+ */
 - (void)disconnect;
 
 @end
