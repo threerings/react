@@ -72,8 +72,7 @@ static void insertConn(RAConnection* conn,  RAConnection* head) {
         conn->reactor = nil;
         
         if (pending != nil) {
-            __weak RAReactor* this = self;
-            [pending insertAction:^{ if (this) [this removeConn:conn]; }];
+            [pending insertAction:^{ [self removeConn:conn]; }];
         }
         else [self removeConn:conn];
     }
@@ -85,8 +84,7 @@ static void insertConn(RAConnection* conn,  RAConnection* head) {
     }
     
     if (pending != nil) {
-        __weak RAReactor* this = self;
-        [pending insertAction:^{ if (this) this->head = nil; }];
+        [pending insertAction:^{ self->head = nil; }];
     }
     else head = nil;
 }
@@ -107,11 +105,10 @@ static void insertConn(RAConnection* conn,  RAConnection* head) {
 @implementation RAReactor (protected)
 - (RAConnection*)connectConnection:(RAConnection*)connection {
     if (pending != nil) {
-        __weak RAReactor* this = self;
         [pending insertAction:^{
             // ensure the connection hasn't already been disconnected
-            if (this && RA_IS_CONNECTED(connection)) {
-                [this insertConn:connection];
+            if (RA_IS_CONNECTED(connection)) {
+                [self insertConn:connection];
             }
         }];
     }
