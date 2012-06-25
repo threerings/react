@@ -83,4 +83,18 @@ public class Functions
             }
         };
     }
+
+    /**
+     * Returns the identity function for type {@code T}.
+     */
+    public static <T> Function<T, T> identity () {
+        @SuppressWarnings("unchecked") Function<T, T> ident = (Function<T, T>)IDENT;
+        return ident;
+    }
+
+    protected static final Function<Object, Object> IDENT = new Function<Object, Object>() {
+        public Object apply (Object value) {
+            return value;
+        }
+    };
 }
