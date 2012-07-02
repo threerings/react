@@ -251,7 +251,15 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
         return _impl.toArray(array);
     }
 
-    public String toString () {
+    @Override public int hashCode () {
+        return _impl.hashCode();
+    }
+
+    @Override public boolean equals (Object other) {
+        return (other instanceof Set<?>) ? _impl.equals(other) : false;
+    }
+
+    @Override public String toString () {
         return "RSet" + _impl;
     }
 

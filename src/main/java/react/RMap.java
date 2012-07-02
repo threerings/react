@@ -207,6 +207,14 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
         return _impl.containsValue(value);
     }
 
+    @Override public int hashCode () {
+        return _impl.hashCode();
+    }
+
+    @Override public boolean equals (Object other) {
+        return (other instanceof Map<?,?>) ? _impl.equals(other) : false;
+    }
+
     @Override public String toString () {
         return "RMap" + _impl;
     }
