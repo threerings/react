@@ -252,7 +252,7 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
     }
 
     public String toString () {
-        return "RSet(" + _impl + ")";
+        return "RSet" + _impl;
     }
 
     protected void emitAdd (E elem) {

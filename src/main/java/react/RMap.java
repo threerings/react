@@ -208,7 +208,7 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
     }
 
     @Override public String toString () {
-        return "RMap(" + _impl + ")";
+        return "RMap" + _impl;
     }
 
     // from interface Map<K,V>
