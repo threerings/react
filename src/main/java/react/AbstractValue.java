@@ -83,7 +83,7 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
      * value is not equal to the value already contained in this instance (per {@link #areEqual}).
      */
     protected T updateAndNotifyIf (T value) {
-        return updateAndNotify(value, get(), false);
+        return updateAndNotify(value, false);
     }
 
     /**
@@ -91,7 +91,7 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
      * @return the previously contained value.
      */
     protected T updateAndNotify (T value) {
-        return updateAndNotify(value, get(), true);
+        return updateAndNotify(value, true);
     }
 
     /**
@@ -100,9 +100,9 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
      * only if the new value is not equal to the old value (per {@link #areEqual}).
      * @return the previously contained value.
      */
-    protected T updateAndNotify (T value, T ovalue, boolean force) {
+    protected T updateAndNotify (T value, boolean force) {
         checkMutate();
-        updateLocal(value);
+        T ovalue = updateLocal(value);
         if (force || !areEqual(value, ovalue)) {
             emitChange(value, ovalue);
         }
