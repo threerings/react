@@ -38,6 +38,11 @@ class Cons<L extends RListener> implements Connection
         owner.disconnect(this);
     }
 
+    @Override public String toString () {
+        return "[owner=" + owner + ", lner=" + listener + ", hasNext=" + (next != null) +
+            ", oneShot=" + oneShot + "]";
+    }
+
     static <L extends RListener> Cons<L> insert (Cons<L> head, Cons<L> cons) {
         if (head == null) {
             return cons;
