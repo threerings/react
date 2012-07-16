@@ -40,6 +40,8 @@ public abstract class Reactor<L extends Reactor.RListener>
     }
 
     protected synchronized Cons<L> prepareNotify () {
+        if (_listeners == DISPATCHING)
+            throw new IllegalStateException("Initiated notify while notifying");
         Cons<L> lners = _listeners;
         @SuppressWarnings("unchecked") Cons<L> sentinel = (Cons<L>)DISPATCHING;
         _listeners = sentinel;
