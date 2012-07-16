@@ -1,24 +1,15 @@
-name := "react"
-
-version := "1.2-SNAPSHOT"
-
-organization := "com.threerings"
+seq(samskivert.POMUtil.pomToSettings("pom.xml") :_*)
 
 crossPaths := false
 
-javacOptions ++= Seq(
-  "-Xlint", "-Xlint:-serial", "-source", "1.6", "-target", "1.6"
-)
+scalaVersion := "2.9.1"
 
 autoScalaLibrary := false // no scala-library dependency
 
-libraryDependencies ++= Seq(
-  "junit" % "junit" % "4.+" % "test",
-  "com.novocode" % "junit-interface" % "0.7" % "test->default"
-)
+javacOptions ++= Seq("-Xlint", "-Xlint:-serial", "-source", "1.6", "-target", "1.6")
 
 // add our sources to the main jar file
 unmanagedResourceDirectories in Compile <+= baseDirectory / "src/main/java"
 
-// work around SBT bug
-unmanagedResources in Compile ~= (_.filterNot(_.isDirectory))
+// allows SBT to run junit tests
+libraryDependencies += "com.novocode" % "junit-interface" % "0.7" % "test->default"
