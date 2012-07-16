@@ -20,6 +20,7 @@ public abstract class Reactor<L extends Reactor.RListener>
     }
 
     protected synchronized Cons<L> addConnection (L listener) {
+        if (listener == null) throw new NullPointerException("Null listener");
         return addCons(new Cons<L>(this, listener));
     }
 
