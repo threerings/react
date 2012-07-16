@@ -26,6 +26,20 @@ public class Functions
         }
     };
 
+    /** A function that returns the float value of a number. */
+    public static Function<Number,Float> FLOAT_VALUE = new Function<Number,Float>() {
+        public Float apply (Number value) {
+            return value.floatValue();
+        }
+    };
+
+    /** A function that returns the int value of a number. */
+    public static Function<Number,Integer> INT_VALUE = new Function<Number,Integer>() {
+        public Integer apply (Number value) {
+            return value.intValue();
+        }
+    };
+
     /**
      * Returns a function that computes whether a value is greater than {@code target}.
      */
