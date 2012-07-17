@@ -96,6 +96,14 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
     }
 
     /**
+     * Returns the mapping for {@code key} or {@code defaultValue} if there is no mapping for
+     * {@code key}.
+     */
+    public V getOrElse (K key, V defaultValue) {
+        return _impl.containsKey(key) ? _impl.get(key) : defaultValue;
+    }
+
+    /**
      * Updates the mapping with the supplied key and value, and notifies registered listeners
      * regardless of whether the new value is equal to the old value.
      * @return the previous value mapped to the supplied key, or null.
