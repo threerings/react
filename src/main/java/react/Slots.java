@@ -10,6 +10,11 @@ package react;
  */
 public class Slots
 {
+    /** A slot that does nothing. Useful when you don't want to fiddle with null checks. */
+    public static UnitSlot NOOP = new UnitSlot() {
+        public void onEmit () {} // noop!
+    };
+
     /**
      * Returns a slot that logs the supplied message (via {@link System#err}) with the emitted
      * value appended to it before passing the emitted value on to {@code slot}. Useful for
