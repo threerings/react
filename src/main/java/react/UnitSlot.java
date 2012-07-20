@@ -13,20 +13,19 @@ package react;
  */
 public abstract class UnitSlot extends Slot<Object> implements Runnable
 {
-    // if you're using unit slot, you're not allow to see the event
-    @Override public final void onEmit (Object event) {
-        onEmit();
+    /**
+     * Wraps the supplied runnable in a {@link UnitSlot}.
+     */
+    public static UnitSlot toSlot (final Runnable runnable) {
+        return new UnitSlot() { public void onEmit () {
+            runnable.run();
+        }};
     }
 
     /**
      * Called when a signal to which this slot is connected has emitted an event.
      */
     public abstract void onEmit ();
-
-    @Override // from Runnable
-    public void run () {
-        onEmit();
-    }
 
     /**
      * Returns a new slot that invokes this slot and then evokes {@code after}.
@@ -39,5 +38,15 @@ public abstract class UnitSlot extends Slot<Object> implements Runnable
                 after.onEmit();
             }
         };
+    }
+
+    @Override // if you're using unit slot, you're not allow to see the event
+    public final void onEmit (Object event) {
+        onEmit();
+    }
+
+    @Override // from Runnable
+    public void run () {
+        onEmit();
     }
 }
