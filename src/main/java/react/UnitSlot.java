@@ -27,4 +27,17 @@ public abstract class UnitSlot extends Slot<Object> implements Runnable
     public void run () {
         onEmit();
     }
+
+    /**
+     * Returns a new slot that invokes this slot and then evokes {@code after}.
+     */
+    public UnitSlot andThen (final UnitSlot after) {
+        final UnitSlot before = this;
+        return new UnitSlot() {
+            public void onEmit () {
+                before.onEmit();
+                after.onEmit();
+            }
+        };
+    }
 }
