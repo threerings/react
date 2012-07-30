@@ -332,7 +332,7 @@
 		CBFF4A63149AA9470003AC2B /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0430;
+				LastUpgradeCheck = 0440;
 				ORGANIZATIONNAME = "Three Rings Design";
 			};
 			buildConfigurationList = CBFF4A66149AA9470003AC2B /* Build configuration list for PBXProject "react" */;
