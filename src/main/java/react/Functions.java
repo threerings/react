@@ -41,6 +41,17 @@ public class Functions
     };
 
     /**
+     * Returns a function that always returns the supplied constant integer value.
+     */
+    public static Function<Object,Integer> constant (final int constant) {
+        return new Function<Object,Integer>() {
+            public Integer apply (Object value) {
+                return constant;
+            }
+        };
+    }
+
+    /**
      * Returns a function that computes whether a value is greater than {@code target}.
      */
     public static Function<Integer,Boolean> greaterThan (final int target) {
