@@ -37,7 +37,7 @@ public abstract class Slot<T> extends ValueView.Listener<T>
     /**
      * Returns a new slot that invokes this slot and then evokes {@code after}.
      */
-    public <S extends T> Slot<S> andThen (final Slot<S> after) {
+    public <S extends T> Slot<S> andThen (final Slot<? super S> after) {
         final Slot<T> before = this;
         return new Slot<S>() {
             public void onEmit (S event) {
