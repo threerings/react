@@ -41,11 +41,11 @@ public class Functions
     };
 
     /**
-     * Returns a function that always returns the supplied constant integer value.
+     * Returns a function that always returns the supplied constant value.
      */
-    public static Function<Object,Integer> constant (final int constant) {
-        return new Function<Object,Integer>() {
-            public Integer apply (Object value) {
+    public static <E> Function<Object,E> constant (final E constant) {
+        return new Function<Object,E>() {
+            public E apply (Object value) {
                 return constant;
             }
         };
