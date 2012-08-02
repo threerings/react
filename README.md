@@ -8,8 +8,8 @@ listen and to which they will react.
 
 * [API docs](http://threerings.github.com/react/apidocs/) are available.
 
-Building
---------
+Building (Java)
+---------------
 
 The library is built using [SBT] or [Maven].
 
@@ -18,6 +18,14 @@ Ivy repository (i.e. `~/.ivy2/local`).
 
 Invoke `mvn install` to build and install the library to your local Maven
 repository (i.e. `~/.m2/repository`).
+
+Building (Objective-C)
+----------------------
+
+The Objective-C library is distributed as an Xcode project with no
+external dependencies. Add it to your project, add `src/main/objc` to
+your user header search paths, and add `#import "React.h"` to your
+project's pre-compiled header.
 
 Artifacts
 ---------
