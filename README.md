@@ -23,9 +23,9 @@ Building (Objective-C)
 ----------------------
 
 The Objective-C library is distributed as an Xcode project with no
-external dependencies. Add it to your project, add `src/main/objc` to
-your user header search paths, and add `#import "React.h"` to your
-project's pre-compiled header.
+external dependencies. Add `react.xcodeproj` to your project, 
+add `/path/to/react/src/main/objc` to your user header search paths, 
+and add `#import "React.h"` to your project's pre-compiled header.
 
 Artifacts
 ---------
