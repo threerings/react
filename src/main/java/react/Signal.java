@@ -24,4 +24,16 @@ public class Signal<T> extends AbstractSignal<T>
     public void emit (T event) {
         notifyEmit(event);
     }
+
+    /**
+     * Returns a slot which can be used to wire this signal to the emissons of a {@link Signal} or
+     * another value.
+     */
+    public Slot<T> slot () {
+        return new Slot<T> () {
+            @Override public void onEmit (T value) {
+                emit(value);
+            }
+        };
+    }
 }
