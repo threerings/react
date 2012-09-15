@@ -25,4 +25,14 @@ public class UnitSignal extends AbstractSignal<Void>
     public void emit () {
         notifyEmit(null);
     }
+
+    /**
+     * Returns a slot which can be used to wire this signal to the emissons of a {@link Signal} or
+     * another value.
+     */
+    public UnitSlot slot () {
+        return new UnitSlot () {
+            @Override public void onEmit () { emit(); }
+        };
+    }
 }
