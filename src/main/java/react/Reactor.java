@@ -19,6 +19,13 @@ public abstract class Reactor<L extends Reactor.RListener>
         }
     }
 
+    /**
+     * Returns true if this reactor has at least one connection.
+     */
+    public boolean hasConnections () {
+        return _listeners != null;
+    }
+
     protected synchronized Cons<L> addConnection (L listener) {
         if (listener == null) throw new NullPointerException("Null listener");
         return addCons(new Cons<L>(this, listener));
@@ -113,13 +120,6 @@ public abstract class Reactor<L extends Reactor.RListener>
      */
     protected void connectionRemoved () {
         // noop
-    }
-
-    /**
-     * Returns true if this reactor has at least one connection.
-     */
-    protected boolean hasConnections () {
-        return _listeners != null;
     }
 
     protected static Runs insert (Runs head, Runs action) {
