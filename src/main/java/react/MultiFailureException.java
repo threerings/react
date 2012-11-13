@@ -6,6 +6,7 @@
 package react;
 
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +50,13 @@ public class MultiFailureException extends RuntimeException
     public void printStackTrace (PrintStream s) {
         for (Throwable failure : _failures) {
             failure.printStackTrace(s);
+        }
+    }
+
+    @Override
+    public void printStackTrace (PrintWriter w) {
+        for (Throwable failure : _failures) {
+            failure.printStackTrace(w);
         }
     }
 
