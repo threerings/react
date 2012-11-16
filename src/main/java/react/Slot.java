@@ -51,7 +51,7 @@ public abstract class Slot<T> extends ValueView.Listener<T>
      * Allows a slot to be used as a {@link ValueView.Listener} by passing just the new value
      * through to {@link #onEmit}.
      */
-    @Override public void onChange (T value, T oldValue) {
+    @Override public final void onChange (T value, T oldValue) {
         onEmit(value);
     }
 }
