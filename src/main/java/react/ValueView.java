@@ -19,9 +19,20 @@ public interface ValueView<T>
      */
     abstract class Listener<T> extends Reactor.RListener {
         /**
-         * Called when the value to which this listener is bound has changed.
+         * Called when the value to which this listener is bound has changed. This method will call
+         * the old-value-forgetting version ({@link #onChange(Object)}) by default.
          */
-        public abstract void onChange (T value, T oldValue);
+        public void onChange (T value, T oldValue) {
+            onChange(value);
+        }
+
+        /**
+         * Called when the value has changed. If you care about the previous value, override
+         * {@link #onChange(Object,Object)} instead.
+         */
+        public void onChange (T value) {
+            // noop
+        }
     }
 
     /**
