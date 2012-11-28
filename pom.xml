@@ -71,6 +71,9 @@
           <showDeprecation>true</showDeprecation>
           <showWarnings>true</showWarnings>
           <compilerArgument>-Xlint" "-Xlint:-serial" "-Xlint:-path</compilerArgument>
+          <excludes>
+            <exclude>gwt/**</exclude>
+          </excludes>
         </configuration>
       </plugin>
       <plugin>
