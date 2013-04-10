@@ -159,16 +159,27 @@ public class ValueTest
         System.gc();
         System.gc();
         System.gc();
-        value.addConnection(listener).holdWeakly();
+
+        Connection conn = value.addConnection(listener);
         value.update(41);
         assertEquals(1, fired.get());
         assertTrue(value.hasConnections());
+
+        // make sure that calling holdWeakly twice doesn't cause weirdness
+        conn.holdWeakly();
+        value.update(42);
+        assertEquals(2, fired.get());
+        assertTrue(value.hasConnections());
+
+        // clear out the listener and do our best to convince the JVM to collect it
         listener = null;
         System.gc();
         System.gc();
         System.gc();
+
+        // now check that the listener has been collected and is not notified
         value.update(40);
-        assertEquals(1, fired.get());
+        assertEquals(2, fired.get());
         assertFalse(value.hasConnections());
     }
 }
