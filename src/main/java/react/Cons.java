@@ -12,40 +12,51 @@ import react.Reactor.RListener;
  */
 abstract class Cons<L extends RListener> implements Connection
 {
-    /** The reactor that owns this cons cell. */
-    public final Reactor<L> owner;
-
     /** The next connection in our chain. */
     public Cons<L> next;
 
     /** Indicates whether this connection is one-shot or persistent. */
-    public boolean oneShot;
+    public final boolean oneShot () { return _oneShot; }
 
     /** Returns the listener for this cons cell. */
     public abstract L listener ();
 
+    @Override public void disconnect () {
+        // multiple disconnects are OK, we just NOOP after the first one
+        if (_owner != null) {
+            _owner.disconnect(this);
+            _owner = null;
+        }
+    }
+
     @Override public Connection once () {
-        oneShot = true;
+        _oneShot = true;
         return this;
     }
 
-    @Override public void disconnect () {
-        owner.disconnect(this);
+    @Override public Connection atPriority (int priority) {
+        if (_owner == null) throw new IllegalStateException(
+            "Cannot change priority of disconnected connection.");
+        _owner.disconnect(this);
+        next = null;
+        _priority = priority;
+        _owner.addCons(this);
+        return this;
     }
 
     @Override public String toString () {
-        return "[owner=" + owner + ", lner=" + listener() + ", hasNext=" + (next != null) +
-            ", oneShot=" + oneShot + "]";
+        return "[owner=" + _owner + ", pri=" + _priority + ", lner=" + listener() +
+            ", hasNext=" + (next != null) + ", oneShot=" + oneShot() + "]";
     }
 
     protected Cons (Reactor<L> owner) {
-        this.owner = owner;
+        _owner = owner;
     }
 
     static <L extends RListener> Cons<L> insert (Cons<L> head, Cons<L> cons) {
         if (head == null) {
             return cons;
-        } else if (head.listener().priority() > cons.listener().priority()) {
+        } else if (head._priority > cons._priority) {
             cons.next = head;
             return cons;
         } else {
@@ -67,4 +78,8 @@ abstract class Cons<L extends RListener> implements Connection
         head.next = removeAll(head.next, listener);
         return head;
     }
+
+    protected Reactor<L> _owner;
+    private boolean _oneShot; // defaults to false
+    private int _priority; // defaults to zero
 }

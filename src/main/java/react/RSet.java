@@ -279,7 +279,7 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);
                 }
-                if (cons.oneShot) cons.disconnect();
+                if (cons.oneShot()) cons.disconnect();
             }
         } finally {
             finishNotify(lners);
@@ -302,7 +302,7 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);
                 }
-                if (cons.oneShot) cons.disconnect();
+                if (cons.oneShot()) cons.disconnect();
             }
         } finally {
             finishNotify(lners);

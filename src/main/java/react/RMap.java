@@ -440,7 +440,7 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);
                 }
-                if (cons.oneShot) cons.disconnect();
+                if (cons.oneShot()) cons.disconnect();
             }
         } finally {
             finishNotify(lners);
@@ -463,7 +463,7 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);
                 }
-                if (cons.oneShot) cons.disconnect();
+                if (cons.oneShot()) cons.disconnect();
             }
         } finally {
             finishNotify(lners);

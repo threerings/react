@@ -60,24 +60,16 @@ public class SignalTest
                 order = ++counter[0];
             }
         }
-        TestSlot slot1 = new TestSlot() {
-            @Override public int priority () { return 1; }
-        };
-        TestSlot slot2 = new TestSlot() {
-            @Override public int priority () { return 2; }
-        };
-        TestSlot slot3 = new TestSlot() {
-            @Override public int priority () { return 3; }
-        };
-        TestSlot slot4 = new TestSlot() {
-            @Override public int priority () { return 3; }
-        };
+        TestSlot slot1 = new TestSlot();
+        TestSlot slot2 = new TestSlot();
+        TestSlot slot3 = new TestSlot();
+        TestSlot slot4 = new TestSlot();
 
         UnitSignal signal = new UnitSignal();
-        signal.connect(slot3);
-        signal.connect(slot1);
-        signal.connect(slot2);
-        signal.connect(slot4);
+        signal.connect(slot3).atPriority(3);
+        signal.connect(slot1).atPriority(1);
+        signal.connect(slot2).atPriority(2);
+        signal.connect(slot4).atPriority(4);
         signal.emit();
         assertEquals(1, slot1.order);
         assertEquals(2, slot2.order);

@@ -135,7 +135,7 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);
                 }
-                if (cons.oneShot) cons.disconnect();
+                if (cons.oneShot()) cons.disconnect();
             }
         } finally {
             finishNotify(lners);

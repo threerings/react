@@ -13,13 +13,8 @@ import java.lang.ref.WeakReference;
  */
 public abstract class Reactor<L extends Reactor.RListener>
 {
-    /** The base class for all reactor listeners. Handles priority. */
-    public abstract static class RListener {
-        /** Returns the priority of this listener. Listeners are notified in order of priority. */
-        public int priority () {
-            return 0;
-        }
-    }
+    /** The base class for all reactor listeners. */
+    public abstract static class RListener {}
 
     /**
      * Returns true if this reactor has at least one connection.
@@ -52,7 +47,7 @@ public abstract class Reactor<L extends Reactor.RListener>
             @Override public L listener () {
                 L listener = weak.get();
                 if (listener == null) {
-                    listener = owner.placeholderListener();
+                    listener = _owner.placeholderListener();
                     disconnect();
                 }
                 return listener;

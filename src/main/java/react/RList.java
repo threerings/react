@@ -319,7 +319,7 @@ public class RList<E> extends Reactor<RList.Listener<E>>
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);
                 }
-                if (cons.oneShot) cons.disconnect();
+                if (cons.oneShot()) cons.disconnect();
             }
         } finally {
             finishNotify(lners);
@@ -338,7 +338,7 @@ public class RList<E> extends Reactor<RList.Listener<E>>
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);
                 }
-                if (cons.oneShot) cons.disconnect();
+                if (cons.oneShot()) cons.disconnect();
             }
         } finally {
             finishNotify(lners);
@@ -357,7 +357,7 @@ public class RList<E> extends Reactor<RList.Listener<E>>
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);
                 }
-                if (cons.oneShot) cons.disconnect();
+                if (cons.oneShot()) cons.disconnect();
             }
         } finally {
             finishNotify(lners);

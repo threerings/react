@@ -135,6 +135,10 @@ public class Values
                         for (Connection conn : conns) conn.once();
                         return this;
                     }
+                    public Connection atPriority (int priority) {
+                        for (Connection conn : conns) conn.atPriority(priority);
+                        return this;
+                    }
                 };
             }
 

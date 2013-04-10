@@ -20,7 +20,21 @@ public interface Connection
     /**
      * Converts this connection into a one-shot connection. After the first time the slot or
      * listener is notified, it will automatically be disconnected.
+     *
      * @return this connection instance for convenient chaining.
      */
     Connection once ();
+
+    /**
+     * Changes the priority of this connection to the specified value. This should generally be
+     * done simultaneously with creating a connection. For example:
+     *
+     * <pre>{@code
+     * Signal<Foo> signal = ...;
+     * Connection conn = signal.connect(new Slot<Foo>() { ... }).atPriority(5);
+     * }</pre></p>
+     *
+     * @return this connection instance for convenient chaining.
+     */
+    Connection atPriority (int priority);
 }
