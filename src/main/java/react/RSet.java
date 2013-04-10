@@ -54,6 +54,7 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
      * Creates a reactive set with the supplied underlying set implementation.
      */
     public RSet (Set<E> impl) {
+        super(new Listener<E>() {});
         _impl = impl;
     }
 
@@ -273,7 +274,7 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
         try {
             for (Cons<Listener<E>> cons = lners; cons != null; cons = cons.next) {
                 try {
-                    cons.listener.onAdd(elem);
+                    cons.getListener().onAdd(elem);
                 } catch (Throwable t) {
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);
@@ -296,7 +297,7 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
         try {
             for (Cons<Listener<E>> cons = lners; cons != null; cons = cons.next) {
                 try {
-                    cons.listener.onRemove(elem);
+                    cons.getListener().onRemove(elem);
                 } catch (Throwable t) {
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);

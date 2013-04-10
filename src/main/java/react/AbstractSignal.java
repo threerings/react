@@ -26,6 +26,12 @@ public class AbstractSignal<T> extends Reactor<Slot<T>>
         };
     }
 
+    public AbstractSignal() {
+        super(new Slot<T>() {
+            @Override public void onEmit(T event) {}
+        });
+    }
+
     @Override public Connection connect (Slot<? super T> slot) {
         // alas, Java does not support higher kinded types; this cast is safe
         @SuppressWarnings("unchecked") Slot<T> casted = (Slot<T>)slot;
@@ -47,7 +53,7 @@ public class AbstractSignal<T> extends Reactor<Slot<T>>
         try {
             for (Cons<Slot<T>> cons = lners; cons != null; cons = cons.next) {
                 try {
-                    cons.listener.onEmit(event);
+                    cons.getListener().onEmit(event);
                 } catch (Throwable t) {
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);

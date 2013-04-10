@@ -20,6 +20,14 @@ public abstract class Reactor<L extends Reactor.RListener>
     }
 
     /**
+     * Create the Reactor with the given placeholderListener to be used when a weakly held listener is discovered to
+     * have been collected while dispatching. The placeholder should noop when signalled.
+     */
+    public Reactor(L placeholderListener) {
+        this.placeholderListener = placeholderListener;
+    }
+
+    /**
      * Returns true if this reactor has at least one connection.
      */
     public boolean hasConnections () {
@@ -28,7 +36,12 @@ public abstract class Reactor<L extends Reactor.RListener>
 
     protected synchronized Cons<L> addConnection (L listener) {
         if (listener == null) throw new NullPointerException("Null listener");
-        return addCons(new Cons<L>(this, listener));
+        return addCons(new StrongCons<L>(this, listener));
+    }
+
+    protected synchronized Cons<L> addConnectionWeak (L listener) {
+        if (listener == null) throw new NullPointerException("Null listener");
+        return addCons(new WeakCons<L>(this, listener));
     }
 
     protected synchronized Cons<L> addCons (final Cons<L> cons) {
@@ -135,10 +148,11 @@ public abstract class Reactor<L extends Reactor.RListener>
 
     protected Cons<L> _listeners;
     protected Runs _pendingRuns;
+    final L placeholderListener;
 
     protected static abstract class Runs implements Runnable {
         public Runs next;
     }
 
-    protected static final Cons<RListener> DISPATCHING = new Cons<RListener>(null, null);
+    protected static final Cons<RListener> DISPATCHING = new StrongCons<RListener>(null, null);
 }

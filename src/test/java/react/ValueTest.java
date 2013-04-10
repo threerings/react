@@ -6,6 +6,9 @@
 package react;
 
 import org.junit.*;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
 import static org.junit.Assert.*;
 
 /**
@@ -141,5 +144,31 @@ public class ValueTest
         value.connect(listener).disconnect();
         value.update((expectedValue[0] = 14));
         assertEquals(1, fired[0]);
+    }
+
+    @Test public void testWeakListener () {
+        final Value<Integer> value = Value.create(42);
+        final AtomicInteger fired = new AtomicInteger(0);
+
+        ValueView.Listener<Integer> listener = new ValueView.Listener<Integer>() {
+            @Override
+            public void onChange(Integer value, Integer oldValue) {
+                fired.incrementAndGet();
+            }
+        };
+        System.gc();
+        System.gc();
+        System.gc();
+        value.addConnectionWeak(listener);
+        value.update(41);
+        assertEquals(1, fired.get());
+        assertTrue(value.hasConnections());
+        listener = null;
+        System.gc();
+        System.gc();
+        System.gc();
+        value.update(40);
+        assertEquals(1, fired.get());
+        assertFalse(value.hasConnections());
     }
 }

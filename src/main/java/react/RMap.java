@@ -72,6 +72,7 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
      * Creates a reactive map with the supplied underlying map implementation.
      */
     public RMap (Map<K,V> impl) {
+        super(new Listener<K, V>() {});
         _impl = impl;
     }
 
@@ -434,7 +435,7 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
         try {
             for (Cons<Listener<K,V>> cons = lners; cons != null; cons = cons.next) {
                 try {
-                    cons.listener.onPut(key, value, oldValue);
+                    cons.getListener().onPut(key, value, oldValue);
                 } catch (Throwable t) {
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);
@@ -457,7 +458,7 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
         try {
             for (Cons<Listener<K,V>> cons = lners; cons != null; cons = cons.next) {
                 try {
-                    cons.listener.onRemove(key, oldValue);
+                    cons.getListener().onRemove(key, oldValue);
                 } catch (Throwable t) {
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);

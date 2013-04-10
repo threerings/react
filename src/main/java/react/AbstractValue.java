@@ -14,6 +14,12 @@ package react;
 public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
     implements ValueView<T>
 {
+    public AbstractValue() {
+        super(new Listener<T>() {
+            @Override public void onChange(T value, T oldValue) {}
+        });
+    }
+
     @Override public <M> ValueView<M> map (final Function<? super T, M> func) {
         final AbstractValue<T> outer = this;
         return new MappedValue<M>() {
@@ -34,6 +40,11 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
         // alas, Java does not support higher kinded types; this cast is safe
         @SuppressWarnings("unchecked") Listener<T> casted = (Listener<T>)listener;
         return addConnection(casted);
+    }
+
+    public Connection connectWeak (Listener<? super T> listener) {
+        @SuppressWarnings("unchecked") Listener<T> casted = (Listener<T>)listener;
+        return addConnectionWeak(casted);
     }
 
     @Override public Connection connectNotify (Listener<? super T> listener) {
@@ -120,12 +131,12 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
      * Notifies our listeners of a value change.
      */
     protected void notifyChange (T value, T ovalue) {
-        Cons<ValueView.Listener<T>> lners = prepareNotify();
+        Cons<Listener<T>> lners = prepareNotify();
         MultiFailureException error = null;
         try {
-            for (Cons<ValueView.Listener<T>> cons = lners; cons != null; cons = cons.next) {
+            for (Cons<Listener<T>> cons = lners; cons != null; cons = cons.next) {
                 try {
-                    cons.listener.onChange(value, ovalue);
+                    cons.getListener().onChange(value, ovalue);
                 } catch (Throwable t) {
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);

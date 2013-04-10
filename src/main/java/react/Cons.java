@@ -10,13 +10,10 @@ import react.Reactor.RListener;
 /**
  * Implements {@link Connection} and a linked-list style listener list for {@link Reactor}s.
  */
-class Cons<L extends RListener> implements Connection
+abstract class Cons<L extends RListener> implements Connection
 {
     /** The reactor that owns this cons cell. */
     public final Reactor<L> owner;
-
-    /** Receives signals from the reactor. */
-    public final L listener;
 
     /** The next connection in our chain. */
     public Cons<L> next;
@@ -24,10 +21,11 @@ class Cons<L extends RListener> implements Connection
     /** Indicates whether this connection is one-shot or persistent. */
     public boolean oneShot;
 
-    public Cons (Reactor<L> owner, L listener) {
+    public Cons(Reactor<L> owner) {
         this.owner = owner;
-        this.listener = listener;
     }
+
+    abstract public L getListener();
 
     @Override public Connection once () {
         oneShot = true;
@@ -39,14 +37,14 @@ class Cons<L extends RListener> implements Connection
     }
 
     @Override public String toString () {
-        return "[owner=" + owner + ", lner=" + listener + ", hasNext=" + (next != null) +
+        return "[owner=" + owner + ", lner=" + getListener() + ", hasNext=" + (next != null) +
             ", oneShot=" + oneShot + "]";
     }
 
     static <L extends RListener> Cons<L> insert (Cons<L> head, Cons<L> cons) {
         if (head == null) {
             return cons;
-        } else if (head.listener.priority() > cons.listener.priority()) {
+        } else if (head.getListener().priority() > cons.getListener().priority()) {
             cons.next = head;
             return cons;
         } else {
@@ -64,7 +62,7 @@ class Cons<L extends RListener> implements Connection
 
     static <L extends RListener> Cons<L> removeAll (Cons<L> head, Object listener) {
         if (head == null) return null;
-        if (head.listener == listener) return removeAll(head.next, listener);
+        if (head.getListener() == listener) return removeAll(head.next, listener);
         head.next = removeAll(head.next, listener);
         return head;
     }
