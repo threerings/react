@@ -74,7 +74,6 @@ public class RList<E> extends Reactor<RList.Listener<E>>
      * Creates a reactive list with the supplied underlying list implementation.
      */
     public RList (List<E> impl) {
-        super(new Listener<E>() {});
         _impl = impl;
     }
 
@@ -307,6 +306,11 @@ public class RList<E> extends Reactor<RList.Listener<E>>
         return _impl.toArray(array);
     }
 
+    @Override Listener<E> placeholderListener () {
+        @SuppressWarnings("unchecked") Listener<E> p = (Listener<E>)NOOP;
+        return p;
+    }
+
     // Non-list RList implementation
     protected void emitAdd (int index, E elem) {
         Cons<Listener<E>> lners = prepareNotify();
@@ -314,7 +318,7 @@ public class RList<E> extends Reactor<RList.Listener<E>>
         try {
             for (Cons<Listener<E>> cons = lners; cons != null; cons = cons.next) {
                 try {
-                    cons.getListener().onAdd(index, elem);
+                    cons.listener().onAdd(index, elem);
                 } catch (Throwable t) {
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);
@@ -333,7 +337,7 @@ public class RList<E> extends Reactor<RList.Listener<E>>
         try {
             for (Cons<Listener<E>> cons = lners; cons != null; cons = cons.next) {
                 try {
-                    cons.getListener().onSet(index, newElem, oldElem);
+                    cons.listener().onSet(index, newElem, oldElem);
                 } catch (Throwable t) {
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);
@@ -352,7 +356,7 @@ public class RList<E> extends Reactor<RList.Listener<E>>
         try {
             for (Cons<Listener<E>> cons = lners; cons != null; cons = cons.next) {
                 try {
-                    cons.getListener().onRemove(index, elem);
+                    cons.listener().onRemove(index, elem);
                 } catch (Throwable t) {
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);
@@ -370,4 +374,6 @@ public class RList<E> extends Reactor<RList.Listener<E>>
 
     /** Used to expose the size of this list as a value. Initialized lazily. */
     protected Value<Integer> _sizeView;
+
+    protected static final Listener<Object> NOOP = new Listener<Object>() {};
 }

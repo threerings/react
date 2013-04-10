@@ -14,12 +14,6 @@ package react;
 public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
     implements ValueView<T>
 {
-    public AbstractValue() {
-        super(new Listener<T>() {
-            @Override public void onChange(T value, T oldValue) {}
-        });
-    }
-
     @Override public <M> ValueView<M> map (final Function<? super T, M> func) {
         final AbstractValue<T> outer = this;
         return new MappedValue<M>() {
@@ -42,7 +36,7 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
         return addConnection(casted);
     }
 
-    public Connection connectWeak (Listener<? super T> listener) {
+    @Override public Connection connectWeak (Listener<? super T> listener) {
         @SuppressWarnings("unchecked") Listener<T> casted = (Listener<T>)listener;
         return addConnectionWeak(casted);
     }
@@ -87,6 +81,11 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
     @Override public String toString () {
         String cname = getClass().getName();
         return cname.substring(cname.lastIndexOf(".")+1) + "(" + get() + ")";
+    }
+
+    @Override Listener<T> placeholderListener () {
+        @SuppressWarnings("unchecked") Listener<T> p = (Listener<T>)Slots.NOOP;
+        return p;
     }
 
     /**
@@ -136,7 +135,7 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
         try {
             for (Cons<Listener<T>> cons = lners; cons != null; cons = cons.next) {
                 try {
-                    cons.getListener().onChange(value, ovalue);
+                    cons.listener().onChange(value, ovalue);
                 } catch (Throwable t) {
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);

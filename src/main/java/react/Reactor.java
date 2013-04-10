@@ -5,6 +5,8 @@
 
 package react;
 
+import java.lang.ref.WeakReference;
+
 /**
  * A base class for all reactive classes. This is an implementation detail, but is public so that
  * third parties may use it to create their own reactive classes, if desired.
@@ -20,28 +22,36 @@ public abstract class Reactor<L extends Reactor.RListener>
     }
 
     /**
-     * Create the Reactor with the given placeholderListener to be used when a weakly held listener is discovered to
-     * have been collected while dispatching. The placeholder should noop when signalled.
-     */
-    public Reactor(L placeholderListener) {
-        this.placeholderListener = placeholderListener;
-    }
-
-    /**
      * Returns true if this reactor has at least one connection.
      */
     public boolean hasConnections () {
         return _listeners != null;
     }
 
-    protected synchronized Cons<L> addConnection (L listener) {
+    /** Returns the listener to be used when a weakly held listener is discovered to have been
+     * collected while dispatching. This listener should NOOP when signaled. */
+    abstract L placeholderListener ();
+
+    protected synchronized Cons<L> addConnection (final L listener) {
         if (listener == null) throw new NullPointerException("Null listener");
-        return addCons(new StrongCons<L>(this, listener));
+        return addCons(new Cons<L>(this) {
+            @Override public L listener() { return listener; }
+        });
     }
 
     protected synchronized Cons<L> addConnectionWeak (L listener) {
         if (listener == null) throw new NullPointerException("Null listener");
-        return addCons(new WeakCons<L>(this, listener));
+        final WeakReference<L> weak = new WeakReference<L>(listener);
+        return addCons(new Cons<L>(this) {
+            @Override public L listener () {
+                L listener = weak.get();
+                if (listener == null) {
+                    listener = owner.placeholderListener();
+                    disconnect();
+                }
+                return listener;
+            }
+        });
     }
 
     protected synchronized Cons<L> addCons (final Cons<L> cons) {
@@ -148,11 +158,12 @@ public abstract class Reactor<L extends Reactor.RListener>
 
     protected Cons<L> _listeners;
     protected Runs _pendingRuns;
-    final L placeholderListener;
 
     protected static abstract class Runs implements Runnable {
         public Runs next;
     }
 
-    protected static final Cons<RListener> DISPATCHING = new StrongCons<RListener>(null, null);
+    protected static final Cons<RListener> DISPATCHING = new Cons<RListener>(null) {
+        @Override public RListener listener () { return null; }
+    };
 }

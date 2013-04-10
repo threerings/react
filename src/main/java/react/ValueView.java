@@ -39,15 +39,16 @@ public interface ValueView<T>
 
     /**
      * Connects the supplied listener to this value, such that it will be notified when this value
-     * changes. The listener is held by a strong reference, so it's held in memory by virtue of being connected.
+     * changes. The listener is held by a strong reference, so it's held in memory by virtue of
+     * being connected.
      * @return a connection instance which can be used to cancel the connection.
      */
     Connection connect (Listener<? super T> listener);
 
     /**
      * Connects the supplied listener to this value, such that it will be notified when this value
-     * changes. The listener is only held by a weak reference, so it only remains in memory and connected as long as
-     * it's referenced elsewhere.
+     * changes. The listener is only held by a weak reference, so it only remains in memory and
+     * connected as long as it's referenced elsewhere.
      * @return a connection instance which can be used to cancel the connection.
      */
     Connection connectWeak (Listener<? super T> listener);

@@ -54,7 +54,6 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
      * Creates a reactive set with the supplied underlying set implementation.
      */
     public RSet (Set<E> impl) {
-        super(new Listener<E>() {});
         _impl = impl;
     }
 
@@ -264,6 +263,11 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
         return "RSet" + _impl;
     }
 
+    @Override Listener<E> placeholderListener () {
+        @SuppressWarnings("unchecked") Listener<E> p = (Listener<E>)NOOP;
+        return p;
+    }
+
     protected void emitAdd (E elem) {
         notifyAdd(elem);
     }
@@ -274,7 +278,7 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
         try {
             for (Cons<Listener<E>> cons = lners; cons != null; cons = cons.next) {
                 try {
-                    cons.getListener().onAdd(elem);
+                    cons.listener().onAdd(elem);
                 } catch (Throwable t) {
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);
@@ -297,7 +301,7 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
         try {
             for (Cons<Listener<E>> cons = lners; cons != null; cons = cons.next) {
                 try {
-                    cons.getListener().onRemove(elem);
+                    cons.listener().onRemove(elem);
                 } catch (Throwable t) {
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);
@@ -315,4 +319,6 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
 
     /** Used to expose the size of this set as a value. Initialized lazily. */
     protected Value<Integer> _sizeView;
+
+    protected static final Listener<Object> NOOP = new Listener<Object>() {};
 }

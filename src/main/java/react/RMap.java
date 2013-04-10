@@ -72,7 +72,6 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
      * Creates a reactive map with the supplied underlying map implementation.
      */
     public RMap (Map<K,V> impl) {
-        super(new Listener<K, V>() {});
         _impl = impl;
     }
 
@@ -425,6 +424,11 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
         };
     }
 
+    @Override Listener<K,V> placeholderListener () {
+        @SuppressWarnings("unchecked") Listener<K,V> p = (Listener<K,V>)NOOP;
+        return p;
+    }
+
     protected void emitPut (K key, V value, V oldValue) {
         notifyPut(key, value, oldValue);
     }
@@ -435,7 +439,7 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
         try {
             for (Cons<Listener<K,V>> cons = lners; cons != null; cons = cons.next) {
                 try {
-                    cons.getListener().onPut(key, value, oldValue);
+                    cons.listener().onPut(key, value, oldValue);
                 } catch (Throwable t) {
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);
@@ -458,7 +462,7 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
         try {
             for (Cons<Listener<K,V>> cons = lners; cons != null; cons = cons.next) {
                 try {
-                    cons.getListener().onRemove(key, oldValue);
+                    cons.listener().onRemove(key, oldValue);
                 } catch (Throwable t) {
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);
@@ -476,4 +480,6 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
 
     /** Used to expose the size of this map as a value. Initialized lazily. */
     protected Value<Integer> _sizeView;
+
+    protected static final Listener<Object,Object> NOOP = new Listener<Object,Object>() {};
 }
