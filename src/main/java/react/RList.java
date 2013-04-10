@@ -74,6 +74,7 @@ public class RList<E> extends Reactor<RList.Listener<E>>
      * Creates a reactive list with the supplied underlying list implementation.
      */
     public RList (List<E> impl) {
+        super(new Listener<E>() {});
         _impl = impl;
     }
 
@@ -313,7 +314,7 @@ public class RList<E> extends Reactor<RList.Listener<E>>
         try {
             for (Cons<Listener<E>> cons = lners; cons != null; cons = cons.next) {
                 try {
-                    cons.listener.onAdd(index, elem);
+                    cons.getListener().onAdd(index, elem);
                 } catch (Throwable t) {
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);
@@ -332,7 +333,7 @@ public class RList<E> extends Reactor<RList.Listener<E>>
         try {
             for (Cons<Listener<E>> cons = lners; cons != null; cons = cons.next) {
                 try {
-                    cons.listener.onSet(index, newElem, oldElem);
+                    cons.getListener().onSet(index, newElem, oldElem);
                 } catch (Throwable t) {
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);
@@ -351,7 +352,7 @@ public class RList<E> extends Reactor<RList.Listener<E>>
         try {
             for (Cons<Listener<E>> cons = lners; cons != null; cons = cons.next) {
                 try {
-                    cons.listener.onRemove(index, elem);
+                    cons.getListener().onRemove(index, elem);
                 } catch (Throwable t) {
                     if (error == null) error = new MultiFailureException();
                     error.addFailure(t);
