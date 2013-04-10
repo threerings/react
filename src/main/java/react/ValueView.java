@@ -47,18 +47,6 @@ public interface ValueView<T>
 
     /**
      * Connects the supplied listener to this value, such that it will be notified when this value
-     * changes. The listener is only held by a weak reference, so it only remains in memory and
-     * connected as long as it's referenced elsewhere.
-     *
-     * <p><em>NOTE:</em> weak references are not supported in JavaScript. When using this library
-     * in GWT, this will result in a strong connection.</p>
-     *
-     * @return a connection instance which can be used to cancel the connection.
-     */
-    Connection connectWeak (Listener<? super T> listener);
-
-    /**
-     * Connects the supplied listener to this value, such that it will be notified when this value
      * changes. Also immediately notifies the listener of the current value. Note that the previous
      * value supplied with this notification will be null. If the notification triggers an
      * unchecked exception, the slot will automatically be disconnected and the caller need not
