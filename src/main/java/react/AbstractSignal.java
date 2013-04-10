@@ -32,6 +32,11 @@ public class AbstractSignal<T> extends Reactor<Slot<T>>
         return addConnection(casted);
     }
 
+    @Override public Connection connectWeak (Slot<? super T> slot) {
+        @SuppressWarnings("unchecked") Slot<T> casted = (Slot<T>)slot;
+        return addConnectionWeak(casted);
+    }
+
     @Override public void disconnect (Slot<? super T> slot) {
         // alas, Java does not support higher kinded types; this cast is safe
         @SuppressWarnings("unchecked") Slot<T> casted = (Slot<T>)slot;
