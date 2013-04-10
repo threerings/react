@@ -21,6 +21,20 @@ public interface Connection
      * Converts this connection into a one-shot connection. After the first time the slot or
      * listener is notified, it will automatically be disconnected.
      *
+     * <p><em>NOTE:</em> if you are dispatching signals in a multithreaded environment, it is
+     * possible for your connected listener to be notified before this call has a chance to mark it
+     * as one-shot. Thus you could receive multiple notifications. If you require this to be
+     * avoided, you must synchronize on the signal/value/etc. on which you are adding a
+     * listener:</p>
+     *
+     * <pre>{@code
+     * Signal<Foo> signal = ...;
+     * Connection conn;
+     * synchronized (signal) {
+     *   conn = signal.connect(slot).once();
+     * }
+     * }</pre>
+     *
      * @return this connection instance for convenient chaining.
      */
     Connection once ();
@@ -32,7 +46,20 @@ public interface Connection
      * <pre>{@code
      * Signal<Foo> signal = ...;
      * Connection conn = signal.connect(new Slot<Foo>() { ... }).atPriority(5);
-     * }</pre></p>
+     * }</pre>
+     *
+     * <p><em>NOTE:</em> if you are dispatching signals in a multithreaded environment, it is
+     * possible for your connected listener to be notified at priority zero before this call has a
+     * chance to update its priority. If you require this to be avoided, you must synchronize on
+     * the signal/value/etc. on which you are adding a listener:</p>
+     *
+     * <pre>{@code
+     * Signal<Foo> signal = ...;
+     * Connection conn;
+     * synchronized (signal) {
+     *   conn = signal.connect(slot).atPriority(5);
+     * }
+     * }</pre>
      *
      * @return this connection instance for convenient chaining.
      */
