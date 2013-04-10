@@ -39,13 +39,13 @@ public interface Connection
     Connection atPriority (int priority);
 
     /**
-     * Changes the listener to be held by a weak reference, so it only remains in memory and
-     * connected only as long as it's referenced elsewhere.
+     * Changes this connection to one held by a weak reference. It only remains connected as long
+     * as its target listener is referenced elsewhere.
      *
      * <p><em>NOTE:</em> weak references are not supported in JavaScript. When using this library
      * in GWT, the reference remains strong.</p>
      *
      * @return this connection instance for convenient chaining.
      */
-    Connection holdWeakly();
+    Connection holdWeakly ();
 }

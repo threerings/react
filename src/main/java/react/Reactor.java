@@ -11,7 +11,6 @@ package react;
  */
 public abstract class Reactor<L extends Reactor.RListener>
 {
-
     /** The base class for all reactor listeners. */
     public abstract static class RListener {}
 

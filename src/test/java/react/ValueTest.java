@@ -159,7 +159,7 @@ public class ValueTest
         System.gc();
         System.gc();
         System.gc();
-        value.addConnection(listener).holdWeakly().holdWeakly();
+        value.addConnection(listener).holdWeakly();
         value.update(41);
         assertEquals(1, fired.get());
         assertTrue(value.hasConnections());

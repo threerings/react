@@ -48,12 +48,23 @@ class Cons<L extends RListener> implements Connection
         return this;
     }
 
-    // Synchronize to make sure it's impossible to create a WeakListenerRef to the placeholder listener, as that
-    // listener always has a strong reference
-    @Override public synchronized Connection holdWeakly() {
-        if (_owner == null) throw new IllegalStateException("Cannot change disconnected connection to weak.");
-        if (!(_ref instanceof Cons.WeakListenerRef)) {
-            _ref = new WeakListenerRef();
+    @Override public Connection holdWeakly () {
+        if (_owner == null) throw new IllegalStateException(
+            "Cannot change disconnected connection to weak.");
+        ListenerRef<L> ref = _ref;
+        if (!ref.isWeak()) {
+            final WeakReference<L> weak = new WeakReference<L>(ref.get());
+            _ref = new ListenerRef<L>() {
+                public boolean isWeak () { return true; }
+                public L get () {
+                    L listener = weak.get();
+                    if (listener == null) {
+                        listener = _owner.placeholderListener();
+                        disconnect();
+                    }
+                    return listener;
+                }
+            };
         }
         return this;
     }
@@ -63,29 +74,17 @@ class Cons<L extends RListener> implements Connection
             ", hasNext=" + (next != null) + ", oneShot=" + oneShot() + "]";
     }
 
-    interface ListenerRef<L extends RListener> {
-        abstract L get();
-    }
-
-    class WeakListenerRef implements ListenerRef<L> {
-        private final WeakReference<L> _weak = new WeakReference<L>(_ref.get());
-        public L get() {
-            L listener = _weak.get();
-            if (listener == null) {
-                listener = _owner.placeholderListener();
-                disconnect();
-            }
-            return listener;
-        }
-    }
-
     protected Cons (Reactor<L> owner, final L listener) {
         _owner = owner;
         _ref = new ListenerRef<L>() {
-            @Override public L get() {
-                return listener;
-            }
+            public boolean isWeak () { return false; }
+            public L get() { return listener; }
         };
+    }
+
+    private interface ListenerRef<L extends RListener> {
+        boolean isWeak ();
+        L get ();
     }
 
     static <L extends RListener> Cons<L> insert (Cons<L> head, Cons<L> cons) {
@@ -114,8 +113,8 @@ class Cons<L extends RListener> implements Connection
         return head;
     }
 
-    protected Reactor<L> _owner;
+    private Reactor<L> _owner;
+    private ListenerRef<L> _ref;
     private boolean _oneShot; // defaults to false
     private int _priority; // defaults to zero
-    private ListenerRef<L> _ref;
 }
