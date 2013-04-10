@@ -5,14 +5,13 @@
 
 package react;
 
-import java.lang.ref.WeakReference;
-
 /**
  * A base class for all reactive classes. This is an implementation detail, but is public so that
  * third parties may use it to create their own reactive classes, if desired.
  */
 public abstract class Reactor<L extends Reactor.RListener>
 {
+
     /** The base class for all reactor listeners. */
     public abstract static class RListener {}
 
@@ -33,26 +32,7 @@ public abstract class Reactor<L extends Reactor.RListener>
         // plain type variable (L) and Java doesn't have the higher kinded type machinery needed to
         // let the compiler know that what we're doing is safe; so we just cast
         @SuppressWarnings("unchecked") final L casted = (L)listener;
-        return addCons(new Cons<L>(this) {
-            @Override public L listener() { return casted; }
-        });
-    }
-
-    protected synchronized Cons<L> addConnectionWeak (Object listener) {
-        if (listener == null) throw new NullPointerException("Null listener");
-        // see addConnection for details on why this cast is safe
-        @SuppressWarnings("unchecked") final L casted = (L)listener;
-        final WeakReference<L> weak = new WeakReference<L>(casted);
-        return addCons(new Cons<L>(this) {
-            @Override public L listener () {
-                L listener = weak.get();
-                if (listener == null) {
-                    listener = _owner.placeholderListener();
-                    disconnect();
-                }
-                return listener;
-            }
-        });
+        return addCons(new Cons<L>(this, casted));
     }
 
     protected synchronized Cons<L> addCons (final Cons<L> cons) {
@@ -166,7 +146,5 @@ public abstract class Reactor<L extends Reactor.RListener>
         public Runs next;
     }
 
-    protected static final Cons<RListener> DISPATCHING = new Cons<RListener>(null) {
-        @Override public RListener listener () { return null; }
-    };
+    protected static final Cons<RListener> DISPATCHING = new Cons<RListener>(null, null);
 }

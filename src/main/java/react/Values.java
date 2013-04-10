@@ -139,6 +139,10 @@ public class Values
                         for (Connection conn : conns) conn.atPriority(priority);
                         return this;
                     }
+                    public Connection holdWeakly() {
+                        for (Connection conn : conns) conn.holdWeakly();
+                        return this;
+                    }
                 };
             }
 

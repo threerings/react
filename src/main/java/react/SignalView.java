@@ -28,18 +28,6 @@ public interface SignalView<T>
     Connection connect (Slot<? super T> slot);
 
     /**
-     * Connects this signal to the supplied slot, such that when an event is emitted from this
-     * signal, the slot will be notified. The slot is only held by a weak reference, so it only
-     * remains in memory and connected as long as it's referenced elsewhere.
-     *
-     * <p><em>NOTE:</em> weak references are not supported in JavaScript. When using this library
-     * in GWT, this will result in a strong connection.</p>
-     *
-     * @return a connection instance which can be used to cancel the connection.
-     */
-    Connection connectWeak (Slot<? super T> slot);
-
-    /**
      * Disconnects the supplied slot from this signal if connect was called with it. If the slot has
      * been connected multiple times, all connections are cancelled.
      */

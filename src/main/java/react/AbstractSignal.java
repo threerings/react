@@ -30,10 +30,6 @@ public class AbstractSignal<T> extends Reactor<Slot<T>>
         return addConnection(slot);
     }
 
-    @Override public Connection connectWeak (Slot<? super T> slot) {
-        return addConnectionWeak(slot);
-    }
-
     @Override public void disconnect (Slot<? super T> slot) {
         removeConnection(slot);
     }

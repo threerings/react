@@ -34,10 +34,6 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
         return addConnection(listener);
     }
 
-    @Override public Connection connectWeak (Listener<? super T> listener) {
-        return addConnectionWeak(listener);
-    }
-
     @Override public Connection connectNotify (Listener<? super T> listener) {
         // connect before calling emit; if the listener changes the value in the body of onEmit, it
         // will expect to be notified of that change; however if onEmit throws a runtime exception,
