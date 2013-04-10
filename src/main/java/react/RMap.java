@@ -81,18 +81,14 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
      * @return a connection instance which can be used to cancel the connection.
      */
     public Connection connect (Listener<? super K, ? super V> listener) {
-        // alas, Java does not support higher kinded types; this cast is safe
-        @SuppressWarnings("unchecked") Listener<K,V> casted = (Listener<K,V>)listener;
-        return addConnection(casted);
+        return addConnection(listener);
     }
 
     /**
      * Disconnects the supplied listener from this map if listen was called with it.
      */
     public void disconnect (Listener<? super K, ? super V> listener) {
-        // alas, Java does not support higher kinded types; this cast is safe
-        @SuppressWarnings("unchecked") Listener<K,V> casted = (Listener<K,V>)listener;
-        removeConnection(casted);
+        removeConnection(listener);
     }
 
     /**

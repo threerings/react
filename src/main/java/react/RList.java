@@ -83,18 +83,14 @@ public class RList<E> extends Reactor<RList.Listener<E>>
      * @return a connection instance which can be used to cancel the connection.
      */
     public Connection connect (Listener<? super E> listener) {
-        // alas, Java does not support higher kinded types; this cast is safe
-        @SuppressWarnings("unchecked") Listener<E> casted = (Listener<E>)listener;
-        return addConnection(casted);
+        return addConnection(listener);
     }
 
    /**
     * Disconnects the supplied listener from this list if listen was called with it.
     */
    public void disconnect (Listener<? super E> listener) {
-       // alas, Java does not support higher kinded types; this cast is safe
-       @SuppressWarnings("unchecked") Listener<E> casted = (Listener<E>)listener;
-       removeConnection(casted);
+       removeConnection(listener);
    }
 
    /**

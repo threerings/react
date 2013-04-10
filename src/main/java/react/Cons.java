@@ -61,7 +61,7 @@ abstract class Cons<L extends RListener> implements Connection
         return head;
     }
 
-    static <L extends RListener> Cons<L> removeAll (Cons<L> head, Object listener) {
+    static <L extends RListener> Cons<L> removeAll (Cons<L> head, L listener) {
         if (head == null) return null;
         if (head.listener() == listener) return removeAll(head.next, listener);
         head.next = removeAll(head.next, listener);

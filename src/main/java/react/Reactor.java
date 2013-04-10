@@ -32,16 +32,22 @@ public abstract class Reactor<L extends Reactor.RListener>
      * collected while dispatching. This listener should NOOP when signaled. */
     abstract L placeholderListener ();
 
-    protected synchronized Cons<L> addConnection (final L listener) {
+    protected synchronized Cons<L> addConnection (Object listener) {
         if (listener == null) throw new NullPointerException("Null listener");
+        // listeners have the form Listener<T> (a type constructor) but here we treat them as a
+        // plain type variable (L) and Java doesn't have the higher kinded type machinery needed to
+        // let the compiler know that what we're doing is safe; so we just cast
+        @SuppressWarnings("unchecked") final L casted = (L)listener;
         return addCons(new Cons<L>(this) {
-            @Override public L listener() { return listener; }
+            @Override public L listener() { return casted; }
         });
     }
 
-    protected synchronized Cons<L> addConnectionWeak (L listener) {
+    protected synchronized Cons<L> addConnectionWeak (Object listener) {
         if (listener == null) throw new NullPointerException("Null listener");
-        final WeakReference<L> weak = new WeakReference<L>(listener);
+        // see addConnection for details on why this cast is safe
+        @SuppressWarnings("unchecked") final L casted = (L)listener;
+        final WeakReference<L> weak = new WeakReference<L>(casted);
         return addCons(new Cons<L>(this) {
             @Override public L listener () {
                 L listener = weak.get();
@@ -102,16 +108,18 @@ public abstract class Reactor<L extends Reactor.RListener>
         }
     }
 
-    protected synchronized void removeConnection (final Object listener) {
+    protected synchronized void removeConnection (Object listener) {
+        // see addConnection for details on why this cast is safe
+        @SuppressWarnings("unchecked") final L casted = (L)listener;
         if (isDispatching()) {
             _pendingRuns = insert(_pendingRuns, new Runs() {
                 public void run () {
-                    _listeners = Cons.removeAll(_listeners, listener);
+                    _listeners = Cons.removeAll(_listeners, casted);
                     connectionRemoved();
                 }
             });
         } else {
-            _listeners = Cons.removeAll(_listeners, listener);
+            _listeners = Cons.removeAll(_listeners, casted);
             connectionRemoved();
         }
     }

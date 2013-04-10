@@ -31,14 +31,11 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
     }
 
     @Override public Connection connect (Listener<? super T> listener) {
-        // alas, Java does not support higher kinded types; this cast is safe
-        @SuppressWarnings("unchecked") Listener<T> casted = (Listener<T>)listener;
-        return addConnection(casted);
+        return addConnection(listener);
     }
 
     @Override public Connection connectWeak (Listener<? super T> listener) {
-        @SuppressWarnings("unchecked") Listener<T> casted = (Listener<T>)listener;
-        return addConnectionWeak(casted);
+        return addConnectionWeak(listener);
     }
 
     @Override public Connection connectNotify (Listener<? super T> listener) {
@@ -60,9 +57,7 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
     }
 
     @Override public void disconnect (Listener<? super T> listener) {
-        // alas, Java does not support higher kinded types; this cast is safe
-        @SuppressWarnings("unchecked") Listener<T> casted = (Listener<T>)listener;
-        removeConnection(casted);
+        removeConnection(listener);
     }
 
     @Override public int hashCode () {
