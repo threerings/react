@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.threerings</groupId>
-  <artifactId>react</artifactId>
-  <packaging>jar</packaging>
-  <version>1.4-SNAPSHOT</version>
-  <name>react</name>
-  <description>A signals/slots plus FRP-like library for Java.</description>
-  <url>http://github.com/threerings/react/</url>
-  <issueManagement>
-    <url>http://github.com/threerings/react/issues</url>
-  </issueManagement>
-
   <parent>
     <groupId>org.sonatype.oss</groupId>
     <artifactId>oss-parent</artifactId>
     <version>7</version>
   </parent>
+
+  <groupId>com.threerings</groupId>
+  <artifactId>react</artifactId>
+  <packaging>jar</packaging>
+  <version>1.4-SNAPSHOT</version>
+
+  <name>react</name>
+  <description>A signals/slots plus FRP-like library for Java.</description>
+  <url>http://github.com/threerings/react/</url>
+
+  <issueManagement>
+    <url>http://github.com/threerings/react/issues</url>
+  </issueManagement>
 
   <licenses>
     <license>
