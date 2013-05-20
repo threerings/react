@@ -26,6 +26,20 @@ public class Functions
         }
     };
 
+    /** A function that returns true for null values and false for non-null values. */
+    public static Function<Object, Boolean> IS_NULL = new Function<Object, Boolean>() {
+        public Boolean apply (Object value) {
+            return (value == null);
+        }
+    };
+
+    /** A function that returns true for non-null values and false for null values. */
+    public static Function<Object, Boolean> NON_NULL = new Function<Object, Boolean>() {
+        public Boolean apply (Object value) {
+            return (value != null);
+        }
+    };
+
     /** A function that returns the float value of a number. */
     public static Function<Number,Float> FLOAT_VALUE = new Function<Number,Float>() {
         public Float apply (Number value) {
