@@ -5,6 +5,9 @@
 
 package react;
 
+import java.util.List;
+import java.util.ArrayList;
+
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -223,4 +226,93 @@ public class RFutureTest extends TestBase {
         }
     }
 
+    @Test public void testSequenceImmediate () {
+        FutureCounter counter = new FutureCounter();
+
+        RFuture<String> success1 = RFuture.success("Yay 1!");
+        RFuture<String> success2 = RFuture.success("Yay 2!");
+
+        RFuture<String> failure1 = RFuture.failure(new Exception("Boo 1!"));
+        RFuture<String> failure2 = RFuture.failure(new Exception("Boo 2!"));
+
+        RFuture<List<String>> sucseq = RFuture.sequence(list(success1, success2));
+        counter.bind(sucseq);
+        sucseq.onSuccess(new Slot<List<String>>() {
+            public void onEmit (List<String> results) {
+                assertEquals(list("Yay 1!", "Yay 2!"), results);
+            }
+        });
+        counter.check("immediate seq success/success", 1, 0, 1);
+
+        counter.bind(RFuture.sequence(list(success1, failure1)));
+        counter.check("immediate seq success/failure", 0, 1, 1);
+
+        counter.bind(RFuture.sequence(list(failure1, success2)));
+        counter.check("immediate seq failure/success", 0, 1, 1);
+
+        counter.bind(RFuture.sequence(list(failure1, failure2)));
+        counter.check("immediate seq failure/failure", 0, 1, 1);
+    }
+
+    @Test public void testSequenceDeferred () {
+        FutureCounter counter = new FutureCounter();
+
+        RPromise<String> success1 = RPromise.create(), success2 = RPromise.create();
+        RPromise<String> failure1 = RPromise.create(), failure2 = RPromise.create();
+
+        RFuture<List<String>> suc2seq = RFuture.sequence(list(success1, success2));
+        counter.bind(suc2seq);
+        suc2seq.onSuccess(new Slot<List<String>>() {
+            public void onEmit (List<String> results) {
+                assertEquals(list("Yay 1!", "Yay 2!"), results);
+            }
+        });
+        counter.check("before seq succeed/succeed", 0, 0, 0);
+        success1.succeed("Yay 1!");
+        success2.succeed("Yay 2!");
+        counter.check("after seq succeed/succeed", 1, 0, 1);
+
+        RFuture<List<String>> sucfailseq = RFuture.sequence(list(success1, failure1));
+        sucfailseq.onFailure(new Slot<Throwable>() {
+            public void onEmit (Throwable cause) {
+                assertFalse(cause instanceof MultiFailureException);
+                assertEquals("Boo 1!", cause.getMessage());
+            }
+        });
+        counter.bind(sucfailseq);
+        counter.check("before seq succeed/fail", 0, 0, 0);
+        failure1.fail(new Exception("Boo 1!"));
+        counter.check("after seq succeed/fail", 0, 1, 1);
+
+        RFuture<List<String>> failsucseq = RFuture.sequence(list(failure1, success2));
+        failsucseq.onFailure(new Slot<Throwable>() {
+            public void onEmit (Throwable cause) {
+                assertFalse(cause instanceof MultiFailureException);
+                assertEquals("Boo 1!", cause.getMessage());
+            }
+        });
+        counter.bind(failsucseq);
+        counter.check("after seq fail/succeed", 0, 1, 1);
+
+        RFuture<List<String>> fail2seq = RFuture.sequence(list(failure1, failure2));
+        fail2seq.onFailure(new Slot<Throwable>() {
+            public void onEmit (Throwable cause) {
+                assertTrue(cause instanceof MultiFailureException);
+                assertEquals("2 failures: java.lang.Exception: Boo 1!, java.lang.Exception: Boo 2!",
+                             cause.getMessage());
+            }
+        });
+        counter.bind(fail2seq);
+        counter.check("before seq fail/fail", 0, 0, 0);
+        failure2.fail(new Exception("Boo 2!"));
+        counter.check("after seq fail/fail", 0, 1, 1);
+    }
+
+    // fucking Java generics and arrays... blah
+    protected <T> List<T> list (T one, T two) {
+        List<T> list = new ArrayList<T>();
+        list.add(one);
+        list.add(two);
+        return list;
+    }
 }

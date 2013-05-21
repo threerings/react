@@ -5,6 +5,9 @@
 
 package react;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Represents an asynchronous result. Unlike standard Java futures, you cannot block on this
  * result. You can {@link #map} or {@link #flatMap} it, and listen for success or failure via the
@@ -36,6 +39,42 @@ public class RFuture<T> {
     /** Returns a future with an already-computed result. */
     public static <T> RFuture<T> result (Try<T> result) {
         return new RFuture<T>(Value.create(result));
+    }
+
+    /** Returns a future containing a list of all success results from {@code futures} if all of
+     * the futures complete successfully, or an aggregate of all failures (where multiple
+     * exceptions are combined via {@link MultiFailureException}), if any of the futures fails. */
+    public static <T> RFuture<List<T>> sequence (List<? extends RFuture<T>> futures) {
+        final RPromise<List<T>> pseq = RPromise.create();
+        final int count = futures.size();
+        class Sequencer {
+            public synchronized void onResult (int idx, Try<T> result) {
+                if (result.isSuccess()) {
+                    _results[idx] = result.get();
+                } else {
+                    if (_error == null) _error = new MultiFailureException();
+                    _error.addFailure(result.getFailure());
+                }
+                if (--_remain == 0) {
+                    if (_error != null) pseq.fail(_error.consolidate());
+                    else {
+                        @SuppressWarnings("unchecked") T[] results = (T[])_results;
+                        pseq.succeed(Arrays.asList(results));
+                    }
+                }
+            }
+            protected final Object[] _results = new Object[count];
+            protected int _remain = count;
+            protected MultiFailureException _error;
+        }
+        final Sequencer seq = new Sequencer();
+        for (int ii = 0; ii < count; ii++) {
+            final int idx = ii;
+            futures.get(ii).onComplete(new Slot<Try<T>>() {
+                public void onEmit (Try<T> result) { seq.onResult(idx, result); }
+            });
+        }
+        return pseq;
     }
 
     /** Causes {@code slot} to be notified if/when this future is completed with success. If it has
