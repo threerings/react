@@ -5,6 +5,7 @@
 
 package react;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -80,6 +81,24 @@ public class RFuture<T> {
                 public void onEmit (Try<T> result) { seq.onResult(idx, result); }
             });
         }
+        return pseq;
+    }
+
+    /** Returns a future containing a list of all success results from {@code futures}. Any failure
+     * results are simply omitted from the list. The success results are also in no particular
+     * order. If all of {@code futures} fail, the resulting list will be empty. */
+    public static <T> RFuture<Collection<T>> collect (Collection<? extends RFuture<T>> futures) {
+        final RPromise<Collection<T>> pseq = RPromise.create();
+        final int count = futures.size();
+        Slot<Try<T>> collector = new Slot<Try<T>>() {
+            public synchronized void onEmit (Try<T> result) {
+                if (result.isSuccess()) _results.add(result.get());
+                if (--_remain == 0) pseq.succeed(_results);
+            }
+            protected final List<T> _results = new ArrayList<T>();
+            protected int _remain = count;
+        };
+        for (RFuture<T> future : futures) future.onComplete(collector);
         return pseq;
     }
 
