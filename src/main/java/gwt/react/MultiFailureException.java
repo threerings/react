@@ -37,6 +37,14 @@ public class MultiFailureException extends RuntimeException
         }
     }
 
+    public Throwable consolidate () {
+        switch (_failures.size()) {
+        case 0: return null;
+        case 1: return _failures.get(0);
+        default: return this;
+        }
+    }
+
     @Override
     public String getMessage () {
         StringBuilder buf = new StringBuilder();

@@ -36,6 +36,19 @@ public class MultiFailureException extends RuntimeException
         }
     }
 
+    /**
+     * Returns this exception if it contains more than one underlying exception. Returns the
+     * underyling exception if only one exception has been added. Returns null if no exceptions
+     * have been added.
+     */
+    public Throwable consolidate () {
+        switch (_failures.size()) {
+        case 0: return null;
+        case 1: return _failures.get(0);
+        default: return this;
+        }
+    }
+
     @Override
     public String getMessage () {
         StringBuilder buf = new StringBuilder();
