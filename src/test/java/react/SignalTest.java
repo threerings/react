@@ -109,10 +109,7 @@ public class SignalTest
             public void onEmit () {
                 rconn.disconnect();
             }
-            public int priority () {
-                return 1; // ensure that we're before toRemove
-            }
-        });
+        }).atPriority(1); // ensure that we're before toRemove
         signal.emit(42);
         // since toRemove will have been removed during this dispatch, it will receive the signal
         // in question, even though the higher priority signal triggered first
