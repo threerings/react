@@ -17,6 +17,20 @@ public abstract class Slot<T> extends ValueView.Listener<T>
     public abstract void onEmit (T event);
 
     /**
+     * Returns a slot that maps values via {@code f} and then passes them to this slot.
+     * This is essentially function composition in that {@code slot.compose(f)} means
+     * {@code slot(f(value)))} where this slot is treated as a side effecting void function.
+     */
+    public <S> Slot<S> compose (final Function<S,T> f) {
+        final Slot<T> outer = this;
+        return new Slot<S>() {
+            public void onEmit (S value) {
+                outer.onEmit(f.apply(value));
+            }
+        };
+    }
+
+    /**
      * Returns a new slot that invokes this slot and then evokes {@code after}.
      */
     public <S extends T> Slot<S> andThen (final Slot<? super S> after) {
