@@ -6,6 +6,8 @@
 package react;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -43,8 +45,11 @@ public class RFuture<T> {
 
     /** Returns a future containing a list of all success results from {@code futures} if all of
      * the futures complete successfully, or an aggregate of all failures (where multiple
-     * exceptions are combined via {@link MultiFailureException}), if any of the futures fails. */
-    public static <T> RFuture<List<T>> sequence (List<? extends RFuture<T>> futures) {
+     * exceptions are combined via {@link MultiFailureException}), if any of the futures fails.
+     *
+     * <p>If {@code futures} is an ordered collection, the resulting list will match the order of
+     * the futures. If not, result list is in {@code futures}' iteration order.</p> */
+    public static <T> RFuture<List<T>> sequence (Collection<? extends RFuture<T>> futures) {
         final RPromise<List<T>> pseq = RPromise.create();
         final int count = futures.size();
         class Sequencer {
@@ -68,9 +73,10 @@ public class RFuture<T> {
             protected MultiFailureException _error;
         }
         final Sequencer seq = new Sequencer();
-        for (int ii = 0; ii < count; ii++) {
+        Iterator<? extends RFuture<T>> iter = futures.iterator();
+        for (int ii = 0; iter.hasNext(); ii++) {
             final int idx = ii;
-            futures.get(ii).onComplete(new Slot<Try<T>>() {
+            iter.next().onComplete(new Slot<Try<T>>() {
                 public void onEmit (Try<T> result) { seq.onResult(idx, result); }
             });
         }
