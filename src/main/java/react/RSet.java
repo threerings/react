@@ -67,6 +67,14 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
     }
 
     /**
+     * Invokes {@code onAdd} for all existing elements, and then connects {@code listener}.
+     */
+    public Connection connectNotify (Listener<? super E> listener) {
+        for (E elem : this) listener.onAdd(elem);
+        return connect(listener);
+    }
+
+    /**
      * Disconnects the supplied listener from this set if listen was called with it.
      */
     public void disconnect (Listener<? super E> listener) {

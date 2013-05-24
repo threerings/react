@@ -85,6 +85,17 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
     }
 
     /**
+     * Invokes {@code onPut} for all existing entries and then connects {@code listener}. Note that
+     * the previous value supplied to the {@code onPut} calls will be null.
+     */
+    public Connection connectNotify (Listener<? super K, ? super V> listener) {
+        for (Map.Entry<K,V> entry : entrySet()) {
+            listener.onPut(entry.getKey(), entry.getValue(), null);
+        }
+        return connect(listener);
+    }
+
+    /**
      * Disconnects the supplied listener from this map if listen was called with it.
      */
     public void disconnect (Listener<? super K, ? super V> listener) {

@@ -86,6 +86,14 @@ public class RList<E> extends Reactor<RList.Listener<E>>
         return addConnection(listener);
     }
 
+    /**
+     * Invokes {@code onAdd(int,E)} for all existing list elements, then connects {@code listener}.
+     */
+    public Connection connectNotify (Listener<? super E> listener) {
+        for (int ii = 0, ll = size(); ii < ll; ii++) listener.onAdd(ii, get(ii));
+        return connect(listener);
+    }
+
    /**
     * Disconnects the supplied listener from this list if listen was called with it.
     */
