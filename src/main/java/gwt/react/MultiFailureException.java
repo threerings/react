@@ -24,27 +24,6 @@ public class MultiFailureException extends RuntimeException
         _failures.add(t);
     }
 
-    public void trigger () {
-        if (_failures.size() != 1) throw this;
-
-        Throwable t = _failures.get(0);
-        if (t instanceof RuntimeException) {
-            throw (RuntimeException)t;
-        } else if (t instanceof Error) {
-            throw (Error)t;
-        } else {
-            throw (MultiFailureException)initCause(t);
-        }
-    }
-
-    public Throwable consolidate () {
-        switch (_failures.size()) {
-        case 0: return null;
-        case 1: return _failures.get(0);
-        default: return this;
-        }
-    }
-
     @Override
     public String getMessage () {
         StringBuilder buf = new StringBuilder();
