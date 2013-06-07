@@ -11,8 +11,7 @@ package react;
  * observable values, but must manage the maintenance and distribution of value updates themselves
  * (so that they may send them over the network, for example).
  */
-public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
-    implements ValueView<T>
+public abstract class AbstractValue<T> extends Reactor implements ValueView<T>
 {
     @Override public <M> ValueView<M> map (final Function<? super T, M> func) {
         final AbstractValue<T> outer = this;

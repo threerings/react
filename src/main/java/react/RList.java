@@ -16,8 +16,7 @@ import java.util.ListIterator;
  * notification if the removed element is not present in the list. Use {@link #removeForce} to
  * force a notification.
  */
-public class RList<E> extends Reactor<RList.Listener<E>>
-    implements List<E>
+public class RList<E> extends Reactor implements List<E>
 {
     /** Publishes list events to listeners. */
     public static abstract class Listener<E> extends Reactor.RListener

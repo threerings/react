@@ -9,7 +9,7 @@ package react;
  * A base class for all reactive classes. This is an implementation detail, but is public so that
  * third parties may use it to create their own reactive classes, if desired.
  */
-public abstract class Reactor<L extends Reactor.RListener>
+public abstract class Reactor
 {
     /** The base class for all reactor listeners. */
     public abstract static class RListener {}
@@ -23,18 +23,14 @@ public abstract class Reactor<L extends Reactor.RListener>
 
     /** Returns the listener to be used when a weakly held listener is discovered to have been
      * collected while dispatching. This listener should NOOP when signaled. */
-    abstract L placeholderListener ();
+    abstract RListener placeholderListener ();
 
-    protected synchronized Cons<L> addConnection (Object listener) {
+    protected synchronized Cons addConnection (RListener listener) {
         if (listener == null) throw new NullPointerException("Null listener");
-        // listeners have the form Listener<T> (a type constructor) but here we treat them as a
-        // plain type variable (L) and Java doesn't have the higher kinded type machinery needed to
-        // let the compiler know that what we're doing is safe; so we just cast
-        @SuppressWarnings("unchecked") final L casted = (L)listener;
-        return addCons(new Cons<L>(this, casted));
+        return addCons(new Cons(this, listener));
     }
 
-    protected synchronized Cons<L> addCons (final Cons<L> cons) {
+    protected synchronized Cons addCons (final Cons cons) {
         if (isDispatching()) {
             _pendingRuns = insert(_pendingRuns, new Runs() {
                 public void run () {
@@ -49,7 +45,7 @@ public abstract class Reactor<L extends Reactor.RListener>
         return cons;
     }
 
-    protected synchronized void disconnect (final Cons<L> cons) {
+    protected synchronized void disconnect (final Cons cons) {
         if (isDispatching()) {
             _pendingRuns = insert(_pendingRuns, new Runs() {
                 public void run () {
@@ -63,18 +59,16 @@ public abstract class Reactor<L extends Reactor.RListener>
         }
     }
 
-    protected synchronized void removeConnection (Object listener) {
-        // see addConnection for details on why this cast is safe
-        @SuppressWarnings("unchecked") final L casted = (L)listener;
+    protected synchronized void removeConnection (final RListener listener) {
         if (isDispatching()) {
             _pendingRuns = insert(_pendingRuns, new Runs() {
                 public void run () {
-                    _listeners = Cons.removeAll(_listeners, casted);
+                    _listeners = Cons.removeAll(_listeners, listener);
                     connectionRemoved();
                 }
             });
         } else {
-            _listeners = Cons.removeAll(_listeners, casted);
+            _listeners = Cons.removeAll(_listeners, listener);
             connectionRemoved();
         }
     }
@@ -106,18 +100,18 @@ public abstract class Reactor<L extends Reactor.RListener>
      * there's zero chance of fucking up and this results in simpler, easier to read code.
      */
     protected void notify (Notifier notifier, Object a1, Object a2, Object a3) {
-        Cons<L> lners;
+        Cons lners;
         synchronized (this) {
             if (_listeners == DISPATCHING)
                 throw new IllegalStateException("Initiated notify while notifying");
             lners = _listeners;
-            @SuppressWarnings("unchecked") Cons<L> sentinel = (Cons<L>)DISPATCHING;
+            Cons sentinel = DISPATCHING;
             _listeners = sentinel;
         }
 
         RuntimeException exn = null;
         try {
-            for (Cons<L> cons = lners; cons != null; cons = cons.next) {
+            for (Cons cons = lners; cons != null; cons = cons.next) {
                 try {
                     notifier.notify(cons.listener(), a1, a2, a3);
                 } catch (RuntimeException ex) {
@@ -159,7 +153,7 @@ public abstract class Reactor<L extends Reactor.RListener>
         return _listeners == DISPATCHING;
     }
 
-    protected Cons<L> _listeners;
+    protected Cons _listeners;
     protected Runs _pendingRuns;
 
     protected static abstract class Runs implements Runnable {
@@ -170,5 +164,5 @@ public abstract class Reactor<L extends Reactor.RListener>
         public abstract void notify (Object listener, Object a1, Object a2, Object a3);
     }
 
-    protected static final Cons<RListener> DISPATCHING = new Cons<RListener>(null, null);
+    protected static final Cons DISPATCHING = new Cons(null, null);
 }

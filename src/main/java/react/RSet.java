@@ -19,8 +19,7 @@ import java.util.Set;
  * #remove} will only generate a notification if an element was actually removed, use {@link
  * #removeForce} to force a notification.
  */
-public class RSet<E> extends Reactor<RSet.Listener<E>>
-    implements Set<E>
+public class RSet<E> extends Reactor implements Set<E>
 {
     /** An interface for publishing set events to listeners. */
     public static abstract class Listener<E> extends Reactor.RListener

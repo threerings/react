@@ -21,8 +21,7 @@ import java.util.Set;
  * #remove} will only generate a notification if a mapping for the specified key existed, use
  * {@link #removeForce} to force a notification.
  */
-public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
-    implements Map<K,V>
+public class RMap<K,V> extends Reactor implements Map<K,V>
 {
     /** An interface for publishing map events to listeners. */
     public static abstract class Listener<K,V> extends Reactor.RListener

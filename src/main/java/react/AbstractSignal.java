@@ -10,8 +10,7 @@ package react;
  * exposing a public interface for emitting events. This can be used by entities which wish to
  * expose a signal-like interface for listening, without allowing external callers to emit signals.
  */
-public class AbstractSignal<T> extends Reactor<Slot<T>>
-    implements SignalView<T>
+public class AbstractSignal<T> extends Reactor implements SignalView<T>
 {
     @Override public <M> SignalView<M> map (final Function<? super T, M> func) {
         final AbstractSignal<T> outer = this;

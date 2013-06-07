@@ -12,16 +12,16 @@ import java.lang.ref.WeakReference;
 /**
  * Implements {@link Connection} and a linked-list style listener list for {@link Reactor}s.
  */
-class Cons<L extends RListener> implements Connection
+class Cons implements Connection
 {
     /** The next connection in our chain. */
-    public Cons<L> next;
+    public Cons next;
 
     /** Indicates whether this connection is one-shot or persistent. */
     public final boolean oneShot () { return _oneShot; }
 
     /** Returns the listener for this cons cell. */
-    public L listener () {
+    public RListener listener () {
         return _ref.get();
     }
 
@@ -51,13 +51,13 @@ class Cons<L extends RListener> implements Connection
     @Override public Connection holdWeakly () {
         if (_owner == null) throw new IllegalStateException(
             "Cannot change disconnected connection to weak.");
-        ListenerRef<L> ref = _ref;
+        ListenerRef ref = _ref;
         if (!ref.isWeak()) {
-            final WeakReference<L> weak = new WeakReference<L>(ref.get());
-            _ref = new ListenerRef<L>() {
+            final WeakReference<RListener> weak = new WeakReference<RListener>(ref.get());
+            _ref = new ListenerRef() {
                 public boolean isWeak () { return true; }
-                public L get () {
-                    L listener = weak.get();
+                public RListener get () {
+                    RListener listener = weak.get();
                     if (listener == null) {
                         listener = _owner.placeholderListener();
                         disconnect();
@@ -74,20 +74,20 @@ class Cons<L extends RListener> implements Connection
             ", hasNext=" + (next != null) + ", oneShot=" + oneShot() + "]";
     }
 
-    protected Cons (Reactor<L> owner, final L listener) {
+    protected Cons (Reactor owner, final RListener listener) {
         _owner = owner;
-        _ref = new ListenerRef<L>() {
+        _ref = new ListenerRef() {
             public boolean isWeak () { return false; }
-            public L get() { return listener; }
+            public RListener get() { return listener; }
         };
     }
 
-    private interface ListenerRef<L extends RListener> {
+    private interface ListenerRef {
         boolean isWeak ();
-        L get ();
+        RListener get ();
     }
 
-    static <L extends RListener> Cons<L> insert (Cons<L> head, Cons<L> cons) {
+    static Cons insert (Cons head, Cons cons) {
         if (head == null) {
             return cons;
         } else if (head._priority > cons._priority) {
@@ -99,22 +99,22 @@ class Cons<L extends RListener> implements Connection
         }
     }
 
-    static <L extends RListener> Cons<L> remove (Cons<L> head, Cons<L> cons) {
+    static Cons remove (Cons head, Cons cons) {
         if (head == null) return head;
         if (head == cons) return head.next;
         head.next = remove(head.next, cons);
         return head;
     }
 
-    static <L extends RListener> Cons<L> removeAll (Cons<L> head, L listener) {
+    static Cons removeAll (Cons head, RListener listener) {
         if (head == null) return null;
         if (head.listener() == listener) return removeAll(head.next, listener);
         head.next = removeAll(head.next, listener);
         return head;
     }
 
-    private Reactor<L> _owner;
-    private ListenerRef<L> _ref;
+    private Reactor _owner;
+    private ListenerRef _ref;
     private boolean _oneShot; // defaults to false
     private int _priority; // defaults to zero
 }
