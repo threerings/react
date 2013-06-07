@@ -43,21 +43,12 @@ public class AbstractSignal<T> extends Reactor<Slot<T>>
      * Emits the supplied event to all connected slots.
      */
     protected void notifyEmit (T event) {
-        Cons<Slot<T>> lners = prepareNotify();
-        MultiFailureException error = null;
-        try {
-            for (Cons<Slot<T>> cons = lners; cons != null; cons = cons.next) {
-                try {
-                    cons.listener().onEmit(event);
-                } catch (Throwable t) {
-                    if (error == null) error = new MultiFailureException();
-                    error.addFailure(t);
-                }
-                if (cons.oneShot()) cons.disconnect();
-            }
-        } finally {
-            finishNotify(lners);
-        }
-        if (error != null) error.trigger();
+        notify(EMIT, event, null, null);
     }
+
+    @SuppressWarnings("unchecked") protected static final Notifier EMIT = new Notifier() {
+        public void notify (Object slot, Object event, Object _1, Object _2) {
+            ((Slot<Object>)slot).onEmit(event);
+        }
+    };
 }

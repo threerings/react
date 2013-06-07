@@ -277,22 +277,7 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
     }
 
     protected void notifyAdd (E elem) {
-        Cons<Listener<E>> lners = prepareNotify();
-        MultiFailureException error = null;
-        try {
-            for (Cons<Listener<E>> cons = lners; cons != null; cons = cons.next) {
-                try {
-                    cons.listener().onAdd(elem);
-                } catch (Throwable t) {
-                    if (error == null) error = new MultiFailureException();
-                    error.addFailure(t);
-                }
-                if (cons.oneShot()) cons.disconnect();
-            }
-        } finally {
-            finishNotify(lners);
-        }
-        if (error != null) error.trigger();
+        notify(ADD, elem, null, null);
     }
 
     protected void emitRemove (E elem) {
@@ -300,22 +285,7 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
     }
 
     protected void notifyRemove (E elem) {
-        Cons<Listener<E>> lners = prepareNotify();
-        MultiFailureException error = null;
-        try {
-            for (Cons<Listener<E>> cons = lners; cons != null; cons = cons.next) {
-                try {
-                    cons.listener().onRemove(elem);
-                } catch (Throwable t) {
-                    if (error == null) error = new MultiFailureException();
-                    error.addFailure(t);
-                }
-                if (cons.oneShot()) cons.disconnect();
-            }
-        } finally {
-            finishNotify(lners);
-        }
-        if (error != null) error.trigger();
+        notify(REMOVE, elem, null, null);
     }
 
     /** Contains our underlying elements. */
@@ -325,4 +295,16 @@ public class RSet<E> extends Reactor<RSet.Listener<E>>
     protected Value<Integer> _sizeView;
 
     protected static final Listener<Object> NOOP = new Listener<Object>() {};
+
+    @SuppressWarnings("unchecked") protected static final Notifier ADD = new Notifier() {
+        public void notify (Object lner, Object elem, Object _1, Object _2) {
+            ((Listener<Object>)lner).onAdd(elem);
+        }
+    };
+
+    @SuppressWarnings("unchecked") protected static final Notifier REMOVE = new Notifier() {
+        public void notify (Object lner, Object elem, Object _1, Object _2) {
+            ((Listener<Object>)lner).onRemove(elem);
+        }
+    };
 }

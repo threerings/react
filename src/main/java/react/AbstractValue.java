@@ -113,30 +113,15 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
     /**
      * Emits a change notification. Default implementation immediately notifies listeners.
      */
-    protected void emitChange (T value, T ovalue) {
-        notifyChange(value, ovalue);
+    protected void emitChange (T value, T oldValue) {
+        notifyChange(value, oldValue);
     }
 
     /**
      * Notifies our listeners of a value change.
      */
-    protected void notifyChange (T value, T ovalue) {
-        Cons<Listener<T>> lners = prepareNotify();
-        MultiFailureException error = null;
-        try {
-            for (Cons<Listener<T>> cons = lners; cons != null; cons = cons.next) {
-                try {
-                    cons.listener().onChange(value, ovalue);
-                } catch (Throwable t) {
-                    if (error == null) error = new MultiFailureException();
-                    error.addFailure(t);
-                }
-                if (cons.oneShot()) cons.disconnect();
-            }
-        } finally {
-            finishNotify(lners);
-        }
-        if (error != null) error.trigger();
+    protected void notifyChange (T value, T oldValue) {
+        notify(CHANGE, value, oldValue, null);
     }
 
     /**
@@ -146,4 +131,10 @@ public abstract class AbstractValue<T> extends Reactor<ValueView.Listener<T>>
     protected T updateLocal (T value) {
         throw new UnsupportedOperationException();
     }
+
+    @SuppressWarnings("unchecked") protected static final Notifier CHANGE = new Notifier() {
+        public void notify (Object lner, Object value, Object oldValue, Object _) {
+            ((Listener<Object>)lner).onChange(value, oldValue);
+        }
+    };
 }

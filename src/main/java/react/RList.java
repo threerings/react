@@ -317,60 +317,15 @@ public class RList<E> extends Reactor<RList.Listener<E>>
 
     // Non-list RList implementation
     protected void emitAdd (int index, E elem) {
-        Cons<Listener<E>> lners = prepareNotify();
-        MultiFailureException error = null;
-        try {
-            for (Cons<Listener<E>> cons = lners; cons != null; cons = cons.next) {
-                try {
-                    cons.listener().onAdd(index, elem);
-                } catch (Throwable t) {
-                    if (error == null) error = new MultiFailureException();
-                    error.addFailure(t);
-                }
-                if (cons.oneShot()) cons.disconnect();
-            }
-        } finally {
-            finishNotify(lners);
-        }
-        if (error != null) error.trigger();
+        notify(ADD, index, elem, null);
     }
 
     protected void emitSet (int index, E newElem, E oldElem) {
-        Cons<Listener<E>> lners = prepareNotify();
-        MultiFailureException error = null;
-        try {
-            for (Cons<Listener<E>> cons = lners; cons != null; cons = cons.next) {
-                try {
-                    cons.listener().onSet(index, newElem, oldElem);
-                } catch (Throwable t) {
-                    if (error == null) error = new MultiFailureException();
-                    error.addFailure(t);
-                }
-                if (cons.oneShot()) cons.disconnect();
-            }
-        } finally {
-            finishNotify(lners);
-        }
-        if (error != null) error.trigger();
+        notify(SET, index, newElem, oldElem);
     }
 
     protected void emitRemove (int index, E elem) {
-        Cons<Listener<E>> lners = prepareNotify();
-        MultiFailureException error = null;
-        try {
-            for (Cons<Listener<E>> cons = lners; cons != null; cons = cons.next) {
-                try {
-                    cons.listener().onRemove(index, elem);
-                } catch (Throwable t) {
-                    if (error == null) error = new MultiFailureException();
-                    error.addFailure(t);
-                }
-                if (cons.oneShot()) cons.disconnect();
-            }
-        } finally {
-            finishNotify(lners);
-        }
-        if (error != null) error.trigger();
+        notify(REMOVE, index, elem, null);
     }
 
     /** Contains our underlying elements. */
@@ -380,4 +335,22 @@ public class RList<E> extends Reactor<RList.Listener<E>>
     protected Value<Integer> _sizeView;
 
     protected static final Listener<Object> NOOP = new Listener<Object>() {};
+
+    @SuppressWarnings("unchecked") protected static final Notifier ADD = new Notifier() {
+        public void notify (Object lner, Object index, Object elem, Object _) {
+            ((Listener<Object>)lner).onAdd((Integer)index, elem);
+        }
+    };
+
+    @SuppressWarnings("unchecked") protected static final Notifier SET = new Notifier() {
+        public void notify (Object lner, Object index, Object newElem, Object oldElem) {
+            ((Listener<Object>)lner).onSet((Integer)index, newElem, oldElem);
+        }
+    };
+
+    @SuppressWarnings("unchecked") protected static final Notifier REMOVE = new Notifier() {
+        public void notify (Object lner, Object index, Object elem, Object _) {
+            ((Listener<Object>)lner).onRemove((Integer)index, elem);
+        }
+    };
 }

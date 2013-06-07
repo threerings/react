@@ -275,8 +275,8 @@ public class RFutureTest extends TestBase {
         RFuture<List<String>> sucfailseq = RFuture.sequence(list(success1, failure1));
         sucfailseq.onFailure(new Slot<Throwable>() {
             public void onEmit (Throwable cause) {
-                assertFalse(cause instanceof MultiFailureException);
-                assertEquals("Boo 1!", cause.getMessage());
+                assertTrue(cause instanceof MultiFailureException);
+                assertEquals("1 failures: java.lang.Exception: Boo 1!", cause.getMessage());
             }
         });
         counter.bind(sucfailseq);
@@ -287,8 +287,8 @@ public class RFutureTest extends TestBase {
         RFuture<List<String>> failsucseq = RFuture.sequence(list(failure1, success2));
         failsucseq.onFailure(new Slot<Throwable>() {
             public void onEmit (Throwable cause) {
-                assertFalse(cause instanceof MultiFailureException);
-                assertEquals("Boo 1!", cause.getMessage());
+                assertTrue(cause instanceof MultiFailureException);
+                assertEquals("1 failures: java.lang.Exception: Boo 1!", cause.getMessage());
             }
         });
         counter.bind(failsucseq);

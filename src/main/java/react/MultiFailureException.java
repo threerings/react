@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * An exception thrown to communicate multiple listener failures.
+ * An exception thrown to communicate multiple failures.
  */
 public class MultiFailureException extends RuntimeException
 {
@@ -33,19 +33,6 @@ public class MultiFailureException extends RuntimeException
             throw (Error)t;
         } else {
             throw (MultiFailureException)initCause(t);
-        }
-    }
-
-    /**
-     * Returns this exception if it contains more than one underlying exception. Returns the
-     * underyling exception if only one exception has been added. Returns null if no exceptions
-     * have been added.
-     */
-    public Throwable consolidate () {
-        switch (_failures.size()) {
-        case 0: return null;
-        case 1: return _failures.get(0);
-        default: return this;
         }
     }
 

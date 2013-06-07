@@ -441,22 +441,7 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
     }
 
     protected void notifyPut (K key, V value, V oldValue) {
-        Cons<Listener<K,V>> lners = prepareNotify();
-        MultiFailureException error = null;
-        try {
-            for (Cons<Listener<K,V>> cons = lners; cons != null; cons = cons.next) {
-                try {
-                    cons.listener().onPut(key, value, oldValue);
-                } catch (Throwable t) {
-                    if (error == null) error = new MultiFailureException();
-                    error.addFailure(t);
-                }
-                if (cons.oneShot()) cons.disconnect();
-            }
-        } finally {
-            finishNotify(lners);
-        }
-        if (error != null) error.trigger();
+        notify(PUT, key, value, oldValue);
     }
 
     protected void emitRemove (K key, V oldValue) {
@@ -464,22 +449,7 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
     }
 
     protected void notifyRemove (K key, V oldValue) {
-        Cons<Listener<K,V>> lners = prepareNotify();
-        MultiFailureException error = null;
-        try {
-            for (Cons<Listener<K,V>> cons = lners; cons != null; cons = cons.next) {
-                try {
-                    cons.listener().onRemove(key, oldValue);
-                } catch (Throwable t) {
-                    if (error == null) error = new MultiFailureException();
-                    error.addFailure(t);
-                }
-                if (cons.oneShot()) cons.disconnect();
-            }
-        } finally {
-            finishNotify(lners);
-        }
-        if (error != null) error.trigger();
+        notify(REMOVE, key, oldValue, null);
     }
 
     /** Contains our underlying mappings. */
@@ -489,4 +459,16 @@ public class RMap<K,V> extends Reactor<RMap.Listener<K,V>>
     protected Value<Integer> _sizeView;
 
     protected static final Listener<Object,Object> NOOP = new Listener<Object,Object>() {};
+
+    @SuppressWarnings("unchecked") protected static final Notifier PUT = new Notifier() {
+        public void notify (Object lner, Object key, Object value, Object oldValue) {
+            ((Listener<Object,Object>)lner).onPut(key, value, oldValue);
+        }
+    };
+
+    @SuppressWarnings("unchecked") protected static final Notifier REMOVE = new Notifier() {
+        public void notify (Object lner, Object key, Object oldValue, Object _) {
+            ((Listener<Object,Object>)lner).onRemove(key, oldValue);
+        }
+    };
 }

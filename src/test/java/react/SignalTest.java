@@ -170,7 +170,7 @@ public class SignalTest
         signal.emit();
     }
 
-    @Test(expected=MultiFailureException.class)
+    @Test(expected=RuntimeException.class)
     public void testMultiFailure () {
         UnitSignal signal = new UnitSignal();
         signal.connect(new UnitSlot() {

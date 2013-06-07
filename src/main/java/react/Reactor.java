@@ -49,25 +49,6 @@ public abstract class Reactor<L extends Reactor.RListener>
         return cons;
     }
 
-    protected synchronized Cons<L> prepareNotify () {
-        if (_listeners == DISPATCHING)
-            throw new IllegalStateException("Initiated notify while notifying");
-        Cons<L> lners = _listeners;
-        @SuppressWarnings("unchecked") Cons<L> sentinel = (Cons<L>)DISPATCHING;
-        _listeners = sentinel;
-        return lners;
-    }
-
-    protected synchronized void finishNotify (Cons<L> lners) {
-        // note that we're no longer dispatching
-        _listeners = lners;
-
-        // now remove listeners any queued for removing and add any queued for adding
-        for (; _pendingRuns != null; _pendingRuns = _pendingRuns.next) {
-            _pendingRuns.run();
-        }
-    }
-
     protected synchronized void disconnect (final Cons<L> cons) {
         if (isDispatching()) {
             _pendingRuns = insert(_pendingRuns, new Runs() {
@@ -99,14 +80,6 @@ public abstract class Reactor<L extends Reactor.RListener>
     }
 
     /**
-     * Returns true if both values are null, reference the same instance, or are
-     * {@link Object#equals}.
-     */
-    protected static <T> boolean areEqual (T o1, T o2) {
-        return (o1 == o2 || (o1 != null && o1.equals(o2)));
-    }
-
-    /**
      * Called prior to mutating any underlying model; allows subclasses to reject mutation.
      */
     protected void checkMutate () {
@@ -127,6 +100,54 @@ public abstract class Reactor<L extends Reactor.RListener>
         // noop
     }
 
+    /**
+     * Emits the supplied event to all connected slots. We omit a bunch of generic type shenanigans
+     * here and force the caller to just cast things, because this is all under the hood where
+     * there's zero chance of fucking up and this results in simpler, easier to read code.
+     */
+    protected void notify (Notifier notifier, Object a1, Object a2, Object a3) {
+        Cons<L> lners;
+        synchronized (this) {
+            if (_listeners == DISPATCHING)
+                throw new IllegalStateException("Initiated notify while notifying");
+            lners = _listeners;
+            @SuppressWarnings("unchecked") Cons<L> sentinel = (Cons<L>)DISPATCHING;
+            _listeners = sentinel;
+        }
+
+        RuntimeException exn = null;
+        try {
+            for (Cons<L> cons = lners; cons != null; cons = cons.next) {
+                try {
+                    notifier.notify(cons.listener(), a1, a2, a3);
+                } catch (RuntimeException ex) {
+                    // Java7: if (exn != null) exn.addSuppressed(ex)
+                    exn = ex;
+                }
+                if (cons.oneShot()) cons.disconnect();
+            }
+            if (exn != null) throw exn;
+
+        } finally {
+            synchronized (this) {
+                // note that we're no longer dispatching
+                _listeners = lners;
+                // now remove listeners any queued for removing and add any queued for adding
+                for (; _pendingRuns != null; _pendingRuns = _pendingRuns.next) {
+                    _pendingRuns.run();
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns true if both values are null, reference the same instance, or are
+     * {@link Object#equals}.
+     */
+    protected static <T> boolean areEqual (T o1, T o2) {
+        return (o1 == o2 || (o1 != null && o1.equals(o2)));
+    }
+
     protected static Runs insert (Runs head, Runs action) {
         if (head == null) return action;
         head.next = insert(head.next, action);
@@ -143,6 +164,10 @@ public abstract class Reactor<L extends Reactor.RListener>
 
     protected static abstract class Runs implements Runnable {
         public Runs next;
+    }
+
+    protected static abstract class Notifier {
+        public abstract void notify (Object listener, Object a1, Object a2, Object a3);
     }
 
     protected static final Cons<RListener> DISPATCHING = new Cons<RListener>(null, null);

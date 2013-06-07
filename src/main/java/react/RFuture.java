@@ -45,8 +45,8 @@ public class RFuture<T> {
     }
 
     /** Returns a future containing a list of all success results from {@code futures} if all of
-     * the futures complete successfully, or an aggregate of all failures (where multiple
-     * exceptions are combined via {@link MultiFailureException}), if any of the futures fails.
+     * the futures complete successfully, or a {@link MultiFailureException} aggregating all
+     * failures, if any of the futures fails.
      *
      * <p>If {@code futures} is an ordered collection, the resulting list will match the order of
      * the futures. If not, result list is in {@code futures}' iteration order.</p> */
@@ -62,7 +62,7 @@ public class RFuture<T> {
                     _error.addFailure(result.getFailure());
                 }
                 if (--_remain == 0) {
-                    if (_error != null) pseq.fail(_error.consolidate());
+                    if (_error != null) pseq.fail(_error);
                     else {
                         @SuppressWarnings("unchecked") T[] results = (T[])_results;
                         pseq.succeed(Arrays.asList(results));
