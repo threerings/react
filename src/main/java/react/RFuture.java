@@ -128,7 +128,7 @@ public class RFuture<T> {
         });
         else if (result.isFailure()) slot.onEmit(result.getFailure());
         return this;
-    };
+    }
 
     /** Causes {@code slot} to be notified when this future is completed. If it has already
      * completed, the slot will be notified immediately.
@@ -138,7 +138,7 @@ public class RFuture<T> {
         if (result == null) _result.connect(slot);
         else slot.onEmit(result);
         return this;
-    };
+    }
 
     /** Returns a value that indicates whether this future has completed. */
     public ValueView<Boolean> isComplete () {
@@ -164,7 +164,7 @@ public class RFuture<T> {
                 return result == null ? null : result.map(func);
             }
         }));
-    };
+    }
 
     /** Maps a successful result to a new result using {@link #func} when it arrives. Failure on
      * the original result or the mapped result are both dispatched to the mapped result. This is
@@ -179,7 +179,7 @@ public class RFuture<T> {
             }
         });
         return new RFuture<R>(mapped);
-    };
+    }
 
     protected RFuture (ValueView<Try<T>> result) {
         _result = result;
