@@ -103,7 +103,7 @@ public class RFuture<T> {
     }
 
     /** Causes {@code slot} to be notified if/when this future is completed with success. If it has
-     * already suceeded, the slot will be notified immediately.
+     * already succeeded, the slot will be notified immediately.
      * @return this future for chaining. */
     public RFuture<T> onSuccess (final Slot<? super T> slot) {
         Try<T> result = _result.get();

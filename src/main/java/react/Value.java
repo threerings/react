@@ -44,7 +44,7 @@ public class Value<T> extends AbstractValue<T>
     }
 
     /**
-     * Returns a slot which can be used to wire this value to the emissons of a {@link Signal} or
+     * Returns a slot which can be used to wire this value to the emissions of a {@link Signal} or
      * another value.
      */
     public Slot<T> slot () {

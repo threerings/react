@@ -26,7 +26,7 @@ public class Signal<T> extends AbstractSignal<T>
     }
 
     /**
-     * Returns a slot which can be used to wire this signal to the emissons of a {@link Signal} or
+     * Returns a slot which can be used to wire this signal to the emissions of a {@link Signal} or
      * another value.
      */
     public Slot<T> slot () {

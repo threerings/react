@@ -213,7 +213,7 @@ public class RMapTest
         entries.remove(new HashMap.SimpleEntry<Integer,String>(42, "Mu"));
         assertEquals(1, removes[0]);
 
-        // test removal via the itereator
+        // test removal via the iterator
         Iterator<Map.Entry<Integer,String>> iter = entries.iterator();
         iter.next();
         iter.remove();
