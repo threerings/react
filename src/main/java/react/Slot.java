@@ -34,7 +34,7 @@ public abstract class Slot<T> extends ValueView.Listener<T>
      * Returns a slot that is only notified when the signal to which this slot is connected emits a
      * value which causes {@code pred} to return true.
      */
-    public <S extends T> Slot<S> filtered (final Function<S,Boolean> pred) {
+    public <S extends T> Slot<S> filtered (final Function<? super S,Boolean> pred) {
         final Slot<T> outer = this;
         return new Slot<S>() {
             public void onEmit (S value) {
