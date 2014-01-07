@@ -14,10 +14,17 @@ public interface SignalView<T>
 {
     /**
      * Creates a signal that maps this signal via a function. When this signal emits a value, the
-     * mapped signal will emit that value as transformed by the supplied function. The mapped value
-     * will retain a connection to this signal for as long as it has connections of its own.
+     * mapped signal will emit that value as transformed by the supplied function. The mapped
+     * signal will retain a connection to this signal for as long as it has connections of its own.
      */
-    <M> SignalView<M> map (final Function<? super T, M> func);
+    <M> SignalView<M> map (Function<? super T, M> func);
+
+    /**
+     * Creates a signal that emits a value only when the supplied filter function returns true. The
+     * filtered signal will retain a connection to this signal for as long as it has connections of
+     * its own.
+     */
+    SignalView<T> filter (Function<? super T, Boolean> pred);
 
     /**
      * Connects this signal to the supplied slot, such that when an event is emitted from this

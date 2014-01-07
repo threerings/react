@@ -25,6 +25,21 @@ public class AbstractSignal<T> extends Reactor implements SignalView<T>
         };
     }
 
+    @Override public SignalView<T> filter (final Function<? super T, Boolean> pred) {
+        final AbstractSignal<T> outer = this;
+        return new MappedSignal<T>() {
+            @Override protected Connection connect () {
+                return outer.connect(new Slot<T>() {
+                    @Override public void onEmit (T value) {
+                        if (pred.apply(value)) {
+                            notifyEmit(value);
+                        }
+                    }
+                });
+            }
+        };
+    }
+
     @Override public Connection connect (Slot<? super T> slot) {
         return addConnection(slot);
     }

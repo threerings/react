@@ -205,6 +205,21 @@ public class SignalTest
         assertFalse(signal.hasConnections());
     }
 
+    @Test public void testFilter () {
+        final int[] triggered = new int[1];
+        Slot<String> onString = new Slot<String>() {
+            public void onEmit (String value) {
+                assertFalse(value == null);
+                triggered[0]++;
+            }
+        };
+        Signal<String> sig = Signal.create();
+        sig.filter(Functions.NON_NULL).connect(onString);
+        sig.emit(null);
+        sig.emit("foozle");
+        assertEquals(1, triggered[0]);
+    }
+
     @Test public void testFiltered () {
         final int[] triggered = new int[1];
         Slot<String> onString = new Slot<String>() {
