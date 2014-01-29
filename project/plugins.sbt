@@ -1,1 +1,1 @@
-libraryDependencies += "com.samskivert" % "sbt-pom-util" % "0.3"
+libraryDependencies += "com.samskivert" % "sbt-pom-util" % "0.6"
