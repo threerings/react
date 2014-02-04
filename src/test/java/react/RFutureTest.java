@@ -6,6 +6,8 @@
 package react;
 
 import java.util.List;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.ArrayList;
 
 import org.junit.*;
@@ -306,6 +308,20 @@ public class RFutureTest extends TestBase {
         counter.check("before seq fail/fail", 0, 0, 0);
         failure2.fail(new Exception("Boo 2!"));
         counter.check("after seq fail/fail", 0, 1, 1);
+    }
+
+    @Test public void testSequenceEmpty () {
+        FutureCounter counter = new FutureCounter();
+        RFuture<List<String>> seq = RFuture.sequence(Collections.<RFuture<String>>emptyList());
+        counter.bind(seq);
+        counter.check("sequence empty list succeeds", 1, 0, 1);
+    }
+
+    @Test public void testCollectEmpty () {
+        FutureCounter counter = new FutureCounter();
+        RFuture<Collection<String>> seq = RFuture.collect(Collections.<RFuture<String>>emptyList());
+        counter.bind(seq);
+        counter.check("collect empty list succeeds", 1, 0, 1);
     }
 
     // fucking Java generics and arrays... blah

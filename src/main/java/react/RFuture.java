@@ -8,6 +8,7 @@ package react;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -51,6 +52,9 @@ public class RFuture<T> {
      * <p>If {@code futures} is an ordered collection, the resulting list will match the order of
      * the futures. If not, result list is in {@code futures}' iteration order.</p> */
     public static <T> RFuture<List<T>> sequence (Collection<? extends RFuture<T>> futures) {
+        // if we're passed an empty list of futures, succeed immediately with an empty list
+        if (futures.isEmpty()) return RFuture.success(Collections.<T>emptyList());
+
         final RPromise<List<T>> pseq = RPromise.create();
         final int count = futures.size();
         class Sequencer {
@@ -88,6 +92,9 @@ public class RFuture<T> {
      * results are simply omitted from the list. The success results are also in no particular
      * order. If all of {@code futures} fail, the resulting list will be empty. */
     public static <T> RFuture<Collection<T>> collect (Collection<? extends RFuture<T>> futures) {
+        // if we're passed an empty list of futures, succeed immediately with an empty list
+        if (futures.isEmpty()) return RFuture.<Collection<T>>success(Collections.<T>emptyList());
+
         final RPromise<Collection<T>> pseq = RPromise.create();
         final int count = futures.size();
         Slot<Try<T>> collector = new Slot<Try<T>>() {
