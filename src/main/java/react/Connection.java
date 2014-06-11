@@ -48,14 +48,14 @@ public interface Connection
     @Deprecated Connection atPriority (int priority);
 
     /**
-     * Changes the priority of this connection to the specified value. Connections are notified
+     * Changes the priority of this connection to the specified value. Connections are notified from
      * highest priority to lowest priority. The default priority is zero.
      *
      * <p>This should generally be done simultaneously with creating a connection. For example:</p>
      *
      * <pre>{@code
      * Signal<Foo> signal = ...;
-     * Connection conn = signal.connect(new Slot<Foo>() { ... }).atPriority(5);
+     * Connection conn = signal.connect(new Slot<Foo>() { ... }).atPrio(5);
      * }</pre>
      *
      * <p><em>NOTE:</em> if you are dispatching signals in a multithreaded environment, it is
@@ -67,7 +67,7 @@ public interface Connection
      * Signal<Foo> signal = ...;
      * Connection conn;
      * synchronized (signal) {
-     *   conn = signal.connect(slot).atPriority(5);
+     *   conn = signal.connect(slot).atPrio(5);
      * }
      * }</pre>
      *
