@@ -336,7 +336,7 @@ public class RList<E> extends Reactor implements List<E>
     protected static final Listener<Object> NOOP = new Listener<Object>() {};
 
     @SuppressWarnings("unchecked") protected static final Notifier ADD = new Notifier() {
-        public void notify (Object lner, Object index, Object elem, Object _) {
+        public void notify (Object lner, Object index, Object elem, Object ignored) {
             ((Listener<Object>)lner).onAdd((Integer)index, elem);
         }
     };
@@ -348,7 +348,7 @@ public class RList<E> extends Reactor implements List<E>
     };
 
     @SuppressWarnings("unchecked") protected static final Notifier REMOVE = new Notifier() {
-        public void notify (Object lner, Object index, Object elem, Object _) {
+        public void notify (Object lner, Object index, Object elem, Object ignored) {
             ((Listener<Object>)lner).onRemove((Integer)index, elem);
         }
     };

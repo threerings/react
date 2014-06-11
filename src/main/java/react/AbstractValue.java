@@ -132,7 +132,7 @@ public abstract class AbstractValue<T> extends Reactor implements ValueView<T>
     }
 
     @SuppressWarnings("unchecked") protected static final Notifier CHANGE = new Notifier() {
-        public void notify (Object lner, Object value, Object oldValue, Object _) {
+        public void notify (Object lner, Object value, Object oldValue, Object ignored) {
             ((Listener<Object>)lner).onChange(value, oldValue);
         }
     };

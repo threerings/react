@@ -466,7 +466,7 @@ public class RMap<K,V> extends Reactor implements Map<K,V>
     };
 
     @SuppressWarnings("unchecked") protected static final Notifier REMOVE = new Notifier() {
-        public void notify (Object lner, Object key, Object oldValue, Object _) {
+        public void notify (Object lner, Object key, Object oldValue, Object ignored) {
             ((Listener<Object,Object>)lner).onRemove(key, oldValue);
         }
     };
