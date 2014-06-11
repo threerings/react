@@ -38,7 +38,11 @@ class Cons implements Connection
         return this;
     }
 
-    @Override public Connection atPriority (int priority) {
+    @Deprecated public Connection atPriority (int priority) {
+      return atPrio(priority == Integer.MIN_VALUE ? Integer.MAX_VALUE : -priority);
+    }
+
+    @Override public Connection atPrio (int priority) {
         if (_owner == null) throw new IllegalStateException(
             "Cannot change priority of disconnected connection.");
         _owner.disconnect(this);
@@ -90,7 +94,7 @@ class Cons implements Connection
     static Cons insert (Cons head, Cons cons) {
         if (head == null) {
             return cons;
-        } else if (head._priority > cons._priority) {
+        } else if (cons._priority > head._priority) {
             cons.next = head;
             return cons;
         } else {

@@ -40,8 +40,18 @@ public interface Connection
     Connection once ();
 
     /**
-     * Changes the priority of this connection to the specified value. This should generally be
-     * done simultaneously with creating a connection. For example:
+     * @deprecated React originally notified connections lowest priority to highest priority, which
+     * was non-intuitive, so it has been reversed and this deprecated method now negates the
+     * supplied priority (with special handling for {@link Integer#MIN_VALUE}) so as to preserve old
+     * behavior for code using the old ordering.
+     */
+    @Deprecated Connection atPriority (int priority);
+
+    /**
+     * Changes the priority of this connection to the specified value. Connections are notified
+     * highest priority to lowest priority. The default priority is zero.
+     *
+     * <p>This should generally be done simultaneously with creating a connection. For example:</p>
      *
      * <pre>{@code
      * Signal<Foo> signal = ...;
@@ -63,7 +73,7 @@ public interface Connection
      *
      * @return this connection instance for convenient chaining.
      */
-    Connection atPriority (int priority);
+    Connection atPrio (int priority);
 
     /**
      * Changes this connection to one held by a weak reference. It only remains connected as long
