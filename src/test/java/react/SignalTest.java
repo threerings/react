@@ -66,10 +66,10 @@ public class SignalTest
         TestSlot slot4 = new TestSlot();
 
         UnitSignal signal = new UnitSignal();
-        signal.connect(slot3).atPriority(3);
-        signal.connect(slot1).atPriority(1);
-        signal.connect(slot2).atPriority(2);
-        signal.connect(slot4).atPriority(4);
+        signal.connect(slot3).atPrio(2);
+        signal.connect(slot1).atPrio(4);
+        signal.connect(slot2).atPrio(3);
+        signal.connect(slot4).atPrio(1);
         signal.emit();
         assertEquals(1, slot1.order);
         assertEquals(2, slot2.order);
@@ -109,7 +109,7 @@ public class SignalTest
             public void onEmit () {
                 rconn.disconnect();
             }
-        }).atPriority(1); // ensure that we're before toRemove
+        }).atPrio(1); // ensure that we're before toRemove
         signal.emit(42);
         // since toRemove will have been removed during this dispatch, it will receive the signal
         // in question, even though the higher priority signal triggered first
