@@ -1,5 +1,5 @@
 <!-- defines our GWT module -->
 <module>
   <source path="react"/>
-  <super-source path="gwt"/>
+  <super-source path="super"/>
 </module>
