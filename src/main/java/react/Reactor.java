@@ -21,6 +21,20 @@ public abstract class Reactor
         return _listeners != null;
     }
 
+    /**
+     * Clears all connections from this reactor. This is not used in normal circumstances, but is
+     * made available for libraries which build on react and need a way to forcibly disconnect all
+     * connections to reactive state.
+     *
+     * @throws IllegalStateException if this reactor is in the middle of dispatching an event.
+     */
+    public synchronized void clearConnections () {
+      if (isDispatching()) throw new IllegalStateException(
+        "Cannot clear connections while dispatching.");
+      assert _pendingRuns == null;
+      _listeners = null;
+    }
+
     /** Returns the listener to be used when a weakly held listener is discovered to have been
      * collected while dispatching. This listener should NOOP when signaled. */
     abstract RListener placeholderListener ();
