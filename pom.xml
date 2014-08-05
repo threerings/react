@@ -54,15 +54,9 @@
   <build>
     <!-- we include the source files in our main jar for use by GWT -->
     <resources>
-      <resource>
-        <directory>${project.build.sourceDirectory}</directory>
-      </resource>
-      <resource>
-        <directory>${basedir}/src/main/gwt</directory>
-      </resource>
-      <resource>
-        <directory>${basedir}/src/main/resources</directory>
-      </resource>
+      <resource><directory>${project.build.sourceDirectory}</directory></resource>
+      <resource><directory>${basedir}/src/main/gwt</directory></resource>
+      <resource><directory>${basedir}/src/main/resources</directory></resource>
     </resources>
     <plugins>
       <plugin>
@@ -80,9 +74,6 @@
             <arg>-Xlint:-serial</arg>
             <arg>-Xlint:-path</arg>
           </compilerArgs>
-          <excludes>
-            <exclude>gwt/**</exclude>
-          </excludes>
         </configuration>
       </plugin>
       <plugin>
