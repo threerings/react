@@ -255,8 +255,8 @@ public class RList<E> extends Reactor implements List<E>
         return new RList<E>(_impl.subList(fromIndex, toIndex));
     }
 
-    @Override public boolean equals (Object object) {
-        return object == this || _impl.equals(object);
+    @Override public boolean equals (Object other) {
+        return other == this || _impl.equals(other);
     }
 
     @Override public String toString () {

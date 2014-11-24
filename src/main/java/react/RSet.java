@@ -259,7 +259,7 @@ public class RSet<E> extends Reactor implements Set<E>
     }
 
     @Override public boolean equals (Object other) {
-        return (other instanceof Set<?>) ? _impl.equals(other) : false;
+        return other == this || _impl.equals(other);
     }
 
     @Override public String toString () {

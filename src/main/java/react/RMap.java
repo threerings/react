@@ -228,7 +228,7 @@ public class RMap<K,V> extends Reactor implements Map<K,V>
     }
 
     @Override public boolean equals (Object other) {
-        return (other instanceof Map<?,?>) ? _impl.equals(other) : false;
+        return other == this || _impl.equals(other);
     }
 
     @Override public String toString () {
