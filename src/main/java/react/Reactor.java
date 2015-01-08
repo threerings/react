@@ -46,7 +46,7 @@ public abstract class Reactor
 
     protected synchronized Cons addCons (final Cons cons) {
         if (isDispatching()) {
-            _pendingRuns = insert(_pendingRuns, new Runs() {
+            _pendingRuns = append(_pendingRuns, new Runs() {
                 public void run () {
                     _listeners = Cons.insert(_listeners, cons);
                     connectionAdded();
@@ -61,7 +61,7 @@ public abstract class Reactor
 
     protected synchronized void disconnect (final Cons cons) {
         if (isDispatching()) {
-            _pendingRuns = insert(_pendingRuns, new Runs() {
+            _pendingRuns = append(_pendingRuns, new Runs() {
                 public void run () {
                     _listeners = Cons.remove(_listeners, cons);
                     connectionRemoved();
@@ -75,7 +75,7 @@ public abstract class Reactor
 
     protected synchronized void removeConnection (final RListener listener) {
         if (isDispatching()) {
-            _pendingRuns = insert(_pendingRuns, new Runs() {
+            _pendingRuns = append(_pendingRuns, new Runs() {
                 public void run () {
                     _listeners = Cons.removeAll(_listeners, listener);
                     connectionRemoved();
@@ -113,11 +113,19 @@ public abstract class Reactor
      * here and force the caller to just cast things, because this is all under the hood where
      * there's zero chance of fucking up and this results in simpler, easier to read code.
      */
-    protected void notify (Notifier notifier, Object a1, Object a2, Object a3) {
+    protected void notify (final Notifier notifier, final Object a1, final Object a2,
+                           final Object a3) {
         Cons lners;
         synchronized (this) {
-            if (_listeners == DISPATCHING)
-                throw new IllegalStateException("Initiated notify while notifying");
+            // if we're currently dispatching, defer this notification until we're done
+            if (_listeners == DISPATCHING) {
+                _pendingRuns = append(_pendingRuns, new Runs() {
+                    public void run () {
+                        Reactor.this.notify(notifier, a1, a2, a3);
+                    }
+                });
+                return;
+            }
             lners = _listeners;
             Cons sentinel = DISPATCHING;
             _listeners = sentinel;
@@ -125,6 +133,7 @@ public abstract class Reactor
 
         RuntimeException exn = null;
         try {
+            // perform this dispatch, catching and accumulating any errors
             for (Cons cons = lners; cons != null; cons = cons.next) {
                 try {
                     notifier.notify(cons.listener(), a1, a2, a3);
@@ -134,32 +143,31 @@ public abstract class Reactor
                 }
                 if (cons.oneShot()) cons.disconnect();
             }
-            if (exn != null) throw exn;
 
         } finally {
-            synchronized (this) {
-                // note that we're no longer dispatching
-                _listeners = lners;
-                // now remove listeners any queued for removing and add any queued for adding
-                for (; _pendingRuns != null; _pendingRuns = _pendingRuns.next) {
-                    _pendingRuns.run();
+            // note that we're no longer dispatching
+            synchronized (this) { _listeners = lners; }
+
+            // perform any operations that were deferred while we were dispatching
+            Runs run;
+            while ((run = nextRun()) != null) {
+                try {
+                    run.run();
+                } catch (RuntimeException ex) {
+                    // Java7: if (exn != null) exn.addSuppressed(ex)
+                    exn = ex;
                 }
             }
         }
+
+        // finally throw any exception(s) that occurred during dispatch
+        if (exn != null) throw exn;
     }
 
-    /**
-     * Returns true if both values are null, reference the same instance, or are
-     * {@link Object#equals}.
-     */
-    protected static <T> boolean areEqual (T o1, T o2) {
-        return (o1 == o2 || (o1 != null && o1.equals(o2)));
-    }
-
-    protected static Runs insert (Runs head, Runs action) {
-        if (head == null) return action;
-        head.next = insert(head.next, action);
-        return head;
+    private synchronized Runs nextRun () {
+        Runs run = _pendingRuns;
+        if (run != null) _pendingRuns = run.next;
+        return run;
     }
 
     // always called while lock is held on this reactor
@@ -169,6 +177,20 @@ public abstract class Reactor
 
     protected Cons _listeners;
     protected Runs _pendingRuns;
+
+    /**
+     * Returns true if both values are null, reference the same instance, or are
+     * {@link Object#equals}.
+     */
+    protected static <T> boolean areEqual (T o1, T o2) {
+        return (o1 == o2 || (o1 != null && o1.equals(o2)));
+    }
+
+    protected static Runs append (Runs head, Runs action) {
+        if (head == null) return action;
+        head.next = append(head.next, action);
+        return head;
+    }
 
     protected static abstract class Runs implements Runnable {
         public Runs next;

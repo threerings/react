@@ -111,12 +111,12 @@ public class SignalTest
             }
         }).atPrio(1); // ensure that we're before toRemove
         signal.emit(42);
-        // since toRemove will have been removed during this dispatch, it will receive the signal
-        // in question, even though the higher priority signal triggered first
-        assertEquals(Arrays.asList(5, 42), toRemove.events);
+        // since toRemove will have been removed during this dispatch, it will not receive the
+        // signal in question, because the higher priority signal triggered first and removed it
+        assertEquals(Arrays.asList(5), toRemove.events);
         // finally dispatch one more event and make sure toRemove didn't get it
         signal.emit(9);
-        assertEquals(Arrays.asList(5, 42), toRemove.events);
+        assertEquals(Arrays.asList(5), toRemove.events);
     }
 
     @Test public void testAddAndRemoveDuringDispatch () {
@@ -137,7 +137,9 @@ public class SignalTest
             }
         });
         signal.emit(42);
-        // make sure toRemove got this event and toAdd didn't
+
+        // make sure toRemove got this event (in this case the adder/remover signal fires *after*
+        // toRemove gets the event) and toAdd didn't
         assertEquals(Arrays.asList(5, 42), toRemove.events);
         assertEquals(0, toAdd.events.size());
 
@@ -145,6 +147,25 @@ public class SignalTest
         signal.emit(9);
         assertEquals(Arrays.asList(9), toAdd.events);
         assertEquals(Arrays.asList(5, 42), toRemove.events);
+    }
+
+    @Test public void testDispatchDuringDispatch () {
+        final Signal<Integer> signal = Signal.create();
+        AccSlot<Integer> counter = new AccSlot<Integer>();
+        signal.connect(counter);
+
+        // connect a slot that will emit during dispatch
+        signal.connect(new Slot<Integer>() {
+            public void onEmit (Integer value) {
+                if (value == 5) signal.emit(value*2);
+                // ensure that we're not notified twice even though we emit during dispatch
+                else fail("once() lner notified more than once");
+            }
+        }).once();
+
+        // dispatch one event and make sure that both events are received
+        signal.emit(5);
+        assertEquals(Arrays.asList(5, 10), counter.events);
     }
 
     @Test public void testUnitSlot () {

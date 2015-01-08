@@ -5,9 +5,9 @@
 
 package react;
 
-import react.Reactor.RListener;
-
 import java.lang.ref.WeakReference;
+
+import react.Reactor.RListener;
 
 /**
  * Implements {@link Connection} and a linked-list style listener list for {@link Reactor}s.
@@ -22,12 +22,13 @@ class Cons implements Connection
 
     /** Returns the listener for this cons cell. */
     public RListener listener () {
-        return _ref.get();
+        return _ref.get(this);
     }
 
     @Override public void disconnect () {
         // multiple disconnects are OK, we just NOOP after the first one
         if (_owner != null) {
+            _ref.defang(_owner.placeholderListener());
             _owner.disconnect(this);
             _owner = null;
         }
@@ -55,21 +56,7 @@ class Cons implements Connection
     @Override public Connection holdWeakly () {
         if (_owner == null) throw new IllegalStateException(
             "Cannot change disconnected connection to weak.");
-        ListenerRef ref = _ref;
-        if (!ref.isWeak()) {
-            final WeakReference<RListener> weak = new WeakReference<RListener>(ref.get());
-            _ref = new ListenerRef() {
-                public boolean isWeak () { return true; }
-                public RListener get () {
-                    RListener listener = weak.get();
-                    if (listener == null) {
-                        listener = _owner.placeholderListener();
-                        disconnect();
-                    }
-                    return listener;
-                }
-            };
-        }
+        if (!_ref.isWeak()) _ref = new WeakRef(_ref.get(this));
         return this;
     }
 
@@ -78,17 +65,39 @@ class Cons implements Connection
             ", hasNext=" + (next != null) + ", oneShot=" + oneShot() + "]";
     }
 
-    protected Cons (Reactor owner, final RListener listener) {
+    protected Cons (Reactor owner, RListener listener) {
         _owner = owner;
-        _ref = new ListenerRef() {
-            public boolean isWeak () { return false; }
-            public RListener get() { return listener; }
-        };
+        _ref = new StrongRef(listener);
     }
 
-    private interface ListenerRef {
-        boolean isWeak ();
-        RListener get ();
+    private static abstract class ListenerRef {
+        abstract boolean isWeak ();
+        abstract void defang (RListener noop);
+        abstract RListener get (Cons cons);
+    }
+
+    private static class StrongRef extends ListenerRef {
+        private RListener _lner;
+        public StrongRef (RListener lner) { _lner = lner; }
+        public boolean isWeak () { return false; }
+        public void defang (RListener noop) { _lner = noop; }
+        public RListener get (Cons cons) { return _lner; }
+    }
+
+    private static class WeakRef extends ListenerRef {
+        private WeakReference<RListener> _wref;
+        private RListener _noop;
+        public WeakRef (RListener lner) { _wref = new WeakReference<RListener>(lner); }
+        public boolean isWeak () { return true; }
+        public void defang (RListener noop) { _noop = noop; _wref = null; }
+        public RListener get (Cons cons) {
+            if (_wref != null) {
+                RListener listener = _wref.get();
+                if (listener != null) return listener;
+                cons.disconnect(); // disconnect will defang() us
+            }
+            return _noop;
+        }
     }
 
     static Cons insert (Cons head, Cons cons) {
