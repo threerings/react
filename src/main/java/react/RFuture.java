@@ -153,6 +153,12 @@ public class RFuture<T> {
         return _isComplete;
     }
 
+    /** Returns whether this future is complete right now. This is an unfortunate name, but I
+      * foolishly defined {@link #isComplete} to return a reactive view of completeness. */
+    public boolean isCompleteNow () {
+        return _result.get() != null;
+    }
+
     /** Convenience method to {@link ValueView#connectNotify} {@code slot} to {@link #isComplete}.
      * This is useful for binding the disabled state of UI elements to this future's completeness
      * (i.e. disabled while the future is incomplete, then reenabled when it is completed).
