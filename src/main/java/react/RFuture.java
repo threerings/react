@@ -17,7 +17,7 @@ import java.util.List;
  * result. You can {@link #map} or {@link #flatMap} it, and listen for success or failure via the
  * {@link #success} and {@link #failure} signals.
  *
- * <p> The benefit over just using {@link Callback} is that results can be composed. You can
+ * <p> The benefit over just using {@code Callback} is that results can be composed. You can
  * subscribe to an object, flatmap the result into a service call on that object which returns the
  * address of another object, flat map that into a request to subscribe to that object, and finally
  * pass the resulting object to some other code via a slot. Failure can be handled once for all of
@@ -168,7 +168,7 @@ public class RFuture<T> {
         return this;
     }
 
-    /** Maps the value of a successful result using {@link #func} upon arrival. */
+    /** Maps the value of a successful result using {@code func} upon arrival. */
     public <R> RFuture<R> map (final Function<? super T, R> func) {
         // we'd use Try.lift here but we have to handle the special case where our try is null,
         // meaning we haven't completed yet; it would be weird if Try.lift did that
@@ -179,8 +179,8 @@ public class RFuture<T> {
         }));
     }
 
-    /** Maps a successful result to a new result using {@link #func} when it arrives. Failure on
-     * the original result or the mapped result are both dispatched to the mapped result. This is
+    /** Maps a successful result to a new result using {@code func} when it arrives. Failure on the
+     * original result or the mapped result are both dispatched to the mapped result. This is
      * useful for chaining asynchronous actions. It's also known as monadic bind. */
     public <R> RFuture<R> flatMap (final Function<? super T, RFuture<R>> func) {
         final Value<Try<R>> mapped = Value.create(null);
