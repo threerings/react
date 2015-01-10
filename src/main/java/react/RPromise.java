@@ -37,6 +37,24 @@ public class RPromise<T> extends RFuture<T> {
         return _result.slot();
     }
 
+    /** Returns a slot that can be used to {@link #succeed} this promise. */
+    public Slot<T> succeeder () {
+        return new Slot<T>() {
+            public void onEmit (T result) {
+                succeed(result);
+            }
+        };
+    }
+
+    /** Returns a slot that can be used to {@link #fail} this promise. */
+    public Slot<Throwable> failer () {
+        return new Slot<Throwable>() {
+            public void onEmit (Throwable cause) {
+                fail(cause);
+            }
+        };
+    }
+
     /** Returns true if there are listeners awaiting the completion of this promise. */
     public boolean hasConnections () {
         return _result.hasConnections();
