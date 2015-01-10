@@ -24,10 +24,18 @@ public abstract class Try<T> {
         @Override public Throwable getFailure () { throw new IllegalStateException(); }
         @Override public boolean isSuccess () { return true; }
         @Override public <R> Try<R> map (Function<? super T, R> func) {
-            return success(func.apply(value));
+            try {
+                return success(func.apply(value));
+            } catch (Throwable t) {
+                return failure(t);
+            }
         }
         @Override public <R> Try<R> flatMap (Function<? super T, Try<R>> func) {
-            return func.apply(value);
+            try {
+                return func.apply(value);
+            } catch (Throwable t) {
+                return failure(t);
+            }
         }
 
         @Override public String toString () { return "Success(" + value + ")"; }
