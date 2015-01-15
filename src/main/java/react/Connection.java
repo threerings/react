@@ -11,6 +11,12 @@ package react;
  */
 public abstract class Connection
 {
+    private static abstract class Wrapper extends Connection {
+        public Connection once () { throw new UnsupportedOperationException(); }
+        public Connection atPrio (int prio) { throw new UnsupportedOperationException(); }
+        public Connection holdWeakly () { throw new UnsupportedOperationException(); }
+    }
+
     /** A connection which no-ops on {@link #disconnect} and throws an exception for all other
       * methods. This is for the following code pattern:
       *
@@ -28,12 +34,24 @@ public abstract class Connection
       * In that it allows {@code close} to avoid a null check if it's possible for {@code close} to
       * be called with no call to {@code open} or repeatedly.
       */
-    public static final Connection NOOP = new Connection() {
+    public static final Connection NOOP = new Wrapper() {
         public void disconnect() {} // noop!
-        public Connection once () { throw new UnsupportedOperationException(); }
-        public Connection atPrio (int prio) { throw new UnsupportedOperationException(); }
-        public Connection holdWeakly () { throw new UnsupportedOperationException(); }
     };
+
+    /**
+     * Creates a connection that disconnects multiple connections at once.
+     */
+    public static Connection join (final Connection... cons) {
+        return new Wrapper() {
+            @Override public void disconnect () {
+                for (int ii = 0; ii < cons.length; ii++) {
+                    if (cons[ii] == null) continue;
+                    cons[ii].disconnect();
+                    cons[ii] = null;
+                }
+            }
+        };
+    }
 
     /**
      * Disconnects this registration. Subsequent events will not be dispatched to the associated
