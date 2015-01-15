@@ -9,13 +9,37 @@ package react;
  * Provides a mechanism to cancel a slot or listener registration, or to perform post-registration
  * adjustment like making the registration single-shot.
  */
-public interface Connection
+public abstract class Connection
 {
+    /** A connection which no-ops on {@link #disconnect} and throws an exception for all other
+      * methods. This is for the following code pattern:
+      *
+      * <pre>{@code
+      * Connection _conn = Connection.NOOP;
+      * void open () {
+      *    _conn = whatever.connect(...);
+      * }
+      * void close () {
+      *    _conn.disconnect();
+      *    _conn = Connection.NOOP;
+      * }
+      * }</pre>
+      *
+      * In that it allows {@code close} to avoid a null check if it's possible for {@code close} to
+      * be called with no call to {@code open} or repeatedly.
+      */
+    public static final Connection NOOP = new Connection() {
+        public void disconnect() {} // noop!
+        public Connection once () { throw new UnsupportedOperationException(); }
+        public Connection atPrio (int prio) { throw new UnsupportedOperationException(); }
+        public Connection holdWeakly () { throw new UnsupportedOperationException(); }
+    };
+
     /**
      * Disconnects this registration. Subsequent events will not be dispatched to the associated
      * slot or listener.
      */
-    void disconnect ();
+    public abstract void disconnect ();
 
     /**
      * Converts this connection into a one-shot connection. After the first time the slot or
@@ -37,7 +61,7 @@ public interface Connection
      *
      * @return this connection instance for convenient chaining.
      */
-    Connection once ();
+    public abstract Connection once ();
 
     /**
      * Changes the priority of this connection to the specified value. Connections are notified from
@@ -65,7 +89,7 @@ public interface Connection
      *
      * @return this connection instance for convenient chaining.
      */
-    Connection atPrio (int priority);
+    public abstract Connection atPrio (int priority);
 
     /**
      * Changes this connection to one held by a weak reference. It only remains connected as long
@@ -76,5 +100,5 @@ public interface Connection
      *
      * @return this connection instance for convenient chaining.
      */
-    Connection holdWeakly ();
+    public abstract Connection holdWeakly ();
 }

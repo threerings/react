@@ -12,7 +12,7 @@ import react.Reactor.RListener;
 /**
  * Implements {@link Connection} and a linked-list style listener list for {@link Reactor}s.
  */
-class Cons implements Connection
+class Cons extends Connection
 {
     /** The next connection in our chain. */
     public Cons next;
