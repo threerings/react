@@ -40,14 +40,6 @@ public interface Connection
     Connection once ();
 
     /**
-     * @deprecated React originally notified connections lowest priority to highest priority, which
-     * was non-intuitive, so it has been reversed and this deprecated method now negates the
-     * supplied priority (with special handling for {@link Integer#MIN_VALUE}) so as to preserve old
-     * behavior for code using the old ordering.
-     */
-    @Deprecated Connection atPriority (int priority);
-
-    /**
      * Changes the priority of this connection to the specified value. Connections are notified from
      * highest priority to lowest priority. The default priority is zero.
      *

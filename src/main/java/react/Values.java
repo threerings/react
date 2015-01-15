@@ -135,10 +135,6 @@ public class Values
                         for (Connection conn : conns) conn.once();
                         return this;
                     }
-                    @Deprecated public Connection atPriority (int priority) {
-                        for (Connection conn : conns) conn.atPriority(priority);
-                        return this;
-                    }
                     public Connection atPrio (int priority) {
                         for (Connection conn : conns) conn.atPrio(priority);
                         return this;

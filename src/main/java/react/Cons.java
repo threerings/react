@@ -39,10 +39,6 @@ class Cons implements Connection
         return this;
     }
 
-    @Deprecated public Connection atPriority (int priority) {
-      return atPrio(priority == Integer.MIN_VALUE ? Integer.MAX_VALUE : -priority);
-    }
-
     @Override public Connection atPrio (int priority) {
         if (_owner == null) throw new IllegalStateException(
             "Cannot change priority of disconnected connection.");
