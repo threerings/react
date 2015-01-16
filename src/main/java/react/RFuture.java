@@ -25,6 +25,28 @@ import java.util.List;
  */
 public class RFuture<T> {
 
+    /** Used by {@link #sequence(RFuture,RFuture)}. */
+    public static class T2<A,B> {
+        public final A a;
+        public final B b;
+        public T2 (A a, B b) {
+            this.a = a;
+            this.b = b;
+        }
+    }
+
+    /** Used by {@link #sequence(RFuture,RFuture,RFuture)}. */
+    public static class T3<A,B,C> {
+        public final A a;
+        public final B b;
+        public final C c;
+        public T3 (A a, B b, C c) {
+            this.a = a;
+            this.b = b;
+            this.c = c;
+        }
+    }
+
     /** Returns a future with a pre-existing success value. */
     public static <T> RFuture<T> success (T value) {
         return result(Try.success(value));
@@ -86,6 +108,38 @@ public class RFuture<T> {
             });
         }
         return pseq;
+    }
+
+    /** Returns a future containing the results of {@code a} and {@code b} if both futures complete
+      * successfully, or a {@link MultiFailureException} aggregating all failures, if either of the
+      * futures fails. */
+    public static <A,B> RFuture<T2<A,B>> sequence (RFuture<A> a, RFuture<B> b) {
+        @SuppressWarnings("unchecked") RFuture<Object> oa = (RFuture<Object>)a;
+        @SuppressWarnings("unchecked") RFuture<Object> ob = (RFuture<Object>)b;
+        return sequence(Arrays.asList(oa, ob)).map(new Function<List<Object>,T2<A,B>>() {
+            public T2<A,B> apply (List<Object> results) {
+                @SuppressWarnings("unchecked") A a = (A)results.get(0);
+                @SuppressWarnings("unchecked") B b = (B)results.get(1);
+                return new T2<A,B>(a, b);
+            }
+        });
+    }
+
+    /** Returns a future containing the results of {@code a}, {@code b}, and {@code c} if all
+      * futures complete successfully, or a {@link MultiFailureException} aggregating all failures,
+      * if any of the futures fails. */
+    public static <A,B,C> RFuture<T3<A,B,C>> sequence (RFuture<A> a, RFuture<B> b, RFuture<B> c) {
+        @SuppressWarnings("unchecked") RFuture<Object> oa = (RFuture<Object>)a;
+        @SuppressWarnings("unchecked") RFuture<Object> ob = (RFuture<Object>)b;
+        @SuppressWarnings("unchecked") RFuture<Object> oc = (RFuture<Object>)c;
+        return sequence(Arrays.asList(oa, ob, oc)).map(new Function<List<Object>,T3<A,B,C>>() {
+            public T3<A,B,C> apply (List<Object> results) {
+                @SuppressWarnings("unchecked") A a = (A)results.get(0);
+                @SuppressWarnings("unchecked") B b = (B)results.get(1);
+                @SuppressWarnings("unchecked") C c = (C)results.get(2);
+                return new T3<A,B,C>(a, b, c);
+            }
+        });
     }
 
     /** Returns a future containing a list of all success results from {@code futures}. Any failure

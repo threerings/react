@@ -317,6 +317,31 @@ public class RFutureTest extends TestBase {
         counter.check("sequence empty list succeeds", 1, 0, 1);
     }
 
+    @Test public void testSequenceTuple () {
+        FutureCounter counter = new FutureCounter();
+        RFuture<String> string = RFuture.success("string");
+        RFuture<Integer> integer = RFuture.success(42);
+
+        RFuture<RFuture.T2<String,Integer>> sucsuc = RFuture.sequence(string, integer);
+        sucsuc.onSuccess(new Slot<RFuture.T2<String,Integer>>() {
+            public void onEmit (RFuture.T2<String,Integer> tup) {
+                assertEquals("string", tup.a);
+                assertEquals((Integer)42, tup.b);
+            }
+        });
+        counter.bind(sucsuc);
+        counter.check("tuple2 seq success/success", 1, 0, 1);
+
+        RFuture<Integer> fail = RFuture.failure(new Exception("Alas, poor Yorrick."));
+        RFuture<RFuture.T2<String,Integer>> sucfail = RFuture.sequence(string, fail);
+        counter.bind(sucfail);
+        counter.check("tuple2 seq success/fail", 0, 1, 1);
+
+        RFuture<RFuture.T2<Integer,String>> failsuc = RFuture.sequence(fail, string);
+        counter.bind(failsuc);
+        counter.check("tuple2 seq fail/success", 0, 1, 1);
+    }
+
     @Test public void testCollectEmpty () {
         FutureCounter counter = new FutureCounter();
         RFuture<Collection<String>> seq = RFuture.collect(Collections.<RFuture<String>>emptyList());
