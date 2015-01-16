@@ -47,7 +47,6 @@ public class Values
     /**
      * Returns a value which is the logical AND of the supplied values.
      */
-    @SuppressWarnings("unchecked") // TODO: use new varargs suppression in JDK 1.7
     public static ValueView<Boolean> and (ValueView<Boolean> one, ValueView<Boolean> two) {
         return and(Arrays.asList(one, two));
     }
@@ -55,6 +54,7 @@ public class Values
     /**
      * Returns a value which is the logical AND of the supplied values.
      */
+    @SafeVarargs @SuppressWarnings("varargs")
     public static ValueView<Boolean> and (ValueView<Boolean>... values) {
         return and(Arrays.asList(values));
     }
@@ -69,7 +69,6 @@ public class Values
     /**
      * Returns a value which is the logical OR of the supplied values.
      */
-    @SuppressWarnings("unchecked") // TODO: use new varargs suppression in JDK 1.7
     public static ValueView<Boolean> or (ValueView<Boolean> one, ValueView<Boolean> two) {
         return or(Arrays.asList(one, two));
     }
@@ -77,6 +76,7 @@ public class Values
     /**
      * Returns a value which is the logical OR of the supplied values.
      */
+    @SafeVarargs @SuppressWarnings("varargs")
     public static ValueView<Boolean> or (ValueView<Boolean>... values) {
         return or(Arrays.asList(values));
     }
