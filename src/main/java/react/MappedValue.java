@@ -31,7 +31,7 @@ abstract class MappedValue<T> extends AbstractValue<T>
     protected void connectionRemoved () {
         super.connectionRemoved();
         if (!hasConnections() && _conn != null) {
-            _conn.disconnect();
+            _conn.close();
             _conn = null;
         }
     }

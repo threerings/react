@@ -69,8 +69,8 @@ public class ValueTest
         assertEquals(2, counter.notifies);
 
         // disconnect from the mapped value and ensure that it disconnects in turn
-        c1.disconnect();
-        c2.disconnect();
+        c1.close();
+        c2.close();
         assertFalse(value.hasConnections());
     }
 
@@ -112,7 +112,7 @@ public class ValueTest
         Connection conn = value.connectNotify(listener);
         value.update((expectedValue[0] = 12));
         assertEquals("Disconnecting in listenNotify disconnects", 1, fired[0]);
-        conn.disconnect();// Just see what happens when calling disconnect while disconnected
+        conn.close();// Just see what happens when calling disconnect while disconnected
 
         value.connect(listener);
         value.connect(new SignalTest.Counter());
@@ -121,7 +121,7 @@ public class ValueTest
         value.update((expectedValue[0] = 14));
         assertEquals("Disconnecting in listen disconnects", 3, fired[0]);
 
-        value.connect(listener).disconnect();
+        value.connect(listener).close();
         value.update((expectedValue[0] = 15));
         assertEquals("Disconnecting before geting an update still disconnects", 3, fired[0]);
     }
@@ -141,7 +141,7 @@ public class ValueTest
         value.update((expectedValue[0] = 12));
         assertEquals("Calling disconnect with a slot disconnects", 1, fired[0]);
 
-        value.connect(listener).disconnect();
+        value.connect(listener).close();
         value.update((expectedValue[0] = 14));
         assertEquals(1, fired[0]);
     }

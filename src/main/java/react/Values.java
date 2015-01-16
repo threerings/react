@@ -128,8 +128,8 @@ public class Values
                     conns.add(value.connect(_trigger));
                 }
                 return new Connection() {
-                    public void disconnect () {
-                        for (Connection conn : conns) conn.disconnect();
+                    public void close () {
+                        for (Connection conn : conns) conn.close();
                     }
                     public Connection once () {
                         for (Connection conn : conns) conn.once();

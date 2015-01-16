@@ -141,7 +141,7 @@ public abstract class Reactor
                     // Java7: if (exn != null) exn.addSuppressed(ex)
                     exn = ex;
                 }
-                if (cons.oneShot()) cons.disconnect();
+                if (cons.oneShot()) cons.close();
             }
 
         } finally {

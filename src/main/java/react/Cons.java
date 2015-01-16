@@ -25,7 +25,7 @@ class Cons extends Connection
         return _ref.get(this);
     }
 
-    @Override public void disconnect () {
+    @Override public void close () {
         // multiple disconnects are OK, we just NOOP after the first one
         if (_owner != null) {
             _ref.defang(_owner.placeholderListener());
@@ -90,7 +90,7 @@ class Cons extends Connection
             if (_wref != null) {
                 RListener listener = _wref.get();
                 if (listener != null) return listener;
-                cons.disconnect(); // disconnect will defang() us
+                cons.close(); // close will defang() us
             }
             return _noop;
         }

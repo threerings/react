@@ -11,15 +11,13 @@ import java.util.Set;
 /**
  * Collects connections to allow mass operations on them.
  */
-public class ConnectionGroup
+public class ConnectionGroup implements Closeable
 {
     /**
-     * Disconnects all connections in this group.
+     * Closes all connections in this group.
      */
-    public void disconnect () {
-        for (Connection c : _connections) {
-            c.disconnect();
-        }
+    public void close () {
+        for (Closeable c : _connections) c.close();
         _connections.clear();
     }
 
@@ -27,7 +25,7 @@ public class ConnectionGroup
      * Adds the supplied connection to this group.
      * @return the supplied connection.
      */
-    public Connection add (Connection c) {
+    public Closeable add (Closeable c) {
         _connections.add(c);
         return c;
     }
@@ -35,9 +33,9 @@ public class ConnectionGroup
     /**
      * Removes a connection from this group while leaving its connected status unchanged.
      */
-    public void remove (Connection c) {
+    public void remove (Closeable c) {
         _connections.remove(c);
     }
 
-    protected Set<Connection> _connections = new HashSet<Connection>();
+    protected Set<Closeable> _connections = new HashSet<Closeable>();
 }

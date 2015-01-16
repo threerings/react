@@ -106,9 +106,7 @@ public class SignalTest
 
         // now add our removing signal, and dispatch again
         signal.connect(new UnitSlot() {
-            public void onEmit () {
-                rconn.disconnect();
-            }
+            public void onEmit () { rconn.close(); }
         }).atPrio(1); // ensure that we're before toRemove
         signal.emit(42);
         // since toRemove will have been removed during this dispatch, it will not receive the
@@ -132,7 +130,7 @@ public class SignalTest
         // now add our adder/remover signal, and dispatch again
         signal.connect(new UnitSlot() {
             public void onEmit () {
-                rconn.disconnect();
+                rconn.close();
                 signal.connect(toAdd);
             }
         });
@@ -221,8 +219,8 @@ public class SignalTest
         assertEquals(2, counter.notifies);
 
         // disconnect from the mapped signal and ensure that it clears its connection
-        c1.disconnect();
-        c2.disconnect();
+        c1.close();
+        c2.close();
         assertFalse(signal.hasConnections());
     }
 

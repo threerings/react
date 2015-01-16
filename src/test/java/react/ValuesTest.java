@@ -77,7 +77,7 @@ public class ValuesTest
         assertTrue(fired[0]);
 
         // disconnect from the view and make sure the view disconnects from the signal
-        conn.disconnect();
+        conn.close();
         assertFalse(intsig.hasConnections());
     }
 }

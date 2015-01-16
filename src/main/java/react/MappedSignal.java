@@ -31,7 +31,7 @@ abstract class MappedSignal<T> extends AbstractSignal<T>
     protected void connectionRemoved () {
         super.connectionRemoved();
         if (!hasConnections() && _conn != null) {
-            _conn.disconnect();
+            _conn.close();
             _conn = null;
         }
     }

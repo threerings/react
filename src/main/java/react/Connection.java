@@ -9,44 +9,37 @@ package react;
  * Provides a mechanism to cancel a slot or listener registration, or to perform post-registration
  * adjustment like making the registration single-shot.
  */
-public abstract class Connection
+public abstract class Connection implements Closeable
 {
-    private static abstract class Wrapper extends Connection {
-        public Connection once () { throw new UnsupportedOperationException(); }
-        public Connection atPrio (int prio) { throw new UnsupportedOperationException(); }
-        public Connection holdWeakly () { throw new UnsupportedOperationException(); }
-    }
-
-    /** A connection which no-ops on {@link #disconnect} and throws an exception for all other
-      * methods. This is for the following code pattern:
+    /** A closable which no-ops on {@link #close} and throws an exception for all other methods.
+      * This is for the following code pattern:
       *
       * <pre>{@code
-      * Connection _conn = Connection.NOOP;
+      * Closable _conn = Connection.NOOP;
       * void open () {
       *    _conn = whatever.connect(...);
       * }
       * void close () {
-      *    _conn.disconnect();
-      *    _conn = Connection.NOOP;
+      *    _conn = Connection.close(_conn);
       * }
       * }</pre>
       *
       * In that it allows {@code close} to avoid a null check if it's possible for {@code close} to
       * be called with no call to {@code open} or repeatedly.
       */
-    public static final Connection NOOP = new Wrapper() {
-        public void disconnect() {} // noop!
+    public static final Closeable NOOP = new Closeable() {
+        public void close () {} // noop!
     };
 
     /**
-     * Creates a connection that disconnects multiple connections at once.
+     * Creates a closable that closes multiple connections at once.
      */
-    public static Connection join (final Connection... cons) {
-        return new Wrapper() {
-            @Override public void disconnect () {
+    public static Closeable join (final Closeable... cons) {
+        return new Closeable() {
+            @Override public void close () {
                 for (int ii = 0; ii < cons.length; ii++) {
                     if (cons[ii] == null) continue;
-                    cons[ii].disconnect();
+                    cons[ii].close();
                     cons[ii] = null;
                 }
             }
@@ -54,10 +47,23 @@ public abstract class Connection
     }
 
     /**
+     * Closes {@code con} and returns {@link #NOOP}. This enables code like:
+     * {@code con = Connection.close(con);} which simplifies disconnecting and resetting to
+     * NOOP, a given connection reference.
+     */
+    public static Closeable close (Closeable con) {
+        con.close();
+        return NOOP;
+    }
+
+    /**
      * Disconnects this registration. Subsequent events will not be dispatched to the associated
      * slot or listener.
      */
-    public abstract void disconnect ();
+    public abstract void close ();
+
+    /** @deprecated Call {@link #close} instead. */
+    @Deprecated public void disconnect () { close(); }
 
     /**
      * Converts this connection into a one-shot connection. After the first time the slot or

@@ -43,10 +43,10 @@ public abstract class AbstractValue<T> extends Reactor implements ValueView<T>
             listener.onChange(get(), null);
             return conn;
         } catch (RuntimeException re) {
-            conn.disconnect();
+            conn.close();
             throw re;
         } catch (Error e) {
-            conn.disconnect();
+            conn.close();
             throw e;
         }
     }
