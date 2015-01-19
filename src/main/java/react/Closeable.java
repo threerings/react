@@ -20,25 +20,32 @@ public interface Closeable extends AutoCloseable {
         /** Closes all connections in this set and empties it. */
         @Override public void close () {
             if (_set != null) {
-                for (Closeable c : _set) c.close();
+                MultiFailureException error = null;
+                for (AutoCloseable c : _set) try {
+                    c.close();
+                } catch (Exception e) {
+                    if (error == null) error = new MultiFailureException();
+                    error.addSuppressed(e);
+                }
                 _set.clear();
+                if (error != null) throw error;
             }
         }
 
         /** Adds the supplied connection to this set.
           * @return the supplied connection.*/
-        public Closeable add (Closeable c) {
+        public <T extends AutoCloseable> T add (T c) {
             if (_set == null) _set = new HashSet<>();
             _set.add(c);
             return c;
         }
 
         /** Removes a closeable from this set while leaving its status unchanged. */
-        public void remove (Closeable c) {
+        public void remove (AutoCloseable c) {
             if (_set != null) _set.remove(c);
         }
 
-        protected HashSet<Closeable> _set; // lazily created
+        protected HashSet<AutoCloseable> _set; // lazily created
     }
 
     /** Provides some {@link Closeable}-related utilities. */
