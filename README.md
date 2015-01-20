@@ -34,7 +34,7 @@ To add a React dependency to a Maven project, add the following to your `pom.xml
       <dependency>
         <groupId>com.threerings</groupId>
         <artifactId>react</artifactId>
-        <version>1.5</version>
+        <version>1.5.1</version>
       </dependency>
     </dependencies>
 
@@ -43,7 +43,7 @@ vast majority of the boilerplate above.
 
 If you prefer to download a pre-built binary, that can be found here:
 
-* [react-1.5.jar](http://repo2.maven.org/maven2/com/threerings/react/1.5/react-1.5.jar)
+* [react-1.5.1.jar](http://repo2.maven.org/maven2/com/threerings/react/1.5.1/react-1.5.1.jar)
 
 GWT
 ---
