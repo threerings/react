@@ -248,6 +248,20 @@ public class RFuture<T> {
         return new RFuture<R>(mapped);
     }
 
+    /** Returns the result of this future, or null if it is not yet complete.
+      *
+      * <p><em>NOTE:</em> don't use this method! You should wire up reactions to the completion of
+      * this future via {@link #onSuccess} or {@link #onFailure}. React is not a blocking async
+      * library where on might block a calling thread on the result of a future and then obtain the
+      * result synchronously. This is <em>only</em> appropriate when you're trying to abstract over
+      * synchronous and asynchronous variants of a computation, and you want to use the future
+      * machinery in both cases, but in the synchronous case you know that your future will be
+      * complete by the time you want to obtain its result.
+      */
+    public Try<T> result () {
+        return _result.get();
+    }
+
     protected RFuture (ValueView<Try<T>> result) {
         _result = result;
     }
