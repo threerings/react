@@ -103,7 +103,7 @@ public class RFuture<T> {
         Iterator<? extends RFuture<T>> iter = futures.iterator();
         for (int ii = 0; iter.hasNext(); ii++) {
             final int idx = ii;
-            iter.next().onComplete(new Slot<Try<T>>() {
+            iter.next().onComplete(new SignalView.Listener<Try<T>>() {
                 public void onEmit (Try<T> result) { seq.onResult(idx, result); }
             });
         }
@@ -151,7 +151,7 @@ public class RFuture<T> {
 
         final RPromise<Collection<T>> pseq = RPromise.create();
         final int count = futures.size();
-        Slot<Try<T>> collector = new Slot<Try<T>>() {
+        SignalView.Listener<Try<T>> collector = new SignalView.Listener<Try<T>>() {
             public synchronized void onEmit (Try<T> result) {
                 if (result.isSuccess()) _results.add(result.get());
                 if (--_remain == 0) pseq.succeed(_results);
@@ -166,9 +166,9 @@ public class RFuture<T> {
     /** Causes {@code slot} to be notified if/when this future is completed with success. If it has
      * already succeeded, the slot will be notified immediately.
      * @return this future for chaining. */
-    public RFuture<T> onSuccess (final Slot<? super T> slot) {
+    public RFuture<T> onSuccess (final SignalView.Listener<? super T> slot) {
         Try<T> result = _result.get();
-        if (result == null) _result.connect(new Slot<Try<T>>() {
+        if (result == null) _result.connect(new SignalView.Listener<Try<T>>() {
             public void onEmit (Try<T> result) {
                 if (result.isSuccess()) slot.onEmit(result.get());
             }
@@ -180,9 +180,9 @@ public class RFuture<T> {
     /** Causes {@code slot} to be notified if/when this future is completed with failure. If it has
      * already failed, the slot will be notified immediately.
      * @return this future for chaining. */
-    public RFuture<T> onFailure (final Slot<? super Throwable> slot) {
+    public RFuture<T> onFailure (final SignalView.Listener<? super Throwable> slot) {
         Try<T> result = _result.get();
-        if (result == null) _result.connect(new Slot<Try<T>>() {
+        if (result == null) _result.connect(new SignalView.Listener<Try<T>>() {
             public void onEmit (Try<T> result) {
                 if (result.isFailure()) slot.onEmit(result.getFailure());
             }
@@ -194,7 +194,7 @@ public class RFuture<T> {
     /** Causes {@code slot} to be notified when this future is completed. If it has already
      * completed, the slot will be notified immediately.
      * @return this future for chaining. */
-    public RFuture<T> onComplete (final Slot<? super Try<T>> slot) {
+    public RFuture<T> onComplete (final SignalView.Listener<? super Try<T>> slot) {
         Try<T> result = _result.get();
         if (result == null) _result.connect(slot);
         else slot.onEmit(result);
@@ -217,7 +217,7 @@ public class RFuture<T> {
      * This is useful for binding the disabled state of UI elements to this future's completeness
      * (i.e. disabled while the future is incomplete, then reenabled when it is completed).
      * @return this future for chaining. */
-    public RFuture<T> bindComplete (Slot<Boolean> slot) {
+    public RFuture<T> bindComplete (SignalView.Listener<Boolean> slot) {
         isComplete().connectNotify(slot);
         return this;
     }
@@ -238,7 +238,7 @@ public class RFuture<T> {
      * useful for chaining asynchronous actions. It's also known as monadic bind. */
     public <R> RFuture<R> flatMap (final Function<? super T, RFuture<R>> func) {
         final Value<Try<R>> mapped = Value.create(null);
-        _result.connectNotify(new Slot<Try<T>>() {
+        _result.connectNotify(new SignalView.Listener<Try<T>>() {
             public void onEmit (Try<T> result) {
                 if (result == null) return; // source future not yet complete; nothing to do
                 if (result.isFailure()) mapped.update(Try.<R>failure(result.getFailure()));
