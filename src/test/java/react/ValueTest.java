@@ -53,6 +53,22 @@ public class ValueTest
         assertEquals(1, counter.notifies);
     }
 
+    @Test public void testSignalListener () {
+        // this ensures that our SignalListener -> ValueListener wrapping is working until we
+        // switch to the Java 1.8-only approach which will combine those two interfaces into a
+        // subtype relationship using a default method
+        Value<Integer> value = Value.create(42);
+        final boolean[] fired = new boolean[] { false };
+        value.connect(new SignalView.Listener<Integer>() {
+            public void onEmit (Integer value) {
+                assertEquals(15, value.intValue());
+                fired[0] = true;
+            }
+        });
+        value.update(15);
+        assertTrue(fired[0]);
+    }
+
     @Test public void testMappedValue () {
         Value<Integer> value = Value.create(42);
         ValueView<String> mapped = value.map(Functions.TO_STRING);

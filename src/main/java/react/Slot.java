@@ -8,14 +8,8 @@ package react;
 /**
  * Reacts to signal emissions.
  */
-public abstract class Slot<T> extends ValueView.Listener<T>
+public abstract class Slot<T> implements ValueView.Listener<T>, SignalView.Listener<T>
 {
-    /**
-     * Called when a signal to which this slot is connected has emitted an event.
-     * @param event the event emitted by the signal.
-     */
-    public abstract void onEmit (T event);
-
     /**
      * Returns a slot that maps values via {@code f} and then passes them to this slot.
      * This is essentially function composition in that {@code slot.compose(f)} means

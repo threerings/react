@@ -13,15 +13,10 @@ package react;
  */
 public interface ValueView<T>
 {
-    /**
-     * Used to observe changes to a value. One must override only one of the {@link #onChange}
-     * methods, depending on how much information is desired.
-     */
-    abstract class Listener<T> extends Reactor.RListener {
-        /**
-         * Called when the value to which this listener is bound has changed.
-         */
-        public abstract void onChange (T value, T oldValue);
+    /** Used to observe changes to a value. */
+    interface Listener<T> extends Reactor.RListener {
+        /** Called when the value to which this listener is bound has changed. */
+        void onChange (T value, T oldValue);
     }
 
     /**
@@ -60,4 +55,45 @@ public interface ValueView<T>
      * connected multiple times, all connections are cancelled.
      */
     void disconnect (Listener<? super T> listener);
+
+    // these methods exist only to let javac know that it can synthesize a SignalView.Listener
+    // instance from a single argument lambda; otherwise they are unnecessary because
+    // SignalView.Listener is a subtype of ValueView.Listener
+
+    /**
+     * Connects the supplied listener to this value, such that it will be notified when this value
+     * changes. The listener is held by a strong reference, so it's held in memory by virtue of
+     * being connected.
+     * @return a connection instance which can be used to cancel the connection.
+     */
+    Connection connect (SignalView.Listener<? super T> listener);
+
+    /**
+     * Connects the supplied listener to this value, such that it will be notified when this value
+     * changes. Also immediately notifies the listener of the current value. If the notification
+     * triggers an unchecked exception, the slot will automatically be disconnected and the caller
+     * need not worry about cleaning up after itself.
+     * @return a connection instance which can be used to cancel the connection.
+     */
+    Connection connectNotify (SignalView.Listener<? super T> listener);
+
+    // these methods exist to help javac disambiguate between the above two methods, yay
+    // TODO: when we drop support for java 1.7, we can remove these methods
+
+    /**
+     * Connects the supplied listener to this value, such that it will be notified when this value
+     * changes. The listener is held by a strong reference, so it's held in memory by virtue of
+     * being connected.
+     * @return a connection instance which can be used to cancel the connection.
+     */
+    Connection connect (Slot<? super T> listener);
+
+    /**
+     * Connects the supplied listener to this value, such that it will be notified when this value
+     * changes. Also immediately notifies the listener of the current value. If the notification
+     * triggers an unchecked exception, the slot will automatically be disconnected and the caller
+     * need not worry about cleaning up after itself.
+     * @return a connection instance which can be used to cancel the connection.
+     */
+    Connection connectNotify (Slot<? super T> listener);
 }

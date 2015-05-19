@@ -24,7 +24,7 @@ import java.util.Set;
 public class RMap<K,V> extends Reactor implements Map<K,V>
 {
     /** An interface for publishing map events to listeners. */
-    public static abstract class Listener<K,V> extends Reactor.RListener
+    public static abstract class Listener<K,V> implements Reactor.RListener
     {
         /**
          * Notifies listener of an added or updated mapping. This method will call the

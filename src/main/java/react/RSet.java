@@ -22,7 +22,7 @@ import java.util.Set;
 public class RSet<E> extends Reactor implements Set<E>
 {
     /** An interface for publishing set events to listeners. */
-    public static abstract class Listener<E> extends Reactor.RListener
+    public static abstract class Listener<E> implements Reactor.RListener
     {
         /** Notifies listener of an added element. */
         public void onAdd (E elem) {

@@ -32,7 +32,6 @@ public abstract class AbstractValue<T> extends Reactor implements ValueView<T>
     @Override public Connection connect (Listener<? super T> listener) {
         return addConnection(listener);
     }
-
     @Override public Connection connectNotify (Listener<? super T> listener) {
         // connect before calling emit; if the listener changes the value in the body of onEmit, it
         // will expect to be notified of that change; however if onEmit throws a runtime exception,
@@ -49,6 +48,27 @@ public abstract class AbstractValue<T> extends Reactor implements ValueView<T>
             conn.close();
             throw e;
         }
+    }
+
+    @Override public Connection connect (SignalView.Listener<? super T> listener) {
+        return connect(wrap(listener));
+    }
+    @Override public Connection connectNotify (SignalView.Listener<? super T> listener) {
+        return connectNotify(wrap(listener));
+    }
+    private static <T> Listener<T> wrap (final SignalView.Listener<? super T> listener) {
+        return new Listener<T>() {
+            public void onChange (T newValue, T oldValue) {
+                listener.onEmit(newValue);
+            }
+        };
+    }
+
+    @Override public Connection connect (Slot<? super T> slot) {
+        return connect((Listener<? super T>)slot);
+    }
+    @Override public Connection connectNotify (Slot<? super T> slot) {
+        return connectNotify((Listener<? super T>)slot);
     }
 
     @Override public void disconnect (Listener<? super T> listener) {

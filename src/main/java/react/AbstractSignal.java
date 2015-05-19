@@ -40,16 +40,16 @@ public class AbstractSignal<T> extends Reactor implements SignalView<T>
         };
     }
 
-    @Override public Connection connect (Slot<? super T> slot) {
+    @Override public Connection connect (Listener<? super T> slot) {
         return addConnection(slot);
     }
 
-    @Override public void disconnect (Slot<? super T> slot) {
+    @Override public void disconnect (Listener<? super T> slot) {
         removeConnection(slot);
     }
 
-    @Override Slot<T> placeholderListener () {
-        @SuppressWarnings("unchecked") Slot<T> p = (Slot<T>)Slots.NOOP;
+    @Override Listener<T> placeholderListener () {
+        @SuppressWarnings("unchecked") Listener<T> p = (Listener<T>)Slots.NOOP;
         return p;
     }
 
@@ -62,7 +62,7 @@ public class AbstractSignal<T> extends Reactor implements SignalView<T>
 
     @SuppressWarnings("unchecked") protected static final Notifier EMIT = new Notifier() {
         public void notify (Object slot, Object event, Object _1, Object _2) {
-            ((Slot<Object>)slot).onEmit(event);
+            ((Listener<Object>)slot).onEmit(event);
         }
     };
 }

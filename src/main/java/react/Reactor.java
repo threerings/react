@@ -12,7 +12,7 @@ package react;
 public abstract class Reactor
 {
     /** The base class for all reactor listeners. */
-    public abstract static class RListener {}
+    public abstract interface RListener {}
 
     /**
      * Returns true if this reactor has at least one connection.

@@ -12,6 +12,21 @@ package react;
  */
 public interface SignalView<T>
 {
+    /** Used to observe events from a signal. Normally one uses {@link Slot} rather than this
+      * listener, but this interface exists to allow Java 8 lambdas to be used as well. */
+    interface Listener<T> extends Reactor.RListener {
+        /**
+         * Called when a signal to which this slot is connected has emitted an event.
+         * @param event the event emitted by the signal.
+         */
+        void onEmit (T event);
+
+        // TODO: when we stop supporting Java 1.7, uncomment this method and make Listener extend
+        // ValueView.Listener
+        //
+        // default void onChange (T newValue, T oldValue) { onEmit(newValue); }
+    }
+
     /**
      * Creates a signal that maps this signal via a function. When this signal emits a value, the
      * mapped signal will emit that value as transformed by the supplied function. The mapped
@@ -32,11 +47,11 @@ public interface SignalView<T>
      *
      * @return a connection instance which can be used to cancel the connection.
      */
-    Connection connect (Slot<? super T> slot);
+    Connection connect (Listener<? super T> slot);
 
     /**
      * Disconnects the supplied slot from this signal if connect was called with it. If the slot has
      * been connected multiple times, all connections are cancelled.
      */
-    void disconnect (Slot<? super T> slot);
+    void disconnect (Listener<? super T> slot);
 }

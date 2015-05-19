@@ -19,7 +19,7 @@ import java.util.ListIterator;
 public class RList<E> extends Reactor implements List<E>
 {
     /** Publishes list events to listeners. */
-    public static abstract class Listener<E> extends Reactor.RListener
+    public static abstract class Listener<E> implements Reactor.RListener
     {
         /** Notifies listener of an added element. This method will call the index-forgetting
          * version ({@link #onAdd(Object)}) by default. */
