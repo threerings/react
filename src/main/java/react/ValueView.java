@@ -30,7 +30,16 @@ public interface ValueView<T>
      * mapped value will retain a connection to this value for as long as it has connections of its
      * own.
      */
-    <M> ValueView<M> map (final Function<? super T, M> func);
+    <M> ValueView<M> map (Function<? super T, M> func);
+
+    /**
+     * Creates a value that flat maps (monadic binds) this value via a function. When this value
+     * changes, the mapping function is called to obtain a new reactive value. All of the listeners
+     * to the flat mapped value are "transferred" to the new reactive value. The mapped value will
+     * retain a connection to the most recent reactive value for as long as it has connections of
+     * its own.
+     */
+    <M> ValueView<M> flatMap (Function<? super T, ? extends ValueView<M>> func);
 
     /**
      * Connects the supplied listener to this value, such that it will be notified when this value

@@ -21,6 +21,18 @@ abstract class MappedValue<T> extends AbstractValue<T>
      */
     protected abstract Connection connect ();
 
+    protected void disconnect () {
+        if (_conn != null) {
+            _conn.close();
+            _conn = null;
+        }
+    }
+
+    protected void reconnect () {
+        disconnect();
+        _conn = connect();
+    }
+
     @Override
     protected void connectionAdded () {
         super.connectionAdded();
@@ -30,10 +42,7 @@ abstract class MappedValue<T> extends AbstractValue<T>
     @Override
     protected void connectionRemoved () {
         super.connectionRemoved();
-        if (!hasConnections() && _conn != null) {
-            _conn.close();
-            _conn = null;
-        }
+        if (!hasConnections()) disconnect();
     }
 
     protected Connection _conn;

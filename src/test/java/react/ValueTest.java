@@ -90,6 +90,58 @@ public class ValueTest
         assertFalse(value.hasConnections());
     }
 
+    @Test public void testFlatMappedValue () {
+        final Value<Integer> value1 = Value.create(42);
+        final Value<Integer> value2 = Value.create(24);
+        Value<Boolean> toggle = Value.create(true);
+        ValueView<Integer> flatMapped = toggle.flatMap(new Function<Boolean,Value<Integer>>() {
+            public Value<Integer> apply (Boolean toggle) { return toggle ? value1 : value2; }
+        });
+
+        SignalTest.Counter counter1 = new SignalTest.Counter();
+        SignalTest.Counter counter2 = new SignalTest.Counter();
+        SignalTest.Counter counterM = new SignalTest.Counter();
+        Connection c1 = value1.connect(counter1);
+        Connection c2 = value2.connect(counter2);
+        Connection cM = flatMapped.connect(counterM);
+
+        flatMapped.connect(SignalTest.require(10)).once();
+        value1.update(10);
+        assertEquals(1, counter1.notifies);
+        assertEquals(1, counterM.notifies);
+
+        value2.update(1);
+        assertEquals(1, counter2.notifies);
+        assertEquals(1, counterM.notifies); // not incremented
+
+        flatMapped.connect(SignalTest.require(15)).once();
+        toggle.update(false);
+
+        System.out.println("Updating " + value2);
+        value2.update(15);
+        assertEquals(2, counter2.notifies);
+        assertEquals(2, counterM.notifies); // is incremented
+
+        // disconnect from the mapped value and ensure that it disconnects in turn
+        c1.close();
+        c2.close();
+        cM.close();
+        assertFalse(value1.hasConnections());
+        assertFalse(value2.hasConnections());
+    }
+
+    @Test public void testConnectionlessFlatMappedValue () {
+        final Value<Integer> value1 = Value.create(42);
+        final Value<Integer> value2 = Value.create(24);
+        Value<Boolean> toggle = Value.create(true);
+        ValueView<Integer> flatMapped = toggle.flatMap(new Function<Boolean,Value<Integer>>() {
+            public Value<Integer> apply (Boolean toggle) { return toggle ? value1 : value2; }
+        });
+        assertEquals(42, flatMapped.get().intValue());
+        toggle.update(false);
+        assertEquals(24, flatMapped.get().intValue());
+    }
+
     @Test public void testConnectNotify () {
         Value<Integer> value = Value.create(42);
         final boolean[] fired = new boolean[] { false };

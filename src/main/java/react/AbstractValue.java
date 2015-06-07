@@ -19,12 +19,45 @@ public abstract class AbstractValue<T> extends Reactor implements ValueView<T>
             @Override public M get () {
                 return func.apply(outer.get());
             }
+            @Override public String toString () {
+                return outer + ".map("  + func + ")";
+            }
             @Override protected Connection connect () {
                 return outer.connect(new Listener<T>() {
                     @Override public void onChange (T value, T ovalue) {
                         notifyChange(func.apply(value), func.apply(ovalue));
                     }
                 });
+            }
+        };
+    }
+
+    @Override public <M> ValueView<M> flatMap (
+        final Function<? super T, ? extends ValueView<M>> func) {
+        final AbstractValue<T> outer = this;
+        final ValueView<? extends ValueView<M>> mapped = map(func);
+        return new MappedValue<M>() {
+            private Connection conn;
+
+            @Override public M get () {
+                return mapped.get().get();
+            }
+            @Override public String toString () {
+                return outer + ".flatMap("  + func + ")";
+            }
+            @Override protected Connection connect () {
+                conn = mapped.connect(new UnitSlot() {
+                    public void onEmit () { reconnect(); }
+                });
+                return mapped.get().connect(new Listener<M>() {
+                    @Override public void onChange (M value, M ovalue) {
+                        notifyChange(value, ovalue);
+                    }
+                });
+            }
+            @Override protected void disconnect () {
+                super.disconnect();
+                if (conn != null) conn.close();
             }
         };
     }
