@@ -117,7 +117,6 @@ public class ValueTest
         flatMapped.connect(SignalTest.require(15)).once();
         toggle.update(false);
 
-        System.out.println("Updating " + value2);
         value2.update(15);
         assertEquals(2, counter2.notifies);
         assertEquals(2, counterM.notifies); // is incremented
