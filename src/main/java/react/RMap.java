@@ -21,7 +21,7 @@ import java.util.Set;
  * #remove} will only generate a notification if a mapping for the specified key existed, use
  * {@link #removeForce} to force a notification.
  */
-public class RMap<K,V> extends Reactor implements Map<K,V>
+public class RMap<K,V> extends RCollection<Map.Entry<K,V>> implements Map<K,V>
 {
     /** An interface for publishing map events to listeners. */
     public static abstract class Listener<K,V> implements Reactor.RListener
@@ -182,25 +182,6 @@ public class RMap<K,V> extends Reactor implements Map<K,V>
                 });
             }
         };
-    }
-
-    /**
-     * Exposes the size of this map as a value.
-     */
-    public synchronized ValueView<Integer> sizeView () {
-        if (_sizeView == null) {
-            _sizeView = Value.create(size());
-            // wire up a listener that will keep this value up to date
-            connect(new Listener<K,V>() {
-                @Override public void onPut (K key, V value, V ovalue) {
-                    _sizeView.update(size());
-                }
-                @Override public void onRemove (K key) {
-                    _sizeView.update(size());
-                }
-            });
-        }
-        return _sizeView;
     }
 
     // from interface Map<K,V>
@@ -437,6 +418,7 @@ public class RMap<K,V> extends Reactor implements Map<K,V>
 
     protected void emitPut (K key, V value, V oldValue) {
         notifyPut(key, value, oldValue);
+        updateSize();
     }
 
     protected void notifyPut (K key, V value, V oldValue) {
@@ -445,6 +427,7 @@ public class RMap<K,V> extends Reactor implements Map<K,V>
 
     protected void emitRemove (K key, V oldValue) {
         notifyRemove(key, oldValue);
+        updateSize();
     }
 
     protected void notifyRemove (K key, V oldValue) {
@@ -453,9 +436,6 @@ public class RMap<K,V> extends Reactor implements Map<K,V>
 
     /** Contains our underlying mappings. */
     protected Map<K, V> _impl;
-
-    /** Used to expose the size of this map as a value. Initialized lazily. */
-    protected Value<Integer> _sizeView;
 
     protected static final Listener<Object,Object> NOOP = new Listener<Object,Object>() {};
 

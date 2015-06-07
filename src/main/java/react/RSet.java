@@ -19,7 +19,7 @@ import java.util.Set;
  * #remove} will only generate a notification if an element was actually removed, use {@link
  * #removeForce} to force a notification.
  */
-public class RSet<E> extends Reactor implements Set<E>
+public class RSet<E> extends RCollection<E> implements Set<E>
 {
     /** An interface for publishing set events to listeners. */
     public static abstract class Listener<E> implements Reactor.RListener
@@ -127,25 +127,6 @@ public class RSet<E> extends Reactor implements Set<E>
                 });
             }
         };
-    }
-
-    /**
-     * Exposes the size of this set as a value.
-     */
-    public synchronized ValueView<Integer> sizeView () {
-        if (_sizeView == null) {
-            _sizeView = Value.create(size());
-            // wire up a listener that will keep this value up to date
-            connect(new Listener<E>() {
-                @Override public void onAdd (E elem) {
-                    _sizeView.update(size());
-                }
-                @Override public void onRemove (E elem) {
-                    _sizeView.update(size());
-                }
-            });
-        }
-        return _sizeView;
     }
 
     // from interface Set<E>
@@ -273,6 +254,7 @@ public class RSet<E> extends Reactor implements Set<E>
 
     protected void emitAdd (E elem) {
         notifyAdd(elem);
+        updateSize();
     }
 
     protected void notifyAdd (E elem) {
@@ -281,6 +263,7 @@ public class RSet<E> extends Reactor implements Set<E>
 
     protected void emitRemove (E elem) {
         notifyRemove(elem);
+        updateSize();
     }
 
     protected void notifyRemove (E elem) {
@@ -289,9 +272,6 @@ public class RSet<E> extends Reactor implements Set<E>
 
     /** Contains our underlying elements. */
     protected Set<E> _impl;
-
-    /** Used to expose the size of this set as a value. Initialized lazily. */
-    protected Value<Integer> _sizeView;
 
     protected static final Listener<Object> NOOP = new Listener<Object>() {};
 

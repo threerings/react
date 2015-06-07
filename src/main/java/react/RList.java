@@ -16,7 +16,7 @@ import java.util.ListIterator;
  * notification if the removed element is not present in the list. Use {@link #removeForce} to
  * force a notification.
  */
-public class RList<E> extends Reactor implements List<E>
+public class RList<E> extends RCollection<E> implements List<E>
 {
     /** Publishes list events to listeners. */
     public static abstract class Listener<E> implements Reactor.RListener
@@ -111,25 +111,6 @@ public class RList<E> extends Reactor implements List<E>
         if (index >= 0) _impl.remove(index);
         emitRemove(index, elem);
         return (index >= 0);
-    }
-
-    /**
-     * Exposes the size of this list as a value.
-     */
-    public synchronized ValueView<Integer> sizeView () {
-        if (_sizeView == null) {
-            _sizeView = Value.create(size());
-            // wire up a listener that will keep this value up to date
-            connect(new Listener<E>() {
-                @Override public void onAdd (int index, E elem) {
-                    _sizeView.update(size());
-                }
-                @Override public void onRemove (int index, E elem) {
-                    _sizeView.update(size());
-                }
-            });
-        }
-        return _sizeView;
     }
 
     // List methods that perform reactive functions in addition to calling through
@@ -317,6 +298,7 @@ public class RList<E> extends Reactor implements List<E>
     // Non-list RList implementation
     protected void emitAdd (int index, E elem) {
         notify(ADD, index, elem, null);
+        updateSize();
     }
 
     protected void emitSet (int index, E newElem, E oldElem) {
@@ -325,13 +307,11 @@ public class RList<E> extends Reactor implements List<E>
 
     protected void emitRemove (int index, E elem) {
         notify(REMOVE, index, elem, null);
+        updateSize();
     }
 
     /** Contains our underlying elements. */
     protected List<E> _impl;
-
-    /** Used to expose the size of this list as a value. Initialized lazily. */
-    protected Value<Integer> _sizeView;
 
     protected static final Listener<Object> NOOP = new Listener<Object>() {};
 
