@@ -254,7 +254,6 @@ public class RSet<E> extends RCollection<E> implements Set<E>
 
     protected void emitAdd (E elem) {
         notifyAdd(elem);
-        updateSize();
     }
 
     protected void notifyAdd (E elem) {
@@ -263,7 +262,6 @@ public class RSet<E> extends RCollection<E> implements Set<E>
 
     protected void emitRemove (E elem) {
         notifyRemove(elem);
-        updateSize();
     }
 
     protected void notifyRemove (E elem) {

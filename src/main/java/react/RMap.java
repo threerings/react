@@ -418,7 +418,6 @@ public class RMap<K,V> extends RCollection<Map.Entry<K,V>> implements Map<K,V>
 
     protected void emitPut (K key, V value, V oldValue) {
         notifyPut(key, value, oldValue);
-        updateSize();
     }
 
     protected void notifyPut (K key, V value, V oldValue) {
@@ -427,7 +426,6 @@ public class RMap<K,V> extends RCollection<Map.Entry<K,V>> implements Map<K,V>
 
     protected void emitRemove (K key, V oldValue) {
         notifyRemove(key, oldValue);
-        updateSize();
     }
 
     protected void notifyRemove (K key, V oldValue) {

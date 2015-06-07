@@ -298,7 +298,6 @@ public class RList<E> extends RCollection<E> implements List<E>
     // Non-list RList implementation
     protected void emitAdd (int index, E elem) {
         notify(ADD, index, elem, null);
-        updateSize();
     }
 
     protected void emitSet (int index, E newElem, E oldElem) {
@@ -307,7 +306,6 @@ public class RList<E> extends RCollection<E> implements List<E>
 
     protected void emitRemove (int index, E elem) {
         notify(REMOVE, index, elem, null);
-        updateSize();
     }
 
     /** Contains our underlying elements. */

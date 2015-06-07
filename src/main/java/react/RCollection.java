@@ -42,11 +42,19 @@ public abstract class RCollection<T> extends Reactor {
     }
 
     /**
-     * Updates the reactive size value. The underlying collection should call this method whenever
-     * its size changes.
+     * Updates the reactive size value. The underlying collection need only call this method if it
+     * changes the size of its collection <em>without</em> also calling {@link #notify}.
      */
     protected void updateSize () {
         if (_sizeView != null) _sizeView.update(size());
+    }
+
+    @Override protected void notify (Notifier notifier, Object a1, Object a2, Object a3) {
+        try {
+            super.notify(notifier, a1, a2, a3);
+        } finally {
+            updateSize();
+        }
     }
 
     /** Used to expose the size of this set as a value. Initialized lazily. */
