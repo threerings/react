@@ -12,6 +12,31 @@ package react;
 public abstract class Connection implements Closeable
 {
     /**
+     * Returns a single connection which aggregates all of the supplied connections. When the
+     * aggregated connection is closed, the underlying connections are closed. When its priority is
+     * changed the underlying connections' priorities are changed. Etc.
+     */
+    public static Connection join (final Connection... conns) {
+        return new Connection() {
+            @Override public void close () {
+                for (Connection c : conns) c.close();
+            }
+            @Override public Connection once () {
+                for (Connection c : conns) c.once();
+                return this;
+            }
+            @Override public Connection atPrio (int priority) {
+                for (Connection c : conns) c.atPrio(priority);
+                return this;
+            }
+            @Override public Connection holdWeakly () {
+                for (Connection c : conns) c.holdWeakly();
+                return this;
+            }
+        };
+    }
+
+    /**
      * Disconnects this registration. Subsequent events will not be dispatched to the associated
      * slot or listener.
      */
