@@ -7,13 +7,111 @@ package react;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Provides utility methods for {@link Value}s.
  */
 public class Values
 {
+    /** Used by {@link #join(ValueView,ValueView)}. */
+    public static class T2<A,B> {
+        public final A a;
+        public final B b;
+        public T2 (A a, B b) {
+            this.a = a;
+            this.b = b;
+        }
+
+        @Override public String toString () {
+            return "T2(" + a + ", " + b + ")";
+        }
+        @Override public int hashCode () {
+            return Objects.hashCode(a) ^ Objects.hashCode(b);
+        }
+        @Override public boolean equals (Object other) {
+            if (!(other instanceof T2<?,?>)) return false;
+            T2<?,?> ot = (T2<?,?>)other;
+            return Objects.equals(a, ot.a) && Objects.equals(b, ot.b);
+        }
+    }
+
+    /** Used by {@link #join(ValueView,ValueView,ValueView)}. */
+    public static class T3<A,B,C> {
+        public final A a;
+        public final B b;
+        public final C c;
+        public T3 (A a, B b, C c) {
+            this.a = a;
+            this.b = b;
+            this.c = c;
+        }
+
+        @Override public String toString () {
+            return "T3(" + a + ", " + b + ", " + c + ")";
+        }
+        @Override public int hashCode () {
+            return Objects.hashCode(a) ^ Objects.hashCode(b);
+        }
+        @Override public boolean equals (Object other) {
+            if (!(other instanceof T3<?,?,?>)) return false;
+            T3<?,?,?> ot = (T3<?,?,?>)other;
+            return Objects.equals(a, ot.a) && Objects.equals(b, ot.b) && Objects.equals(c, ot.c);
+        }
+    }
+
+    /**
+     * Returns a reactive value which is triggered when either of {@code a, b} emits an event. The
+     * mapped value will retain connections to {@code a+b} only while it itself has connections.
+     */
+    public static <A,B> ValueView<T2<A,B>> join (final ValueView<A> a, final ValueView<B> b) {
+        return new MappedValue<T2<A,B>>() {
+            @Override public T2<A,B> get () {
+                return _current;
+            }
+            @Override protected Connection connect () {
+                return Connection.join(a.connect(_trigger), b.connect(_trigger));
+            }
+            protected final UnitSlot _trigger = new UnitSlot() {
+                public void onEmit () {
+                    T2<A,B> ovalue = _current;
+                    _current = new T2<A,B>(a.get(), b.get());
+                    notifyChange(_current, ovalue);
+                }
+            };
+            protected T2<A,B> _current = new T2<A,B>(a.get(), b.get());
+        };
+    }
+
+    /**
+     * Returns a reactive value which is triggered when either of {@code a, b, c} emits an event.
+     * The mapped value will retain connections to {@code a+b+c} only while it itself has
+     * connections.
+     */
+    public static <A,B,C> ValueView<T3<A,B,C>> join (final ValueView<A> a, final ValueView<B> b,
+                                                     final ValueView<C> c) {
+        return new MappedValue<T3<A,B,C>>() {
+            @Override public T3<A,B,C> get () {
+                return _current;
+            }
+            @Override protected Connection connect () {
+                return Connection.join(
+                    a.connect(_trigger), b.connect(_trigger), c.connect(_trigger));
+            }
+            protected final UnitSlot _trigger = new UnitSlot() {
+                public void onEmit () {
+                    T3<A,B,C> ovalue = _current;
+                    _current = new T3<A,B,C>(a.get(), b.get(), c.get());
+                    notifyChange(_current, ovalue);
+                }
+            };
+            protected T3<A,B,C> _current = new T3<A,B,C>(a.get(), b.get(), c.get());
+        };
+    }
+
     /**
      * Creates a boolean value that is toggled every time the supplied signal fires.
      *
@@ -62,7 +160,7 @@ public class Values
     /**
      * Returns a value which is the logical AND of the supplied values.
      */
-    public static ValueView<Boolean> and (final Iterable<? extends ValueView<Boolean>> values) {
+    public static ValueView<Boolean> and (final Collection<? extends ValueView<Boolean>> values) {
         return aggValue(values, COMPUTE_AND);
     }
 
@@ -84,7 +182,7 @@ public class Values
     /**
      * Returns a value which is the logical OR of the supplied values.
      */
-    public static ValueView<Boolean> or (final Iterable<? extends ValueView<Boolean>> values) {
+    public static ValueView<Boolean> or (final Collection<? extends ValueView<Boolean>> values) {
         return aggValue(values, COMPUTE_OR);
     }
 
@@ -114,7 +212,7 @@ public class Values
     }
 
     protected static final ValueView<Boolean> aggValue (
-        final Iterable<? extends ValueView<Boolean>> values,
+        final Collection<? extends ValueView<Boolean>> values,
         final Function<Iterable<? extends ValueView<Boolean>>,Boolean> aggOp) {
 
         return new MappedValue<Boolean>() {
@@ -123,27 +221,10 @@ public class Values
             }
 
             @Override protected Connection connect () {
-                final List<Connection> conns = new ArrayList<Connection>();
-                for (ValueView<Boolean> value : values) {
-                    conns.add(value.connect(_trigger));
-                }
-                return new Connection() {
-                    public void close () {
-                        for (Connection conn : conns) conn.close();
-                    }
-                    public Connection once () {
-                        for (Connection conn : conns) conn.once();
-                        return this;
-                    }
-                    public Connection atPrio (int priority) {
-                        for (Connection conn : conns) conn.atPrio(priority);
-                        return this;
-                    }
-                    public Connection holdWeakly () {
-                        for (Connection conn : conns) conn.holdWeakly();
-                        return this;
-                    }
-                };
+                Connection[] conns = new Connection[values.size()];
+                Iterator<? extends ValueView<Boolean>> iter = values.iterator();
+                for (int ii = 0; ii < conns.length; ii++) conns[ii] = iter.next().connect(_trigger);
+                return Connection.join(conns);
             }
 
             protected final UnitSlot _trigger = new UnitSlot() {

@@ -249,4 +249,21 @@ public class ValueTest
         assertEquals(2, fired.get());
         assertFalse(value.hasConnections());
     }
+
+    @Test public void testJoinedValue () {
+        Value<Integer> number = Value.create(1);
+        Value<String> string = Value.create("foo");
+        ValueView<Values.T2<Integer,String>> both = Values.join(number, string);
+        SignalTest.Counter counter = new SignalTest.Counter();
+        both.connect(counter);
+        number.update(2);
+        assertEquals(1, counter.notifies);
+        assertEquals(new Values.T2<>(2, "foo"), both.get());
+        string.update("bar");
+        assertEquals(2, counter.notifies);
+        number.update(2);
+        assertEquals(2, counter.notifies);
+        string.update("bar");
+        assertEquals(2, counter.notifies);
+    }
 }
