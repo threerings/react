@@ -124,6 +124,28 @@ public class Functions
     }
 
     /**
+     * Returns a function which returns its argument as a string with {@code prefix} prepended.
+     */
+    public static <T> Function<T,String> prefix (final String prefix) {
+        return new Function<T,String>() {
+            public String apply (T value) {
+                return prefix + value;
+            }
+        };
+    }
+
+    /**
+     * Returns a function which returns its argument as a string with {@code suffix} appended.
+     */
+    public static <T> Function<T,String> suffix (final String suffix) {
+        return new Function<T,String>() {
+            public String apply (T value) {
+                return value + suffix;
+            }
+        };
+    }
+
+    /**
      * Returns the identity function for type {@code T}.
      */
     public static <T> Function<T, T> identity () {
