@@ -5,10 +5,10 @@
 
 package react;
 
-import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Queue;
 
 /**
@@ -29,10 +29,10 @@ public class RQueue<E> extends RCollection<E> implements Queue<E>
     }
 
     /**
-     * Creates a reactive queue backed by an {@link ArrayDeque}.
+     * Creates a reactive queue backed by an {@link LinkedList}.
      */
     public static <E> RQueue<E> create () {
-        return create(new ArrayDeque<E>());
+        return create(new LinkedList<E>());
     }
 
     /**
