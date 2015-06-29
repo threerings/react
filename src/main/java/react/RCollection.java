@@ -5,8 +5,6 @@
 
 package react;
 
-import java.util.Collection;
-
 /**
  * A base class for reactive collections ({@link RList}, {@link RMap}, {@link RSet}).
  */
