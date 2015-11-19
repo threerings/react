@@ -147,7 +147,7 @@ public class RFuture<T> {
     /** Returns a future containing the results of {@code a}, {@code b}, and {@code c} if all
       * futures complete successfully, or a {@link MultiFailureException} aggregating all failures,
       * if any of the futures fails. */
-    public static <A,B,C> RFuture<T3<A,B,C>> sequence (RFuture<A> a, RFuture<B> b, RFuture<B> c) {
+    public static <A,B,C> RFuture<T3<A,B,C>> sequence (RFuture<A> a, RFuture<B> b, RFuture<C> c) {
         @SuppressWarnings("unchecked") RFuture<Object> oa = (RFuture<Object>)a;
         @SuppressWarnings("unchecked") RFuture<Object> ob = (RFuture<Object>)b;
         @SuppressWarnings("unchecked") RFuture<Object> oc = (RFuture<Object>)c;
