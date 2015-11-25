@@ -22,6 +22,11 @@ public class RPromise<T> extends RFuture<T> {
         return new RPromise<T>();
     }
 
+    /** Causes this promise to be completed with {@code result}. */
+    public void complete (Try<T> result) {
+        _result.update(result);
+    }
+
     /** Causes this promise to be completed successfully with {@code value}. */
     public void succeed (T value) {
         _result.update(Try.success(value));
