@@ -24,7 +24,7 @@ import java.util.Objects;
  * pass the resulting object to some other code via a slot. Failure can be handled once for all of
  * these operations and you avoid nesting yourself three callbacks deep. </p>
  */
-public class RFuture<T> {
+public abstract class RFuture<T> extends Reactor {
 
     /** Used by {@link #sequence(RFuture,RFuture)}. */
     public static class T2<A,B> {
@@ -82,8 +82,10 @@ public class RFuture<T> {
     }
 
     /** Returns a future with an already-computed result. */
-    public static <T> RFuture<T> result (Try<T> result) {
-        return new RFuture<T>(Value.create(result));
+    public static <T> RFuture<T> result (final Try<T> result) {
+        return new RFuture<T>() {
+            public Try<T> result () { return result; }
+        };
     }
 
     /** Returns a future containing a list of all success results from {@code futures} if all of
@@ -186,50 +188,52 @@ public class RFuture<T> {
      * already succeeded, the slot will be notified immediately.
      * @return this future for chaining. */
     public RFuture<T> onSuccess (final SignalView.Listener<? super T> slot) {
-        Try<T> result = _result.get();
-        if (result == null) _result.connect(new SignalView.Listener<Try<T>>() {
+        return onComplete(new SignalView.Listener<Try<T>>() {
             public void onEmit (Try<T> result) {
                 if (result.isSuccess()) slot.onEmit(result.get());
             }
         });
-        else if (result.isSuccess()) slot.onEmit(result.get());
-        return this;
     }
 
     /** Causes {@code slot} to be notified if/when this future is completed with failure. If it has
      * already failed, the slot will be notified immediately.
      * @return this future for chaining. */
     public RFuture<T> onFailure (final SignalView.Listener<? super Throwable> slot) {
-        Try<T> result = _result.get();
-        if (result == null) _result.connect(new SignalView.Listener<Try<T>>() {
+        return onComplete(new SignalView.Listener<Try<T>>() {
             public void onEmit (Try<T> result) {
                 if (result.isFailure()) slot.onEmit(result.getFailure());
             }
         });
-        else if (result.isFailure()) slot.onEmit(result.getFailure());
-        return this;
     }
 
     /** Causes {@code slot} to be notified when this future is completed. If it has already
      * completed, the slot will be notified immediately.
      * @return this future for chaining. */
     public RFuture<T> onComplete (final SignalView.Listener<? super Try<T>> slot) {
-        Try<T> result = _result.get();
-        if (result == null) _result.connect(slot);
-        else slot.onEmit(result);
+        Try<T> result = result();
+        if (result != null) slot.onEmit(result);
+        else addConnection(slot);
         return this;
     }
 
     /** Returns a value that indicates whether this future has completed. */
     public ValueView<Boolean> isComplete () {
-        if (_isComplete == null) _isComplete = _result.map(Functions.NON_NULL);
-        return _isComplete;
+        if (_isCompleteView == null) {
+            final Value<Boolean> isCompleteView = Value.create(false);
+            onComplete(new SignalView.Listener<Try<T>>() {
+                public void onEmit (Try<T> result) {
+                    isCompleteView.update(true);
+                }
+            });
+            _isCompleteView = isCompleteView;
+        }
+        return _isCompleteView;
     }
 
     /** Returns whether this future is complete right now. This is an unfortunate name, but I
       * foolishly defined {@link #isComplete} to return a reactive view of completeness. */
     public boolean isCompleteNow () {
-        return _result.get() != null;
+        return result() != null;
     }
 
     /** Convenience method to {@link ValueView#connectNotify} {@code slot} to {@link #isComplete}.
@@ -241,30 +245,51 @@ public class RFuture<T> {
         return this;
     }
 
+    /** Transforms this future by mapping its result upon arrival. */
+    public <R> RFuture<R> transform (final Function<Try<? super T>,Try<R>> func) {
+        final RPromise<R> xf = RPromise.create();
+        onComplete(new SignalView.Listener<Try<T>>() {
+            public void onEmit (Try<T> result) {
+                xf.complete(func.apply(result));
+            }
+        });
+        return xf;
+    }
+
     /** Maps the value of a successful result using {@code func} upon arrival. */
     public <R> RFuture<R> map (final Function<? super T, R> func) {
-        // we'd use Try.lift here but we have to handle the special case where our try is null,
-        // meaning we haven't completed yet; it would be weird if Try.lift did that
-        return new RFuture<R>(_result.map(new Function<Try<T>,Try<R>>() {
-            public Try<R> apply (Try<T> result) {
-                return result == null ? null : result.map(func);
+        Object sigh = Try.lift(func);
+        @SuppressWarnings("unchecked") Function<Try<? super T>,Try<R>> lifted =
+            (Function<Try<? super T>,Try<R>>)sigh;
+        return transform(lifted);
+    }
+
+    /** Maps the value of a failed result using {@code func} upon arrival. Ideally one could
+      * generalize the type {@code T} here but Java doesn't allow type parameters with lower
+      * bounds. */
+    public RFuture<T> recover (final Function<? super Throwable, T> func) {
+        Object sigh = new Function<Try<T>,Try<T>>() {
+            public Try<T> apply (Try<T> result) {
+                return result.recover(func);
             }
-        }));
+        };
+        @SuppressWarnings("unchecked") Function<Try<? super T>,Try<T>> lifted =
+            (Function<Try<? super T>,Try<T>>)sigh;
+        return transform(lifted);
     }
 
     /** Maps a successful result to a new result using {@code func} when it arrives. Failure on the
      * original result or the mapped result are both dispatched to the mapped result. This is
      * useful for chaining asynchronous actions. It's also known as monadic bind. */
     public <R> RFuture<R> flatMap (final Function<? super T, RFuture<R>> func) {
-        final Value<Try<R>> mapped = Value.create(null);
-        _result.connectNotify(new SignalView.Listener<Try<T>>() {
+        final RPromise<R> mapped = RPromise.create();
+        onComplete(new SignalView.Listener<Try<T>>() {
             public void onEmit (Try<T> result) {
-                if (result == null) return; // source future not yet complete; nothing to do
-                if (result.isFailure()) mapped.update(Try.<R>failure(result.getFailure()));
-                else func.apply(result.get()).onComplete(mapped.slot());
+                if (result.isFailure()) mapped.fail(result.getFailure());
+                else func.apply(result.get()).onComplete(mapped.completer());
             }
         });
-        return new RFuture<R>(mapped);
+        return mapped;
     }
 
     /** Returns the result of this future, or null if it is not yet complete.
@@ -277,14 +302,12 @@ public class RFuture<T> {
       * machinery in both cases, but in the synchronous case you know that your future will be
       * complete by the time you want to obtain its result.
       */
-    public Try<T> result () {
-        return _result.get();
+    public abstract Try<T> result ();
+
+    @Override RListener placeholderListener () {
+        /*@SuppressWarnings("unchecked")*/ RListener p = (RListener)Slots.NOOP;
+        return p;
     }
 
-    protected RFuture (ValueView<Try<T>> result) {
-        _result = result;
-    }
-
-    protected final ValueView<Try<T>> _result;
-    protected ValueView<Boolean> _isComplete;
+    private ValueView<Boolean> _isCompleteView;
 }

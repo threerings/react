@@ -24,22 +24,32 @@ public class RPromise<T> extends RFuture<T> {
 
     /** Causes this promise to be completed with {@code result}. */
     public void complete (Try<T> result) {
-        _result.update(result);
+        if (_result != null) throw new IllegalStateException("Already completed");
+        _result = result;
+        try {
+            notify(COMPLETE, result, null, null);
+        } finally {
+            clearConnections();
+        }
     }
 
     /** Causes this promise to be completed successfully with {@code value}. */
     public void succeed (T value) {
-        _result.update(Try.success(value));
+        complete(Try.success(value));
     }
 
     /** Causes this promise to be completed with failure caused by {@code cause}. */
     public void fail (Throwable cause) {
-        _result.update(Try.<T>failure(cause));
+        complete(Try.<T>failure(cause));
     }
 
     /** Returns a slot that can be used to complete this promise. */
     public Slot<Try<T>> completer () {
-        return _result.slot();
+        return new Slot<Try<T>>() {
+            public void onEmit (Try<T> result) {
+                complete(result);
+            }
+        };
     }
 
     /** Returns a slot that can be used to {@link #succeed} this promise. */
@@ -60,28 +70,15 @@ public class RPromise<T> extends RFuture<T> {
         };
     }
 
-    /** Returns true if there are listeners awaiting the completion of this promise. */
-    public boolean hasConnections () {
-        return _result.hasConnections();
+    @Override public Try<T> result () {
+        return _result;
     }
 
-    protected RPromise () {
-        this(new Value<Try<T>>(null) {
-            @Override protected synchronized Try<T> updateAndNotify (Try<T> value, boolean force) {
-                if (_value != null) throw new IllegalStateException("Already completed");
-                try {
-                    return super.updateAndNotify(value, force);
-                } finally {
-                    _listeners = null; // clear out our listeners now that they have been notified
-                }
-            }
-        });
-    }
+    protected Try<T> _result;
 
-    private RPromise (Value<Try<T>> result) {
-        super(result);
-        _result = result;
-    }
-
-    protected final Value<Try<T>> _result;
+    @SuppressWarnings("unchecked") protected static final Notifier COMPLETE = new Notifier() {
+        public void notify (Object lner, Object value, Object i0, Object i1) {
+            ((SignalView.Listener<Try<Object>>)lner).onEmit((Try<Object>)value);
+        }
+    };
 }

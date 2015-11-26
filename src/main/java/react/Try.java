@@ -30,6 +30,9 @@ public abstract class Try<T> {
                 return failure(t);
             }
         }
+        @Override public Try<T> recover (Function<? super Throwable, T> func) {
+            return this;
+        }
         @Override public <R> Try<R> flatMap (Function<? super T, Try<R>> func) {
             try {
                 return func.apply(value);
@@ -62,6 +65,13 @@ public abstract class Try<T> {
         @Override public <R> Try<R> map (Function<? super T, R> func) {
             return this.<R>casted();
         }
+        @Override public Try<T> recover (Function<? super Throwable, T> func) {
+            try {
+                return success(func.apply(cause));
+            } catch (Throwable t) {
+                return failure(t);
+            }
+        }
         @Override public <R> Try<R> flatMap (Function<? super T, Try<R>> func) {
             return this.<R>casted();
         }
@@ -78,7 +88,7 @@ public abstract class Try<T> {
     public static <T> Try<T> failure (Throwable cause) { return new Failure<T>(cause); }
 
     /** Lifts {@code func}, a function on values, to a function on tries. */
-    public static <T,R> Function<Try<T>,Try<R>> lift (final Function<? super T, R> func) {
+    public static <T,R> Function<Try<T>,Try<R>> lift (final Function<T, R> func) {
         return new Function<Try<T>,Try<R>>() {
             public Try<R> apply (Try<T> result) { return result.map(func); }
         };
@@ -101,6 +111,12 @@ public abstract class Try<T> {
 
     /** Maps successful tries through {@code func}, passees failure through as is. */
     public abstract <R> Try<R> map (Function<? super T, R> func);
+
+    /** Maps failed tries through {@code func}, passes success through as is. Note: if {@code func}
+      * throws an exception, you will get back a failure try with the new failure. Ideally one
+      * could generalize the type {@code T} here but Java doesn't allow type parameters with lower
+      * bounds. */
+    public abstract Try<T> recover (Function<? super Throwable, T> func);
 
     /** Maps successful tries through {@code func}, passes failure through as is. */
     public abstract <R> Try<R> flatMap (Function<? super T, Try<R>> func);
