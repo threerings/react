@@ -8,7 +8,6 @@ package react;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Objects;
 
 /**
  * Provides utility methods for {@link Value}s.
@@ -28,12 +27,12 @@ public class Values
             return "T2(" + a + ", " + b + ")";
         }
         @Override public int hashCode () {
-            return Objects.hashCode(a) ^ Objects.hashCode(b);
+            return ObjectsUtil.hashCode(a) ^ ObjectsUtil.hashCode(b);
         }
         @Override public boolean equals (Object other) {
             if (!(other instanceof T2<?,?>)) return false;
             T2<?,?> ot = (T2<?,?>)other;
-            return Objects.equals(a, ot.a) && Objects.equals(b, ot.b);
+            return ObjectsUtil.equals(a, ot.a) && ObjectsUtil.equals(b, ot.b);
         }
     }
 
@@ -52,12 +51,12 @@ public class Values
             return "T3(" + a + ", " + b + ", " + c + ")";
         }
         @Override public int hashCode () {
-            return Objects.hashCode(a) ^ Objects.hashCode(b);
+            return ObjectsUtil.hashCode(a) ^ ObjectsUtil.hashCode(b);
         }
         @Override public boolean equals (Object other) {
             if (!(other instanceof T3<?,?,?>)) return false;
             T3<?,?,?> ot = (T3<?,?,?>)other;
-            return Objects.equals(a, ot.a) && Objects.equals(b, ot.b) && Objects.equals(c, ot.c);
+            return ObjectsUtil.equals(a, ot.a) && ObjectsUtil.equals(b, ot.b) && ObjectsUtil.equals(c, ot.c);
         }
     }
 

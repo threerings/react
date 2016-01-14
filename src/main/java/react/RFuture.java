@@ -291,21 +291,6 @@ public abstract class RFuture<T> extends Reactor {
         return mapped;
     }
 
-    /** This is used to keep compatible with Android prior to API 19. */
-    final private static class ObjectsUtil {
-    	
-    	/** Utility method for getting object's hash code */
-    	private static int hashCode(Object o) {
-    		return o != null ? o.hashCode() : 0;
-    	}
-
-    	/** Utility method for comparing two objects' equality */
-    	private static boolean equals(Object a, Object b) {
-    		return (a == b) || (a != null && a.equals(b));
-    	}
-    }
-
-
     /** Returns the result of this future, or null if it is not yet complete.
       *
       * <p><em>NOTE:</em> don't use this method! You should wire up reactions to the completion of
