@@ -25,7 +25,7 @@ public interface Closeable {
                     c.close();
                 } catch (Exception e) {
                     if (error == null) error = new MultiFailureException();
-                    error.addSuppressed(e);
+                    error.addFailure(e);
                 }
                 _set.clear();
                 if (error != null) throw error;
