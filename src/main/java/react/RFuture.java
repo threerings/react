@@ -250,7 +250,11 @@ public abstract class RFuture<T> extends Reactor {
         final RPromise<R> xf = RPromise.create();
         onComplete(new SignalView.Listener<Try<T>>() {
             public void onEmit (Try<T> result) {
-                xf.complete(func.apply(result));
+                try {
+                    xf.complete(func.apply(result));
+                } catch (Throwable t) {
+                    xf.fail(t);
+                }
             }
         });
         return xf;
@@ -286,7 +290,11 @@ public abstract class RFuture<T> extends Reactor {
         onComplete(new SignalView.Listener<Try<T>>() {
             public void onEmit (Try<T> result) {
                 if (result.isFailure()) mapped.fail(result.getFailure());
-                else func.apply(result.get()).onComplete(mapped.completer());
+                else try {
+                    func.apply(result.get()).onComplete(mapped.completer());
+                } catch (Throwable t) {
+                    mapped.fail(t);
+                }
             }
         });
         return mapped;

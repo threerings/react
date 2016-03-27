@@ -105,6 +105,7 @@ public class RFutureTest extends TestBase {
     @Test public void testFlatMappedImmediate () {
         FutureCounter scounter = new FutureCounter();
         FutureCounter fcounter = new FutureCounter();
+        FutureCounter ccounter = new FutureCounter();
         Function<String,RFuture<Boolean>> successMap = new Function<String,RFuture<Boolean>>() {
             public RFuture<Boolean> apply (String value) {
                 return RFuture.success(value != null);
@@ -115,18 +116,27 @@ public class RFutureTest extends TestBase {
                 return RFuture.failure(new Exception("Barzle!"));
             }
         };
+        Function<String,RFuture<Boolean>> crashMap = new Function<String,RFuture<Boolean>>() {
+            public RFuture<Boolean> apply (String value) {
+                throw new RuntimeException("Barzle!");
+            }
+        };
 
         RFuture<String> success = RFuture.success("Yay!");
         scounter.bind(success.flatMap(successMap));
         fcounter.bind(success.flatMap(failMap));
+        ccounter.bind(success.flatMap(crashMap));
         scounter.check("immediate success/success", 1, 0, 1);
         fcounter.check("immediate success/failure", 0, 1, 1);
+        ccounter.check("immediate success/crash",   0, 1, 1);
 
         RFuture<String> failure = RFuture.failure(new Exception("Boo!"));
         scounter.bind(failure.flatMap(successMap));
         fcounter.bind(failure.flatMap(failMap));
+        ccounter.bind(failure.flatMap(crashMap));
         scounter.check("immediate failure/success", 0, 1, 1);
-        scounter.check("immediate failure/failure", 0, 1, 1);
+        fcounter.check("immediate failure/failure", 0, 1, 1);
+        ccounter.check("immediate failure/crash",   0, 1, 1);
     }
 
     @Test public void testFlatMappedDeferred () {
