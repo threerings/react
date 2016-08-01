@@ -266,4 +266,26 @@ public class ValueTest
         string.update("bar");
         assertEquals(2, counter.notifies);
     }
+
+    @Test public void testChanges () {
+        Value<Integer> value = Value.create(42);
+        final boolean[] fired = new boolean[] { false };
+        value.changes().connect(new Slot<Integer>() {
+            public void onEmit (Integer v) {
+                assertEquals(15, v.intValue());
+                fired[0] = true;
+            }
+        });
+        value.update(15);
+        assertTrue(fired[0]);
+    }
+
+    @Test public void testChangesNext () {
+        Value<Integer> value = Value.create(42);
+        SignalTest.Counter counter = new SignalTest.Counter();
+        value.changes().next().onSuccess(counter);
+        value.update(15);
+        value.update(42);
+        assertEquals(1, counter.notifies);
+    }
 }

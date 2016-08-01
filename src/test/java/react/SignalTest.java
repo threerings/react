@@ -7,6 +7,7 @@ package react;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.*;
@@ -19,6 +20,7 @@ public class SignalTest
 {
     public static class Counter extends UnitSlot {
         public int notifies;
+
         @Override public void onEmit () {
             notifies++;
         }
@@ -211,7 +213,7 @@ public class SignalTest
 
         Counter counter = new Counter();
         Connection c1 = mapped.connect(counter);
-        Connection c2 = mapped.connect(SignalTest.require("15"));
+        Connection c2 = mapped.connect(require("15"));
 
         signal.emit(15);
         assertEquals(1, counter.notifies);
@@ -252,6 +254,48 @@ public class SignalTest
         sig.emit(null);
         sig.emit("foozle");
         assertEquals(1, triggered[0]);
+    }
+
+    @Test public void testNext () {
+        class Accum<T> implements SignalView.Listener<T> {
+            public List<T> values = new ArrayList<>();
+            public void onEmit (T value) {
+                values.add(value);
+            }
+            public void assertContains (List<T> values) {
+                assertEquals(values, this.values);
+            }
+        }
+
+        Signal<Integer> signal = Signal.create();
+        Accum<Integer> accum = new Accum<>();
+        Accum<Integer> accum3 = new Accum<>();
+
+        signal.next().onSuccess(accum);
+        signal.filter(new Function<Integer,Boolean>() {
+            public Boolean apply (Integer v) { return v == 3; }
+        }).next().onSuccess(accum3);
+
+        List<Integer> NONE = Collections.emptyList();
+        List<Integer> ONE = Arrays.asList(1), THREE = Arrays.asList(3);
+
+        signal.emit(1); // adder should only receive this value
+        accum.assertContains(ONE);
+        accum3.assertContains(NONE);
+
+        signal.emit(2);
+        accum.assertContains(ONE);
+        accum3.assertContains(NONE);
+
+        signal.emit(3);
+        accum.assertContains(ONE);
+        accum3.assertContains(THREE);
+
+        // signal should no longer have connections at this point
+        assertFalse(signal.hasConnections());
+
+        signal.emit(3); // adder3 should not receive multiple threes
+        accum3.assertContains(Arrays.asList(3));
     }
 
     protected static class AccSlot<T> extends Slot<T> {

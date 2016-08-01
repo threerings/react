@@ -40,6 +40,12 @@ public class AbstractSignal<T> extends Reactor implements SignalView<T>
         };
     }
 
+    @Override public RFuture<T> next () {
+        final RPromise<T> result = RPromise.create();
+        connect(result.succeeder()).once();
+        return result;
+    }
+
     @Override public Connection connect (Listener<? super T> slot) {
         return addConnection(slot);
     }

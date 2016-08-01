@@ -42,6 +42,18 @@ public interface ValueView<T>
     <M> ValueView<M> flatMap (Function<? super T, ? extends ValueView<M>> func);
 
     /**
+     * Returns a signal that is emitted whenever this value changes.
+     */
+    SignalView<T> changes ();
+
+    /**
+     * Returns a future which is completed with this value when the value meeds {@code cond}. If
+     * the value meets {@code cond} now, the future will be completed immediately, otherwise the
+     * future will be completed when the value changes to a value which meets {@code cond}.
+     */
+    RFuture<T> when (Function<? super T, Boolean> cond);
+
+    /**
      * Connects the supplied listener to this value, such that it will be notified when this value
      * changes. The listener is held by a strong reference, so it's held in memory by virtue of
      * being connected.

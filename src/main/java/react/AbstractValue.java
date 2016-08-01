@@ -62,6 +62,25 @@ public abstract class AbstractValue<T> extends Reactor implements ValueView<T>
         };
     }
 
+    @Override public SignalView<T> changes () {
+        final AbstractValue<T> outer = this;
+        return new MappedSignal<T>() {
+            @Override protected Connection connect () {
+                return outer.connect(new ValueView.Listener<T>() {
+                    @Override public void onChange (T value, T oldValue) {
+                        notifyEmit(value);
+                    }
+                });
+            }
+        };
+    }
+
+    @Override public RFuture<T> when (Function<? super T, Boolean> cond) {
+        T current = get();
+        if (cond.apply(current)) return RFuture.success(current);
+        else return changes().filter(cond).next();
+    }
+
     @Override public Connection connect (Listener<? super T> listener) {
         return addConnection(listener);
     }

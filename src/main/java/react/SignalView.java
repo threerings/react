@@ -42,6 +42,11 @@ public interface SignalView<T>
     SignalView<T> filter (Function<? super T, Boolean> pred);
 
     /**
+     * Returns a future that is completed with the next value from this signal.
+     */
+    RFuture<T> next ();
+
+    /**
      * Connects this signal to the supplied slot, such that when an event is emitted from this
      * signal, the slot will be notified.
      *
