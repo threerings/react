@@ -12,7 +12,7 @@ import java.util.HashSet;
  * {@link #close}. React resources generally do not encounter failure during closure, thus the
  * checked exception is a needless burden to pass on to callers.
  */
-public interface Closeable extends AutoCloseable {
+public interface Closeable {
 
     /** Maintains a set of closeables to allow mass operations on them. */
     class Set implements Closeable {
@@ -25,7 +25,7 @@ public interface Closeable extends AutoCloseable {
                     c.close();
                 } catch (Exception e) {
                     if (error == null) error = new MultiFailureException();
-                    error.addSuppressed(e);
+                    error.addFailure(e);
                 }
                 _set.clear();
                 if (error != null) throw error;

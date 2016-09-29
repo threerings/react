@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Represents an asynchronous result. Unlike standard Java futures, you cannot block on this
@@ -36,12 +35,12 @@ public abstract class RFuture<T> extends Reactor {
         }
 
         @Override public int hashCode () {
-            return Objects.hashCode(a) ^ Objects.hashCode(b);
+            return ObjectsUtil.hashCode(a) ^ ObjectsUtil.hashCode(b);
         }
         @Override public boolean equals (Object other) {
             if (!(other instanceof T2<?,?>)) return false;
             T2<?,?> ot = (T2<?,?>)other;
-            return Objects.equals(a, ot.a) && Objects.equals(a, ot.b);
+            return ObjectsUtil.equals(a, ot.a) && ObjectsUtil.equals(a, ot.b);
         }
     }
 
@@ -57,12 +56,12 @@ public abstract class RFuture<T> extends Reactor {
         }
 
         @Override public int hashCode () {
-            return Objects.hashCode(a) ^ Objects.hashCode(b);
+            return ObjectsUtil.hashCode(a) ^ ObjectsUtil.hashCode(b);
         }
         @Override public boolean equals (Object other) {
             if (!(other instanceof T3<?,?,?>)) return false;
             T3<?,?,?> ot = (T3<?,?,?>)other;
-            return Objects.equals(a, ot.a) && Objects.equals(a, ot.b) && Objects.equals(c, ot.c);
+            return ObjectsUtil.equals(a, ot.a) && ObjectsUtil.equals(a, ot.b) && ObjectsUtil.equals(c, ot.c);
         }
     }
 
