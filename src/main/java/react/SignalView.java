@@ -42,6 +42,13 @@ public interface SignalView<T>
     SignalView<T> filter (Function<? super T, Boolean> pred);
 
     /**
+     * Creates a signal that maps the values emitted by this signal through {@code collector} and
+     * emits only the non-null values that are returned. This allows you to perform a type-test on
+     * the values emitted by a signal and only emit values of the appropriate subtype.
+     */
+    <M> SignalView<M> collect (Function<? super T, M> collector);
+
+    /**
      * Returns a future that is completed with the next value from this signal.
      */
     RFuture<T> next ();

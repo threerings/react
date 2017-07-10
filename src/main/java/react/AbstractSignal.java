@@ -40,6 +40,22 @@ public class AbstractSignal<T> extends Reactor implements SignalView<T>
         };
     }
 
+    @Override public <M> SignalView<M> collect (final Function<? super T, M> collector) {
+        final AbstractSignal<T> outer = this;
+        return new MappedSignal<M>() {
+            @Override protected Connection connect () {
+                return outer.connect(new Listener<T>() {
+                    @Override public void onEmit (T value) {
+                        M mapped = collector.apply(value);
+                        if (mapped != null) {
+                            notifyEmit(mapped);
+                        }
+                    }
+                });
+            }
+        };
+    }
+
     @Override public RFuture<T> next () {
         final RPromise<T> result = RPromise.create();
         connect(result.succeeder()).once();

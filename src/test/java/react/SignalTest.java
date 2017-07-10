@@ -241,6 +241,27 @@ public class SignalTest
         assertEquals(1, triggered[0]);
     }
 
+    @Test public void testCollected () {
+        final int[] triggered = new int[1];
+        Slot<Float> onFloat = new Slot<Float>() {
+            public void onEmit (Float value) {
+                assertFalse(value == null);
+                triggered[0]++;
+            }
+        };
+        Signal<Number> sig = Signal.create();
+        sig.collect(new Function<Number, Float>() {
+            public Float apply (Number n) {
+                return (n instanceof Float) ? (Float)n : null;
+            }
+        }).connect(onFloat);
+        sig.emit(null);
+        sig.emit(1);
+        sig.emit(1.2f);
+        sig.emit(1.2d);
+        assertEquals(1, triggered[0]);
+    }
+
     @Test public void testFiltered () {
         final int[] triggered = new int[1];
         Slot<String> onString = new Slot<String>() {
