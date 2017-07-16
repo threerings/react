@@ -139,6 +139,7 @@ public abstract class Reactor
                     notifier.notify(cons.listener(), a1, a2, a3);
                 } catch (RuntimeException ex) {
                     if (exn != null) exn.addSuppressed(ex);
+                    else exn = ex;
                 }
                 if (cons.oneShot()) cons.close();
             }
@@ -154,6 +155,7 @@ public abstract class Reactor
                     run.run();
                 } catch (RuntimeException ex) {
                     if (exn != null) exn.addSuppressed(ex);
+                    else exn = ex;
                 }
             }
         }
