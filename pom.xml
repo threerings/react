@@ -72,7 +72,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.3</version>
+        <version>3.7.0</version>
         <configuration>
           <source>${source.level}</source>
           <target>${source.level}</target>
@@ -90,7 +90,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>2.7</version>
+        <version>3.0.2</version>
         <configuration>
           <encoding>UTF-8</encoding>
         </configuration>
@@ -99,7 +99,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.10.3</version>
+        <version>3.0.0-M1</version>
         <configuration>
           <quiet>true</quiet>
           <show>public</show>
@@ -110,7 +110,7 @@
       <plugin>
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>nexus-staging-maven-plugin</artifactId>
-        <version>1.6.6</version>
+        <version>1.6.8</version>
         <extensions>true</extensions>
         <inherited>false</inherited>
         <configuration>
