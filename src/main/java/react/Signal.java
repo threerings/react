@@ -9,41 +9,41 @@ package react;
  * A signal that emits events of type {@code T}. {@link Slot}s may be connected to a signal to be
  * notified upon event emission.
  */
-public class Signal<T> extends AbstractSignal<T>
-{
-    /**
-     * A signal that emits an event with no associated data. It can be used like so:
-     */
-    public static class Unit extends Signal<Void> {
-        /** Connects a zero-argument listener to this signal. */
-        public Connection connect (Runnable slot) {
-            return connect(v -> slot.run());
-        }
+public class Signal<T> extends AbstractSignal<T> {
 
-        /** Causes this signal to emit an event to its connected slots. */
-        public void emit () {
-            notifyEmit(null);
-        }
+  /**
+   * A signal that emits an event with no associated data. It can be used like so:
+   */
+  public static class Unit extends Signal<Void> {
+    /** Connects a zero-argument listener to this signal. */
+    public Connection connect (Runnable slot) {
+      return connect(v -> slot.run());
     }
 
-    /**
-     * Convenience method for creating a signal without repeating the type parameter.
-     */
-    public static <T> Signal<T> create () {
-        return new Signal<T>();
+    /** Causes this signal to emit an event to its connected slots. */
+    public void emit () {
+      notifyEmit(null);
     }
+  }
 
-    /**
-     * Convenience method for creating a {@link Unit} signal.
-     */
-    public static Signal.Unit createUnit () {
-        return new Signal.Unit();
-    }
+  /**
+   * Convenience method for creating a signal without repeating the type parameter.
+   */
+  public static <T> Signal<T> create () {
+    return new Signal<T>();
+  }
 
-    /**
-     * Causes this signal to emit the supplied event to connected slots.
-     */
-    public void emit (T event) {
-        notifyEmit(event);
-    }
+  /**
+   * Convenience method for creating a {@link Unit} signal.
+   */
+  public static Signal.Unit createUnit () {
+    return new Signal.Unit();
+  }
+
+  /**
+   * Causes this signal to emit the supplied event to connected slots.
+   */
+  public void emit (T event) {
+    notifyEmit(event);
+  }
 }

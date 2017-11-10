@@ -17,41 +17,41 @@ package react;
  */
 public class RPromise<T> extends RFuture<T> {
 
-    /** Creates a new, uncompleted, promise. */
-    public static <T> RPromise<T> create () {
-        return new RPromise<T>();
+  /** Creates a new, uncompleted, promise. */
+  public static <T> RPromise<T> create () {
+    return new RPromise<T>();
+  }
+
+  /** Causes this promise to be completed with {@code result}. */
+  public void complete (Try<T> result) {
+    if (_result != null) throw new IllegalStateException("Already completed");
+    _result = result;
+    try {
+      notify(COMPLETE, result, null, null);
+    } finally {
+      clearConnections();
     }
+  }
 
-    /** Causes this promise to be completed with {@code result}. */
-    public void complete (Try<T> result) {
-        if (_result != null) throw new IllegalStateException("Already completed");
-        _result = result;
-        try {
-            notify(COMPLETE, result, null, null);
-        } finally {
-            clearConnections();
-        }
+  /** Causes this promise to be completed successfully with {@code value}. */
+  public void succeed (T value) {
+    complete(Try.success(value));
+  }
+
+  /** Causes this promise to be completed with failure caused by {@code cause}. */
+  public void fail (Throwable cause) {
+    complete(Try.<T>failure(cause));
+  }
+
+  @Override public Try<T> result () {
+    return _result;
+  }
+
+  protected Try<T> _result;
+
+  @SuppressWarnings("unchecked") protected static final Notifier COMPLETE = new Notifier() {
+    public void notify (Object lner, Object value, Object i0, Object i1) {
+      ((SignalView.Listener<Try<Object>>)lner).onEmit((Try<Object>)value);
     }
-
-    /** Causes this promise to be completed successfully with {@code value}. */
-    public void succeed (T value) {
-        complete(Try.success(value));
-    }
-
-    /** Causes this promise to be completed with failure caused by {@code cause}. */
-    public void fail (Throwable cause) {
-        complete(Try.<T>failure(cause));
-    }
-
-    @Override public Try<T> result () {
-        return _result;
-    }
-
-    protected Try<T> _result;
-
-    @SuppressWarnings("unchecked") protected static final Notifier COMPLETE = new Notifier() {
-        public void notify (Object lner, Object value, Object i0, Object i1) {
-            ((SignalView.Listener<Try<Object>>)lner).onEmit((Try<Object>)value);
-        }
-    };
+  };
 }
