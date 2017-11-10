@@ -1,6 +1,6 @@
 //
 // React - a library for functional-reactive-like programming
-// Copyright (c) 2015, Three Rings Design, Inc. - All rights reserved.
+// Copyright (c) 2011-present, React Authors
 // http://github.com/threerings/react/blob/master/LICENSE
 
 package react;
