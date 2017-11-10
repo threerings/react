@@ -5,6 +5,8 @@
 
 package react;
 
+import java.util.function.Function;
+
 /**
  * Handles the machinery of connecting slots to a signal and emitting events to them, without
  * exposing a public interface for emitting events. This can be used by entities which wish to
@@ -58,7 +60,7 @@ public class AbstractSignal<T> extends Reactor implements SignalView<T>
 
     @Override public RFuture<T> next () {
         final RPromise<T> result = RPromise.create();
-        connect(result.succeeder()).once();
+        connect(result::succeed).once();
         return result;
     }
 
@@ -71,7 +73,7 @@ public class AbstractSignal<T> extends Reactor implements SignalView<T>
     }
 
     @Override Listener<T> placeholderListener () {
-        @SuppressWarnings("unchecked") Listener<T> p = (Listener<T>)Slots.NOOP;
+        @SuppressWarnings("unchecked") Listener<T> p = (Listener<T>)Slot.NOOP;
         return p;
     }
 

@@ -5,6 +5,8 @@
 
 package react;
 
+import java.util.function.Function;
+
 /**
  * Represents a computation that either provided a result, or failed with an exception. Monadic
  * methods are provided that allow one to map and compose tries in ways that propagate failure.

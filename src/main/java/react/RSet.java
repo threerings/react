@@ -22,17 +22,13 @@ import java.util.Set;
 public class RSet<E> extends RCollection<E> implements Set<E>
 {
     /** An interface for publishing set events to listeners. */
-    public static abstract class Listener<E> implements Reactor.RListener
+    public interface Listener<E> extends Reactor.RListener
     {
         /** Notifies listener of an added element. */
-        public void onAdd (E elem) {
-            // noop
-        }
+        default void onAdd (E elem) {} // noop
 
         /** Notifies listener of a removed element. */
-        public void onRemove (E elem) {
-            // noop
-        }
+        default void onRemove (E elem) {} // noop
     }
 
     /**
@@ -110,7 +106,7 @@ public class RSet<E> extends RCollection<E> implements Set<E>
      * #addForce} or {@link #removeForce} will cause this view to trigger and incorrectly report
      * that the element was not or was previously contained in the set. Caveat user.
      */
-    public ValueView<Boolean> containsView (final E elem) {
+    public ValueView<Boolean> containsView (E elem) {
         if (elem == null) throw new NullPointerException("Must supply non-null 'elem'.");
         return new MappedValue<Boolean>() {
             @Override public Boolean get () {
@@ -208,7 +204,7 @@ public class RSet<E> extends RCollection<E> implements Set<E>
 
     // from interface Set<E>
     public Iterator<E> iterator () {
-        final Iterator<E> iiter = _impl.iterator();
+        Iterator<E> iiter = _impl.iterator();
         return new Iterator<E>() {
             public boolean hasNext () {
                 return iiter.hasNext();

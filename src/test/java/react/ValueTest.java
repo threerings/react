@@ -8,6 +8,7 @@ package react;
 import org.junit.*;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 
 import static org.junit.Assert.*;
 
@@ -19,12 +20,10 @@ public class ValueTest
     @Test public void testSimpleListener () {
         Value<Integer> value = Value.create(42);
         final boolean[] fired = new boolean[] { false };
-        value.connect(new Value.Listener<Integer>() {
-            public void onChange (Integer nvalue, Integer ovalue) {
-                assertEquals(42, ovalue.intValue());
-                assertEquals(15, nvalue.intValue());
-                fired[0] = true;
-            }
+        value.connect((nvalue, ovalue) -> {
+            assertEquals(42, ovalue.intValue());
+            assertEquals(15, nvalue.intValue());
+            fired[0] = true;
         });
         assertEquals(42, value.update(15).intValue());
         assertEquals(15, value.get().intValue());
@@ -34,11 +33,9 @@ public class ValueTest
     @Test public void testAsSignal () {
         Value<Integer> value = Value.create(42);
         final boolean[] fired = new boolean[] { false };
-        value.connect(new Slot<Integer>() {
-            public void onEmit (Integer value) {
-                assertEquals(15, value.intValue());
-                fired[0] = true;
-            }
+        value.connect(newValue -> {
+            assertEquals(15, newValue.intValue());
+            fired[0] = true;
         });
         value.update(15);
         assertTrue(fired[0]);
@@ -54,16 +51,11 @@ public class ValueTest
     }
 
     @Test public void testSignalListener () {
-        // this ensures that our SignalListener -> ValueListener wrapping is working until we
-        // switch to the Java 1.8-only approach which will combine those two interfaces into a
-        // subtype relationship using a default method
         Value<Integer> value = Value.create(42);
         final boolean[] fired = new boolean[] { false };
-        value.connect(new SignalView.Listener<Integer>() {
-            public void onEmit (Integer value) {
-                assertEquals(15, value.intValue());
-                fired[0] = true;
-            }
+        value.connect(newValue -> {
+            assertEquals(15, newValue.intValue());
+            fired[0] = true;
         });
         value.update(15);
         assertTrue(fired[0]);
@@ -71,7 +63,7 @@ public class ValueTest
 
     @Test public void testMappedValue () {
         Value<Integer> value = Value.create(42);
-        ValueView<String> mapped = value.map(Functions.TO_STRING);
+        ValueView<String> mapped = value.map(String::valueOf);
 
         SignalTest.Counter counter = new SignalTest.Counter();
         Connection c1 = mapped.connect(counter);
@@ -94,9 +86,7 @@ public class ValueTest
         final Value<Integer> value1 = Value.create(42);
         final Value<Integer> value2 = Value.create(24);
         Value<Boolean> toggle = Value.create(true);
-        ValueView<Integer> flatMapped = toggle.flatMap(new Function<Boolean,Value<Integer>>() {
-            public Value<Integer> apply (Boolean toggle) { return toggle ? value1 : value2; }
-        });
+        ValueView<Integer> flatMapped = toggle.flatMap(t -> t ? value1 : value2);
 
         SignalTest.Counter counter1 = new SignalTest.Counter();
         SignalTest.Counter counter2 = new SignalTest.Counter();
@@ -133,9 +123,7 @@ public class ValueTest
         final Value<Integer> value1 = Value.create(42);
         final Value<Integer> value2 = Value.create(24);
         Value<Boolean> toggle = Value.create(true);
-        ValueView<Integer> flatMapped = toggle.flatMap(new Function<Boolean,Value<Integer>>() {
-            public Value<Integer> apply (Boolean toggle) { return toggle ? value1 : value2; }
-        });
+        ValueView<Integer> flatMapped = toggle.flatMap(t -> t ? value1 : value2);
         assertEquals(42, flatMapped.get().intValue());
         toggle.update(false);
         assertEquals(24, flatMapped.get().intValue());
@@ -144,11 +132,9 @@ public class ValueTest
     @Test public void testConnectNotify () {
         Value<Integer> value = Value.create(42);
         final boolean[] fired = new boolean[] { false };
-        value.connectNotify(new Slot<Integer>() {
-            public void onEmit (Integer value) {
-                assertEquals(42, value.intValue());
-                fired[0] = true;
-            }
+        value.connectNotify(newValue -> {
+            assertEquals(42, newValue.intValue());
+            fired[0] = true;
         });
         assertTrue(fired[0]);
     }
@@ -156,11 +142,9 @@ public class ValueTest
     @Test public void testListenNotify () {
         Value<Integer> value = Value.create(42);
         final boolean[] fired = new boolean[] { false };
-        value.connectNotify(new Slot<Integer>() {
-            public void onEmit (Integer value) {
-                assertEquals(42, value.intValue());
-                fired[0] = true;
-            }
+        value.connectNotify(newValue ->{
+            assertEquals(42, newValue.intValue());
+            fired[0] = true;
         });
         assertTrue(fired[0]);
     }
@@ -217,12 +201,7 @@ public class ValueTest
         final Value<Integer> value = Value.create(42);
         final AtomicInteger fired = new AtomicInteger(0);
 
-        ValueView.Listener<Integer> listener = new ValueView.Listener<Integer>() {
-            @Override
-            public void onChange(Integer value, Integer oldValue) {
-                fired.incrementAndGet();
-            }
-        };
+        ValueView.Listener<Integer> listener = (newValue, oldValue) -> fired.incrementAndGet();
         System.gc();
         System.gc();
         System.gc();
@@ -270,11 +249,9 @@ public class ValueTest
     @Test public void testChanges () {
         Value<Integer> value = Value.create(42);
         final boolean[] fired = new boolean[] { false };
-        value.changes().connect(new Slot<Integer>() {
-            public void onEmit (Integer v) {
-                assertEquals(15, v.intValue());
-                fired[0] = true;
-            }
+        value.changes().connect(v -> {
+            assertEquals(15, v.intValue());
+            fired[0] = true;
         });
         value.update(15);
         assertTrue(fired[0]);

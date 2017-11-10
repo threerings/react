@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -18,47 +19,43 @@ import static org.junit.Assert.*;
  */
 public class SignalTest
 {
-    public static class Counter extends UnitSlot {
+    public static class Counter implements Slot<Object> {
         public int notifies;
 
-        @Override public void onEmit () {
+        @Override public void onEmit (Object value) {
             notifies++;
         }
     }
 
-    public static <T> Slot<T> require (final T reqValue) {
-        return new Slot<T>() {
-            public void onEmit (T value) {
-                assertEquals(reqValue, value);
-            }
-        };
+    public static <T> Slot<T> require (T reqValue) {
+        return value -> assertEquals(reqValue, value);
     }
 
     @Test public void testSignalToSlot () {
         Signal<Integer> signal = Signal.create();
-        AccSlot<Integer> slot = new AccSlot<Integer>();
+        Accum<Integer> slot = new Accum<>();
         signal.connect(slot);
         signal.emit(1);
         signal.emit(2);
         signal.emit(3);
-        assertEquals(Arrays.asList(1, 2, 3), slot.events);
+        assertEquals(Arrays.asList(1, 2, 3), slot.values);
     }
 
     @Test public void testOneShotSlot () {
         Signal<Integer> signal = Signal.create();
-        AccSlot<Integer> slot = new AccSlot<Integer>();
+        Accum<Integer> slot = new Accum<>();
         signal.connect(slot).once();
         signal.emit(1); // slot should be removed after this emit
         signal.emit(2);
         signal.emit(3);
-        assertEquals(Arrays.asList(1), slot.events);
+        assertEquals(Arrays.asList(1), slot.values);
     }
 
     @Test public void testSlotPriority () {
         final int[] counter = new int[] { 0 };
-        class TestSlot extends UnitSlot {
+        class TestSlot implements SignalView.Listener<Object> {
             public int order;
-            public void onEmit () {
+            public void onEmit (Object value) {
                 order = ++counter[0];
             }
         }
@@ -67,7 +64,7 @@ public class SignalTest
         TestSlot slot3 = new TestSlot();
         TestSlot slot4 = new TestSlot();
 
-        UnitSignal signal = new UnitSignal();
+        Signal.Unit signal = new Signal.Unit();
         signal.connect(slot3).atPrio(2);
         signal.connect(slot1).atPrio(4);
         signal.connect(slot2).atPrio(3);
@@ -80,136 +77,102 @@ public class SignalTest
     }
 
     @Test public void testAddDuringDispatch () {
-        final Signal<Integer> signal = Signal.create();
-        final AccSlot<Integer> toAdd = new AccSlot<Integer>();
-        signal.connect(new UnitSlot() {
-            public void onEmit () {
-                signal.connect(toAdd);
-            }
-        }).once();
+        Signal<Integer> signal = Signal.create();
+        Accum<Integer> toAdd = new Accum<>();
+        signal.connect(v -> signal.connect(toAdd)).once();
 
         // this will connect our new signal but not dispatch to it
         signal.emit(5);
-        assertEquals(0, toAdd.events.size());
+        assertEquals(0, toAdd.values.size());
 
         // now dispatch an event that should go to the added signal
         signal.emit(42);
-        assertEquals(Arrays.asList(42), toAdd.events);
+        assertEquals(Arrays.asList(42), toAdd.values);
     }
 
     @Test public void testRemoveDuringDispatch () {
-        final Signal<Integer> signal = Signal.create();
-        final AccSlot<Integer> toRemove = new AccSlot<Integer>();
-        final Connection rconn = signal.connect(toRemove);
+        Signal<Integer> signal = Signal.create();
+        Accum<Integer> toRemove = new Accum<>();
+        Connection rconn = signal.connect(toRemove);
 
         // dispatch one event and make sure it's received
         signal.emit(5);
-        assertEquals(Arrays.asList(5), toRemove.events);
+        assertEquals(Arrays.asList(5), toRemove.values);
 
         // now add our removing signal, and dispatch again
-        signal.connect(new UnitSlot() {
-            public void onEmit () { rconn.close(); }
-        }).atPrio(1); // ensure that we're before toRemove
+        signal.connect(v -> rconn.close()).atPrio(1); // ensure that we're before toRemove
         signal.emit(42);
         // since toRemove will have been removed during this dispatch, it will not receive the
         // signal in question, because the higher priority signal triggered first and removed it
-        assertEquals(Arrays.asList(5), toRemove.events);
+        assertEquals(Arrays.asList(5), toRemove.values);
         // finally dispatch one more event and make sure toRemove didn't get it
         signal.emit(9);
-        assertEquals(Arrays.asList(5), toRemove.events);
+        assertEquals(Arrays.asList(5), toRemove.values);
     }
 
     @Test public void testAddAndRemoveDuringDispatch () {
         final Signal<Integer> signal = Signal.create();
-        final AccSlot<Integer> toAdd = new AccSlot<Integer>();
-        final AccSlot<Integer> toRemove = new AccSlot<Integer>();
+        final Accum<Integer> toAdd = new Accum<>();
+        final Accum<Integer> toRemove = new Accum<>();
         final Connection rconn = signal.connect(toRemove);
 
         // dispatch one event and make sure it's received by toRemove
         signal.emit(5);
-        assertEquals(Arrays.asList(5), toRemove.events);
+        assertEquals(Arrays.asList(5), toRemove.values);
 
         // now add our adder/remover signal, and dispatch again
-        signal.connect(new UnitSlot() {
-            public void onEmit () {
-                rconn.close();
-                signal.connect(toAdd);
-            }
+        signal.connect(v -> {
+            rconn.close();
+            signal.connect(toAdd);
         });
         signal.emit(42);
 
         // make sure toRemove got this event (in this case the adder/remover signal fires *after*
         // toRemove gets the event) and toAdd didn't
-        assertEquals(Arrays.asList(5, 42), toRemove.events);
-        assertEquals(0, toAdd.events.size());
+        assertEquals(Arrays.asList(5, 42), toRemove.values);
+        assertEquals(0, toAdd.values.size());
 
         // finally emit one more and ensure that toAdd got it and toRemove didn't
         signal.emit(9);
-        assertEquals(Arrays.asList(9), toAdd.events);
-        assertEquals(Arrays.asList(5, 42), toRemove.events);
+        assertEquals(Arrays.asList(9), toAdd.values);
+        assertEquals(Arrays.asList(5, 42), toRemove.values);
     }
 
     @Test public void testDispatchDuringDispatch () {
         final Signal<Integer> signal = Signal.create();
-        AccSlot<Integer> counter = new AccSlot<Integer>();
+        Accum<Integer> counter = new Accum<>();
         signal.connect(counter);
 
         // connect a slot that will emit during dispatch
-        signal.connect(new Slot<Integer>() {
-            public void onEmit (Integer value) {
-                if (value == 5) signal.emit(value*2);
-                // ensure that we're not notified twice even though we emit during dispatch
-                else fail("once() lner notified more than once");
-            }
+        signal.connect(value -> {
+            if (value == 5) signal.emit(value*2);
+            // ensure that we're not notified twice even though we emit during dispatch
+            else fail("once() lner notified more than once");
         }).once();
 
         // dispatch one event and make sure that both events are received
         signal.emit(5);
-        assertEquals(Arrays.asList(5, 10), counter.events);
-    }
-
-    @Test public void testUnitSlot () {
-        Signal<Integer> signal = Signal.create();
-        final boolean[] fired = new boolean[] { false };
-        signal.connect(new UnitSlot() {
-            public void onEmit () {
-                fired[0] = true;
-            }
-        });
-        signal.emit(42);
-        assertTrue(fired[0]);
+        assertEquals(Arrays.asList(5, 10), counter.values);
     }
 
     @Test(expected=RuntimeException.class)
     public void testSingleFailure () {
-        UnitSignal signal = new UnitSignal();
-        signal.connect(new UnitSlot() {
-            public void onEmit () {
-                throw new RuntimeException("Bang!");
-            }
-        });
+        Signal.Unit signal = new Signal.Unit();
+        signal.connect(() -> { throw new RuntimeException("Bang!"); });
         signal.emit();
     }
 
     @Test(expected=RuntimeException.class)
     public void testMultiFailure () {
-        UnitSignal signal = new UnitSignal();
-        signal.connect(new UnitSlot() {
-            public void onEmit () {
-                throw new RuntimeException("Bing!");
-            }
-        });
-        signal.connect(new UnitSlot() {
-            public void onEmit () {
-                throw new RuntimeException("Bang!");
-            }
-        });
+        Signal.Unit signal = new Signal.Unit();
+        signal.connect(() -> { throw new RuntimeException("Bing!"); });
+        signal.connect(() -> { throw new RuntimeException("Bang!"); });
         signal.emit();
     }
 
     @Test public void testMappedSignal () {
         Signal<Integer> signal = Signal.create();
-        SignalView<String> mapped = signal.map(Functions.TO_STRING);
+        SignalView<String> mapped = signal.map(String::valueOf);
 
         Counter counter = new Counter();
         Connection c1 = mapped.connect(counter);
@@ -228,14 +191,12 @@ public class SignalTest
 
     @Test public void testFilter () {
         final int[] triggered = new int[1];
-        Slot<String> onString = new Slot<String>() {
-            public void onEmit (String value) {
-                assertFalse(value == null);
-                triggered[0]++;
-            }
+        SignalView.Listener<String> onString = value -> {
+            assertFalse(value == null);
+            triggered[0]++;
         };
         Signal<String> sig = Signal.create();
-        sig.filter(Functions.NON_NULL).connect(onString);
+        sig.filter(v -> v != null).connect(onString);
         sig.emit(null);
         sig.emit("foozle");
         assertEquals(1, triggered[0]);
@@ -243,18 +204,12 @@ public class SignalTest
 
     @Test public void testCollected () {
         final int[] triggered = new int[1];
-        Slot<Float> onFloat = new Slot<Float>() {
-            public void onEmit (Float value) {
-                assertFalse(value == null);
-                triggered[0]++;
-            }
+        SignalView.Listener<Float> onFloat = value -> {
+            assertFalse(value == null);
+            triggered[0]++;
         };
         Signal<Number> sig = Signal.create();
-        sig.collect(new Function<Number, Float>() {
-            public Float apply (Number n) {
-                return (n instanceof Float) ? (Float)n : null;
-            }
-        }).connect(onFloat);
+        sig.collect(n -> (n instanceof Float) ? (Float)n : null).connect(onFloat);
         sig.emit(null);
         sig.emit(1);
         sig.emit(1.2f);
@@ -264,38 +219,24 @@ public class SignalTest
 
     @Test public void testFiltered () {
         final int[] triggered = new int[1];
-        Slot<String> onString = new Slot<String>() {
-            public void onEmit (String value) {
-                assertFalse(value == null);
-                triggered[0]++;
-            }
+        Slot<String> onString = value -> {
+            assertFalse(value == null);
+            triggered[0]++;
         };
         Signal<String> sig = Signal.create();
-        sig.connect(onString.filtered(Functions.NON_NULL));
+        sig.connect(onString.filtered(v -> v != null));
         sig.emit(null);
         sig.emit("foozle");
         assertEquals(1, triggered[0]);
     }
 
     @Test public void testNext () {
-        class Accum<T> implements SignalView.Listener<T> {
-            public List<T> values = new ArrayList<>();
-            public void onEmit (T value) {
-                values.add(value);
-            }
-            public void assertContains (List<T> values) {
-                assertEquals(values, this.values);
-            }
-        }
-
         Signal<Integer> signal = Signal.create();
         Accum<Integer> accum = new Accum<>();
         Accum<Integer> accum3 = new Accum<>();
 
         signal.next().onSuccess(accum);
-        signal.filter(new Function<Integer,Boolean>() {
-            public Boolean apply (Integer v) { return v == 3; }
-        }).next().onSuccess(accum3);
+        signal.filter(v -> v == 3).next().onSuccess(accum3);
 
         List<Integer> NONE = Collections.emptyList();
         List<Integer> ONE = Arrays.asList(1), THREE = Arrays.asList(3);
@@ -319,10 +260,13 @@ public class SignalTest
         accum3.assertContains(Arrays.asList(3));
     }
 
-    protected static class AccSlot<T> extends Slot<T> {
-        public List<T> events = new ArrayList<T>();
-        public void onEmit (T event) {
-            events.add(event);
+    protected class Accum<T> implements SignalView.Listener<T> {
+        public List<T> values = new ArrayList<>();
+        public void onEmit (T value) {
+            values.add(value);
+        }
+        public void assertContains (List<T> values) {
+            assertEquals(values, this.values);
         }
     }
 }

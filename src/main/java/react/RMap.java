@@ -24,33 +24,25 @@ import java.util.Set;
 public class RMap<K,V> extends RCollection<Map.Entry<K,V>> implements Map<K,V>
 {
     /** An interface for publishing map events to listeners. */
-    public static abstract class Listener<K,V> implements Reactor.RListener
+    public interface Listener<K,V> extends Reactor.RListener
     {
         /**
          * Notifies listener of an added or updated mapping. This method will call the
          * old-value-forgetting version ({@link #onPut(Object,Object)}) by default.
          */
-        public void onPut (K key, V value, V oldValue) {
-            onPut(key, value);
-        }
+        default void onPut (K key, V value, V oldValue) { onPut(key, value); }
 
         /** Notifies listener of an added or updated mapping. */
-        public void onPut (K key, V value) {
-            // noop
-        }
+        default void onPut (K key, V value) {} // noop
 
         /**
          * Notifies listener of a removed mapping. This method will call the old-value-forgetting
          * version ({@link #onRemove(Object)}) by default.
          */
-        public void onRemove (K key, V oldValue) {
-            onRemove(key);
-        }
+        default void onRemove (K key, V oldValue) { onRemove(key); }
 
         /** Notifies listener of a removed mapping. */
-        public void onRemove (K key) {
-            // noop
-        }
+        default void onRemove (K key) {} // noop
     }
 
     /**
@@ -141,7 +133,7 @@ public class RMap<K,V> extends RCollection<Map.Entry<K,V>> implements Map<K,V>
      * this view only works on maps that <em>do not</em> contain mappings to {@code null}. The view
      * will retain a connection to this map for as long as it has connections of its own.
      */
-    public ValueView<Boolean> containsKeyView (final K key) {
+    public ValueView<Boolean> containsKeyView (K key) {
         if (key == null) throw new NullPointerException("Must supply non-null 'key'.");
         return new MappedValue<Boolean>() {
             @Override public Boolean get () {
@@ -165,7 +157,7 @@ public class RMap<K,V> extends RCollection<Map.Entry<K,V>> implements Map<K,V>
      * report a change when the mapping for the specified key is changed or removed. The view will
      * retain a connection to this map for as long as it has connections of its own.
      */
-    public ValueView<V> getView (final K key) {
+    public ValueView<V> getView (K key) {
         if (key == null) throw new NullPointerException("Must supply non-null 'key'.");
         return new MappedValue<V>() {
             @Override public V get () {
@@ -266,7 +258,7 @@ public class RMap<K,V> extends RCollection<Map.Entry<K,V>> implements Map<K,V>
 
     // from interface Map<K,V>
     public Set<K> keySet () {
-        final Set<K> iset = _impl.keySet();
+        Set<K> iset = _impl.keySet();
         return new AbstractSet<K>() {
             public Iterator<K> iterator () {
                 final Iterator<K> iiter = iset.iterator();
@@ -309,7 +301,7 @@ public class RMap<K,V> extends RCollection<Map.Entry<K,V>> implements Map<K,V>
 
     // from interface Map<K,V>
     public Collection<V> values () {
-        final Collection<Map.Entry<K,V>> iset = _impl.entrySet();
+        Collection<Map.Entry<K,V>> iset = _impl.entrySet();
         return new AbstractCollection<V>() {
             public Iterator<V> iterator () {
                 final Iterator<Map.Entry<K,V>> iiter = iset.iterator();
@@ -343,7 +335,7 @@ public class RMap<K,V> extends RCollection<Map.Entry<K,V>> implements Map<K,V>
 
     // from interface Map<K,V>
     public Set<Map.Entry<K,V>> entrySet () {
-        final Set<Map.Entry<K,V>> iset = _impl.entrySet();
+        Set<Map.Entry<K,V>> iset = _impl.entrySet();
         return new AbstractSet<Map.Entry<K,V>>() {
             public Iterator<Map.Entry<K,V>> iterator () {
                 final Iterator<Map.Entry<K,V>> iiter = iset.iterator();

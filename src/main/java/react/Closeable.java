@@ -48,49 +48,45 @@ public interface Closeable extends AutoCloseable {
         protected HashSet<AutoCloseable> _set; // lazily created
     }
 
-    /** Provides some {@link Closeable}-related utilities. */
-    class Util {
+    /** A closable which no-ops on {@link #close} and throws an exception for all other
+      * methods. This is for the following code pattern:
+      *
+      * <pre>{@code
+      * Closable _conn = Closeable.Util.NOOP;
+      * void open () {
+      *    _conn = whatever.connect(...);
+      * }
+      * void close () {
+      *    _conn = Closeable.Util.close(_conn);
+      * }
+      * }</pre>
+      *
+      * In that it allows {@code close} to avoid a null check if it's possible for
+      * {@code close} to be called with no call to {@code open} or repeatedly.
+      */
+    static final Closeable NOOP = new Closeable() {
+        public void close () {} // noop!
+    };
 
-        /** A closable which no-ops on {@link #close} and throws an exception for all other
-          * methods. This is for the following code pattern:
-          *
-          * <pre>{@code
-          * Closable _conn = Closeable.Util.NOOP;
-          * void open () {
-          *    _conn = whatever.connect(...);
-          * }
-          * void close () {
-          *    _conn = Closeable.Util.close(_conn);
-          * }
-          * }</pre>
-          *
-          * In that it allows {@code close} to avoid a null check if it's possible for
-          * {@code close} to be called with no call to {@code open} or repeatedly.
-          */
-        public static final Closeable NOOP = new Closeable() {
-            public void close () {} // noop!
-        };
-
-        /** Creates a closable that closes multiple connections at once. */
-        public static Closeable join (final Closeable... cons) {
-            return new Closeable() {
-                @Override public void close () {
-                    for (int ii = 0; ii < cons.length; ii++) {
-                        if (cons[ii] == null) continue;
-                        cons[ii].close();
-                        cons[ii] = null;
-                    }
+    /** Creates a closable that closes multiple connections at once. */
+    static Closeable join (final Closeable... cons) {
+        return new Closeable() {
+            @Override public void close () {
+                for (int ii = 0; ii < cons.length; ii++) {
+                    if (cons[ii] == null) continue;
+                    cons[ii].close();
+                    cons[ii] = null;
                 }
-            };
-        }
+            }
+        };
+    }
 
-        /** Closes {@code con} and returns {@link #NOOP}. This enables code like:
-          * {@code con = Connection.close(con);} which simplifies disconnecting and resetting to
-          * {@link #NOOP}, a given connection reference. */
-        public static Closeable close (Closeable con) {
-            con.close();
-            return NOOP;
-        }
+    /** Closes {@code con} and returns {@link #NOOP}. This enables code like:
+      * {@code con = Connection.close(con);} which simplifies disconnecting and resetting to
+      * {@link #NOOP}, a given connection reference. */
+    static Closeable close (Closeable con) {
+        con.close();
+        return NOOP;
     }
 
     /** Closes this closeable resource. */

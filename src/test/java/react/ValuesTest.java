@@ -19,15 +19,12 @@ public class ValuesTest
         Value<Boolean> c = Value.create(false);
         final boolean[] fired = new boolean[] { false };
 
-        @SuppressWarnings("unchecked") // TODO: remove when we use JDK 1.7 @SafeVarargs
         ValueView<Boolean> anded = Values.and(a, b, c);
         assertFalse(anded.get());
-        anded.connect(new Value.Listener<Boolean>() {
-            public void onChange (Boolean value, Boolean oldValue) {
-                assertFalse(value);
-                assertFalse(oldValue);
-                fired[0] = true;
-            }
+        anded.connect((value, oldValue) -> {
+            assertFalse(value);
+            assertFalse(oldValue);
+            fired[0] = true;
         }).once();
         a.update(true);
         assertTrue(fired[0]);

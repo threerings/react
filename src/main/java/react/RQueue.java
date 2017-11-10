@@ -18,13 +18,13 @@ import java.util.Queue;
 public class RQueue<E> extends RCollection<E> implements Queue<E>
 {
     /** Publishes queue events to listeners. */
-    public static abstract class Listener<E> implements Reactor.RListener
+    public interface Listener<E> extends Reactor.RListener
     {
         /** Notifies listener of an offered (added) element. */
-        public void onOffer (E elem) {} // noop
+        default void onOffer (E elem) {} // noop
 
         /** Notifies listener of a polled (removed) element. */
-        public void onPoll (E elem) {} // noop
+        default void onPoll (E elem) {} // noop
     }
 
     /**

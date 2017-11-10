@@ -5,6 +5,8 @@
 
 package react;
 
+import java.util.function.Function;
+
 /**
  * A view of a {@link Signal}, on which slots may listen, but to which one cannot emit events. This
  * is generally used to provide signal-like views of changing entities. See {@link AbstractValue}
@@ -20,11 +22,6 @@ public interface SignalView<T>
          * @param event the event emitted by the signal.
          */
         void onEmit (T event);
-
-        // TODO: when we stop supporting Java 1.7, uncomment this method and make Listener extend
-        // ValueView.Listener
-        //
-        // default void onChange (T newValue, T oldValue) { onEmit(newValue); }
     }
 
     /**

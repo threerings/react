@@ -5,6 +5,8 @@
 
 package react;
 
+import java.util.function.Function;
+
 /**
  * Handles the machinery of connecting listeners to a value and notifying them, without exposing a
  * public interface for updating the value. This can be used by libraries which wish to provide
@@ -23,11 +25,7 @@ public abstract class AbstractValue<T> extends Reactor implements ValueView<T>
                 return outer + ".map("  + func + ")";
             }
             @Override protected Connection connect () {
-                return outer.connect(new Listener<T>() {
-                    @Override public void onChange (T value, T ovalue) {
-                        notifyChange(func.apply(value), func.apply(ovalue));
-                    }
-                });
+                return outer.connect((v, ov) -> notifyChange(func.apply(v), func.apply(ov)));
             }
         };
     }
@@ -46,14 +44,8 @@ public abstract class AbstractValue<T> extends Reactor implements ValueView<T>
                 return outer + ".flatMap("  + func + ")";
             }
             @Override protected Connection connect () {
-                conn = mapped.connect(new UnitSlot() {
-                    public void onEmit () { reconnect(); }
-                });
-                return mapped.get().connect(new Listener<M>() {
-                    @Override public void onChange (M value, M ovalue) {
-                        notifyChange(value, ovalue);
-                    }
-                });
+                conn = mapped.connect(v -> reconnect());
+                return mapped.get().connect((v, ov) -> notifyChange(v, ov));
             }
             @Override protected void disconnect () {
                 super.disconnect();
@@ -66,11 +58,7 @@ public abstract class AbstractValue<T> extends Reactor implements ValueView<T>
         final AbstractValue<T> outer = this;
         return new MappedSignal<T>() {
             @Override protected Connection connect () {
-                return outer.connect(new ValueView.Listener<T>() {
-                    @Override public void onChange (T value, T oldValue) {
-                        notifyEmit(value);
-                    }
-                });
+                return outer.connect((v, ov) -> notifyEmit(v));
             }
         };
     }
@@ -102,25 +90,11 @@ public abstract class AbstractValue<T> extends Reactor implements ValueView<T>
         }
     }
 
-    @Override public Connection connect (SignalView.Listener<? super T> listener) {
-        return connect(wrap(listener));
+    @Override public Connection connect (Slot<? super T> listener) {
+        return connect((Listener<? super T>)listener);
     }
-    @Override public Connection connectNotify (SignalView.Listener<? super T> listener) {
-        return connectNotify(wrap(listener));
-    }
-    private static <T> Listener<T> wrap (final SignalView.Listener<? super T> listener) {
-        return new Listener<T>() {
-            public void onChange (T newValue, T oldValue) {
-                listener.onEmit(newValue);
-            }
-        };
-    }
-
-    @Override public Connection connect (Slot<? super T> slot) {
-        return connect((Listener<? super T>)slot);
-    }
-    @Override public Connection connectNotify (Slot<? super T> slot) {
-        return connectNotify((Listener<? super T>)slot);
+    @Override public Connection connectNotify (Slot<? super T> listener) {
+        return connectNotify((Listener<? super T>)listener);
     }
 
     @Override public void disconnect (Listener<? super T> listener) {
@@ -146,7 +120,7 @@ public abstract class AbstractValue<T> extends Reactor implements ValueView<T>
     }
 
     @Override Listener<T> placeholderListener () {
-        @SuppressWarnings("unchecked") Listener<T> p = (Listener<T>)Slots.NOOP;
+        @SuppressWarnings("unchecked") Listener<T> p = (Listener<T>)Slot.NOOP;
         return p;
     }
 

@@ -5,6 +5,8 @@
 
 package react;
 
+import java.util.function.Function;
+
 /**
  * A view of a {@link Value}, to which listeners may be added, but which one cannot update. This
  * can be used in combination with {@link AbstractValue} to provide {@link Value} semantics to an
@@ -77,29 +79,8 @@ public interface ValueView<T>
      */
     void disconnect (Listener<? super T> listener);
 
-    // these methods exist only to let javac know that it can synthesize a SignalView.Listener
-    // instance from a single argument lambda; otherwise they are unnecessary because
-    // SignalView.Listener is a subtype of ValueView.Listener
-
-    /**
-     * Connects the supplied listener to this value, such that it will be notified when this value
-     * changes. The listener is held by a strong reference, so it's held in memory by virtue of
-     * being connected.
-     * @return a connection instance which can be used to cancel the connection.
-     */
-    Connection connect (SignalView.Listener<? super T> listener);
-
-    /**
-     * Connects the supplied listener to this value, such that it will be notified when this value
-     * changes. Also immediately notifies the listener of the current value. If the notification
-     * triggers an unchecked exception, the slot will automatically be disconnected and the caller
-     * need not worry about cleaning up after itself.
-     * @return a connection instance which can be used to cancel the connection.
-     */
-    Connection connectNotify (SignalView.Listener<? super T> listener);
-
-    // these methods exist to help javac disambiguate between the above two methods, yay
-    // TODO: when we drop support for java 1.7, we can remove these methods
+    // these methods exist to let javac know that it can synthesize a Slot when a single argument
+    // lambda is passed to connect/connectNotify
 
     /**
      * Connects the supplied listener to this value, such that it will be notified when this value

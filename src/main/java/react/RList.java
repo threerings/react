@@ -16,43 +16,31 @@ import java.util.ListIterator;
  * notification if the removed element is not present in the list. Use {@link #removeForce} to
  * force a notification.
  */
-public class RList<E> extends RCollection<E> implements List<E>
-{
+public class RList<E> extends RCollection<E> implements List<E> {
+
     /** Publishes list events to listeners. */
-    public static abstract class Listener<E> implements Reactor.RListener
-    {
+    public interface Listener<E> extends Reactor.RListener {
+
         /** Notifies listener of an added element. This method will call the index-forgetting
          * version ({@link #onAdd(Object)}) by default. */
-        public void onAdd (int index, E elem) {
-            onAdd(elem);
-        }
+        default void onAdd (int index, E elem) { onAdd(elem); }
 
         /** Notifies listener of an added element. */
-        public void onAdd (E elem) {
-            // noop
-        }
+        default void onAdd (E elem) {} // noop
 
         /** Notifies listener of an updated element. This method will call the old-value-forgetting
          * version ({@link #onSet(int,Object)}) by default. */
-        public void onSet (int index, E newElem, E oldElem) {
-            onSet(index, newElem);
-        }
+        default void onSet (int index, E newElem, E oldElem) { onSet(index, newElem); }
 
         /** Notifies listener of an updated element. */
-        public void onSet (int index, E newElem) {
-            // noop
-        }
+        default void onSet (int index, E newElem) {} // noop
 
         /** Notifies listener of a removed element. This method will call the index-forgetting
          * version ({@link #onRemove(Object)}) by default. */
-        public void onRemove (int index, E elem) {
-            onRemove(elem);
-        }
+        default void onRemove (int index, E elem) { onRemove(elem); }
 
         /** Notifies listener of a removed element. */
-        public void onRemove (E elem) {
-            // noop
-        }
+        default void onRemove (E elem) {} // noop
     }
 
     /**
@@ -148,7 +136,7 @@ public class RList<E> extends RCollection<E> implements List<E>
     }
 
     @Override public ListIterator<E> listIterator (int index) {
-        final ListIterator<E> iiter = _impl.listIterator();
+        ListIterator<E> iiter = _impl.listIterator();
         return new ListIterator<E> () {
             public void add (E elem) {
                 checkMutate();

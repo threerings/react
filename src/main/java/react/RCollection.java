@@ -29,14 +29,14 @@ public abstract class RCollection<T> extends Reactor {
      * Returns a reactive value which is true when this collection is empty, false otherwise.
      */
     public ValueView<Boolean> isEmptyView () {
-        return sizeView().map(Functions.lessThanEqual(0));
+        return sizeView().map(s -> s == 0);
     }
 
     /**
      * Returns a reactive value which is false when this collection is empty, true otherwise.
      */
     public ValueView<Boolean> isNonEmptyView () {
-        return sizeView().map(Functions.greaterThan(0));
+        return sizeView().map(s -> s > 0);
     }
 
     /**

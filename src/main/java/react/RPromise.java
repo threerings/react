@@ -43,33 +43,6 @@ public class RPromise<T> extends RFuture<T> {
         complete(Try.<T>failure(cause));
     }
 
-    /** Returns a slot that can be used to complete this promise. */
-    public Slot<Try<T>> completer () {
-        return new Slot<Try<T>>() {
-            public void onEmit (Try<T> result) {
-                complete(result);
-            }
-        };
-    }
-
-    /** Returns a slot that can be used to {@link #succeed} this promise. */
-    public Slot<T> succeeder () {
-        return new Slot<T>() {
-            public void onEmit (T result) {
-                succeed(result);
-            }
-        };
-    }
-
-    /** Returns a slot that can be used to {@link #fail} this promise. */
-    public Slot<Throwable> failer () {
-        return new Slot<Throwable>() {
-            public void onEmit (Throwable cause) {
-                fail(cause);
-            }
-        };
-    }
-
     @Override public Try<T> result () {
         return _result;
     }

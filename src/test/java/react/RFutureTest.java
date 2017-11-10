@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.ArrayList;
+import java.util.function.Function;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -75,11 +76,11 @@ public class RFutureTest extends TestBase {
         FutureCounter counter = new FutureCounter();
 
         RFuture<String> success = RFuture.success("Yay!");
-        counter.bind(success.map(Functions.NON_NULL));
+        counter.bind(success.map(v -> v != null));
         counter.check("immediate succeed", 1, 0, 1);
 
         RFuture<String> failure = RFuture.failure(new Exception("Boo!"));
-        counter.bind(failure.map(Functions.NON_NULL));
+        counter.bind(failure.map(v -> v != null));
         counter.check("immediate failure", 0, 1, 1);
     }
 
@@ -87,13 +88,13 @@ public class RFutureTest extends TestBase {
         FutureCounter counter = new FutureCounter();
 
         RPromise<String> success = RPromise.create();
-        counter.bind(success.map(Functions.NON_NULL));
+        counter.bind(success.map(v -> v != null));
         counter.check("before succeed", 0, 0, 0);
         success.succeed("Yay!");
         counter.check("after succeed", 1, 0, 1);
 
         RPromise<String> failure = RPromise.create();
-        counter.bind(failure.map(Functions.NON_NULL));
+        counter.bind(failure.map(v -> v != null));
         counter.check("before fail", 0, 0, 0);
         failure.fail(new Exception("Boo!"));
         counter.check("after fail", 0, 1, 1);
@@ -106,21 +107,12 @@ public class RFutureTest extends TestBase {
         FutureCounter scounter = new FutureCounter();
         FutureCounter fcounter = new FutureCounter();
         FutureCounter ccounter = new FutureCounter();
-        Function<String,RFuture<Boolean>> successMap = new Function<String,RFuture<Boolean>>() {
-            public RFuture<Boolean> apply (String value) {
-                return RFuture.success(value != null);
-            }
-        };
-        Function<String,RFuture<Boolean>> failMap = new Function<String,RFuture<Boolean>>() {
-            public RFuture<Boolean> apply (String value) {
-                return RFuture.failure(new Exception("Barzle!"));
-            }
-        };
-        Function<String,RFuture<Boolean>> crashMap = new Function<String,RFuture<Boolean>>() {
-            public RFuture<Boolean> apply (String value) {
-                throw new RuntimeException("Barzle!");
-            }
-        };
+        Function<String,RFuture<Boolean>> successMap =
+            value -> RFuture.success(value != null);
+        Function<String,RFuture<Boolean>> failMap =
+            value -> RFuture.failure(new Exception("Barzle!"));
+        Function<String,RFuture<Boolean>> crashMap =
+            value -> { throw new RuntimeException("Barzle!"); };
 
         RFuture<String> success = RFuture.success("Yay!");
         scounter.bind(success.flatMap(successMap));
@@ -142,16 +134,8 @@ public class RFutureTest extends TestBase {
     @Test public void testFlatMappedDeferred () {
         FutureCounter scounter = new FutureCounter();
         FutureCounter fcounter = new FutureCounter();
-        Function<String,RFuture<Boolean>> successMap = new Function<String,RFuture<Boolean>>() {
-            public RFuture<Boolean> apply (String value) {
-                return RFuture.success(value != null);
-            }
-        };
-        Function<String,RFuture<Boolean>> failMap = new Function<String,RFuture<Boolean>>() {
-            public RFuture<Boolean> apply (String value) {
-                return RFuture.failure(new Exception("Barzle!"));
-            }
-        };
+        Function<String,RFuture<Boolean>> successMap = v -> RFuture.success(v != null);
+        Function<String,RFuture<Boolean>> failMap = v -> RFuture.failure(new Exception("Barzle!"));
 
         RPromise<String> success = RPromise.create();
         scounter.bind(success.flatMap(successMap));
@@ -181,18 +165,10 @@ public class RFutureTest extends TestBase {
 
         {   RPromise<String> success = RPromise.create();
             final RPromise<Boolean> innerSuccessSuccess = RPromise.create();
-            scounter.bind(success.flatMap(new Function<String,RFuture<Boolean>>() {
-                public RFuture<Boolean> apply (String value) {
-                    return innerSuccessSuccess;
-                }
-            }));
+            scounter.bind(success.flatMap(value -> innerSuccessSuccess));
             scounter.check("before succeed/succeed", 0, 0, 0);
             final RPromise<Boolean> innerSuccessFailure = RPromise.create();
-            fcounter.bind(success.flatMap(new Function<String,RFuture<Boolean>>() {
-                public RFuture<Boolean> apply (String value) {
-                    return innerSuccessFailure;
-                }
-            }));
+            fcounter.bind(success.flatMap(value -> innerSuccessFailure));
             fcounter.check("before succeed/fail", 0, 0, 0);
 
             success.succeed("Yay!");
@@ -210,18 +186,10 @@ public class RFutureTest extends TestBase {
 
         {   RPromise<String> failure = RPromise.create();
             final RPromise<Boolean> innerFailureSuccess = RPromise.create();
-            scounter.bind(failure.flatMap(new Function<String,RFuture<Boolean>>() {
-                public RFuture<Boolean> apply (String value) {
-                    return innerFailureSuccess;
-                }
-            }));
+            scounter.bind(failure.flatMap(value -> innerFailureSuccess));
             scounter.check("before fail/succeed", 0, 0, 0);
             final RPromise<Boolean> innerFailureFailure = RPromise.create();
-            fcounter.bind(failure.flatMap(new Function<String,RFuture<Boolean>>() {
-                public RFuture<Boolean> apply (String value) {
-                    return innerFailureFailure;
-                }
-            }));
+            fcounter.bind(failure.flatMap(value -> innerFailureFailure));
             fcounter.check("before fail/fail", 0, 0, 0);
 
             failure.fail(new Exception("Boo!"));
@@ -249,11 +217,7 @@ public class RFutureTest extends TestBase {
 
         RFuture<List<String>> sucseq = RFuture.sequence(list(success1, success2));
         counter.bind(sucseq);
-        sucseq.onSuccess(new Slot<List<String>>() {
-            public void onEmit (List<String> results) {
-                assertEquals(list("Yay 1!", "Yay 2!"), results);
-            }
-        });
+        sucseq.onSuccess(results -> assertEquals(list("Yay 1!", "Yay 2!"), results));
         counter.check("immediate seq success/success", 1, 0, 1);
 
         counter.bind(RFuture.sequence(list(success1, failure1)));
@@ -274,22 +238,16 @@ public class RFutureTest extends TestBase {
 
         RFuture<List<String>> suc2seq = RFuture.sequence(list(success1, success2));
         counter.bind(suc2seq);
-        suc2seq.onSuccess(new Slot<List<String>>() {
-            public void onEmit (List<String> results) {
-                assertEquals(list("Yay 1!", "Yay 2!"), results);
-            }
-        });
+        suc2seq.onSuccess(results -> assertEquals(list("Yay 1!", "Yay 2!"), results));
         counter.check("before seq succeed/succeed", 0, 0, 0);
         success1.succeed("Yay 1!");
         success2.succeed("Yay 2!");
         counter.check("after seq succeed/succeed", 1, 0, 1);
 
         RFuture<List<String>> sucfailseq = RFuture.sequence(list(success1, failure1));
-        sucfailseq.onFailure(new Slot<Throwable>() {
-            public void onEmit (Throwable cause) {
-                assertTrue(cause instanceof MultiFailureException);
-                assertEquals("1 failures: java.lang.Exception: Boo 1!", cause.getMessage());
-            }
+        sucfailseq.onFailure(cause -> {
+            assertTrue(cause instanceof MultiFailureException);
+            assertEquals("1 failures: java.lang.Exception: Boo 1!", cause.getMessage());
         });
         counter.bind(sucfailseq);
         counter.check("before seq succeed/fail", 0, 0, 0);
@@ -297,22 +255,18 @@ public class RFutureTest extends TestBase {
         counter.check("after seq succeed/fail", 0, 1, 1);
 
         RFuture<List<String>> failsucseq = RFuture.sequence(list(failure1, success2));
-        failsucseq.onFailure(new Slot<Throwable>() {
-            public void onEmit (Throwable cause) {
-                assertTrue(cause instanceof MultiFailureException);
-                assertEquals("1 failures: java.lang.Exception: Boo 1!", cause.getMessage());
-            }
+        failsucseq.onFailure(cause -> {
+            assertTrue(cause instanceof MultiFailureException);
+            assertEquals("1 failures: java.lang.Exception: Boo 1!", cause.getMessage());
         });
         counter.bind(failsucseq);
         counter.check("after seq fail/succeed", 0, 1, 1);
 
         RFuture<List<String>> fail2seq = RFuture.sequence(list(failure1, failure2));
-        fail2seq.onFailure(new Slot<Throwable>() {
-            public void onEmit (Throwable cause) {
-                assertTrue(cause instanceof MultiFailureException);
-                assertEquals("2 failures: java.lang.Exception: Boo 1!, java.lang.Exception: Boo 2!",
-                             cause.getMessage());
-            }
+        fail2seq.onFailure(cause -> {
+            assertTrue(cause instanceof MultiFailureException);
+            assertEquals("2 failures: java.lang.Exception: Boo 1!, java.lang.Exception: Boo 2!",
+                         cause.getMessage());
         });
         counter.bind(fail2seq);
         counter.check("before seq fail/fail", 0, 0, 0);
@@ -333,11 +287,9 @@ public class RFutureTest extends TestBase {
         RFuture<Integer> integer = RFuture.success(42);
 
         RFuture<RFuture.T2<String,Integer>> sucsuc = RFuture.sequence(string, integer);
-        sucsuc.onSuccess(new Slot<RFuture.T2<String,Integer>>() {
-            public void onEmit (RFuture.T2<String,Integer> tup) {
-                assertEquals("string", tup.a);
-                assertEquals((Integer)42, tup.b);
-            }
+        sucsuc.onSuccess(tup -> {
+            assertEquals("string", tup.a);
+            assertEquals((Integer)42, tup.b);
         });
         counter.bind(sucsuc);
         counter.check("tuple2 seq success/success", 1, 0, 1);
@@ -354,14 +306,13 @@ public class RFutureTest extends TestBase {
 
     @Test public void testCollectEmpty () {
         FutureCounter counter = new FutureCounter();
-        RFuture<Collection<String>> seq = RFuture.collect(Collections.<RFuture<String>>emptyList());
+        RFuture<Collection<String>> seq = RFuture.collect(Collections.emptyList());
         counter.bind(seq);
         counter.check("collect empty list succeeds", 1, 0, 1);
     }
 
-    // fucking Java generics and arrays... blah
     protected <T> List<T> list (T one, T two) {
-        List<T> list = new ArrayList<T>();
+        List<T> list = new ArrayList<>();
         list.add(one);
         list.add(two);
         return list;

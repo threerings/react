@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * Represents an asynchronous result. Unlike standard Java futures, you cannot block on this
@@ -82,7 +83,7 @@ public abstract class RFuture<T> extends Reactor {
     }
 
     /** Returns a future with an already-computed result. */
-    public static <T> RFuture<T> result (final Try<T> result) {
+    public static <T> RFuture<T> result (Try<T> result) {
         return new RFuture<T>() {
             public Try<T> result () { return result; }
         };
@@ -98,8 +99,8 @@ public abstract class RFuture<T> extends Reactor {
         // if we're passed an empty list of futures, succeed immediately with an empty list
         if (futures.isEmpty()) return RFuture.success(Collections.<T>emptyList());
 
-        final RPromise<List<T>> pseq = RPromise.create();
-        final int count = futures.size();
+        RPromise<List<T>> pseq = RPromise.create();
+        int count = futures.size();
         class Sequencer {
             public synchronized void onResult (int idx, Try<T> result) {
                 if (result.isSuccess()) {
@@ -120,10 +121,10 @@ public abstract class RFuture<T> extends Reactor {
             protected int _remain = count;
             protected MultiFailureException _error;
         }
-        final Sequencer seq = new Sequencer();
+        Sequencer seq = new Sequencer();
         Iterator<? extends RFuture<T>> iter = futures.iterator();
         for (int ii = 0; iter.hasNext(); ii++) {
-            final int idx = ii;
+            int idx = ii;
             iter.next().onComplete(new SignalView.Listener<Try<T>>() {
                 public void onEmit (Try<T> result) { seq.onResult(idx, result); }
             });
@@ -170,8 +171,8 @@ public abstract class RFuture<T> extends Reactor {
         // if we're passed an empty list of futures, succeed immediately with an empty list
         if (futures.isEmpty()) return RFuture.<Collection<T>>success(Collections.<T>emptyList());
 
-        final RPromise<Collection<T>> pseq = RPromise.create();
-        final int count = futures.size();
+        RPromise<Collection<T>> pseq = RPromise.create();
+        int count = futures.size();
         SignalView.Listener<Try<T>> collector = new SignalView.Listener<Try<T>>() {
             public synchronized void onEmit (Try<T> result) {
                 if (result.isSuccess()) _results.add(result.get());
@@ -187,7 +188,7 @@ public abstract class RFuture<T> extends Reactor {
     /** Causes {@code slot} to be notified if/when this future is completed with success. If it has
      * already succeeded, the slot will be notified immediately.
      * @return this future for chaining. */
-    public RFuture<T> onSuccess (final SignalView.Listener<? super T> slot) {
+    public RFuture<T> onSuccess (SignalView.Listener<? super T> slot) {
         return onComplete(new SignalView.Listener<Try<T>>() {
             public void onEmit (Try<T> result) {
                 if (result.isSuccess()) slot.onEmit(result.get());
@@ -198,7 +199,7 @@ public abstract class RFuture<T> extends Reactor {
     /** Causes {@code slot} to be notified if/when this future is completed with failure. If it has
      * already failed, the slot will be notified immediately.
      * @return this future for chaining. */
-    public RFuture<T> onFailure (final SignalView.Listener<? super Throwable> slot) {
+    public RFuture<T> onFailure (SignalView.Listener<? super Throwable> slot) {
         return onComplete(new SignalView.Listener<Try<T>>() {
             public void onEmit (Try<T> result) {
                 if (result.isFailure()) slot.onEmit(result.getFailure());
@@ -209,7 +210,7 @@ public abstract class RFuture<T> extends Reactor {
     /** Causes {@code slot} to be notified when this future is completed. If it has already
      * completed, the slot will be notified immediately.
      * @return this future for chaining. */
-    public RFuture<T> onComplete (final SignalView.Listener<? super Try<T>> slot) {
+    public RFuture<T> onComplete (SignalView.Listener<? super Try<T>> slot) {
         Try<T> result = result();
         if (result != null) slot.onEmit(result);
         else addConnection(slot);
@@ -219,7 +220,7 @@ public abstract class RFuture<T> extends Reactor {
     /** Returns a value that indicates whether this future has completed. */
     public ValueView<Boolean> isComplete () {
         if (_isCompleteView == null) {
-            final Value<Boolean> isCompleteView = Value.create(false);
+            Value<Boolean> isCompleteView = Value.create(false);
             onComplete(new SignalView.Listener<Try<T>>() {
                 public void onEmit (Try<T> result) {
                     isCompleteView.update(true);
@@ -240,14 +241,14 @@ public abstract class RFuture<T> extends Reactor {
      * This is useful for binding the disabled state of UI elements to this future's completeness
      * (i.e. disabled while the future is incomplete, then reenabled when it is completed).
      * @return this future for chaining. */
-    public RFuture<T> bindComplete (SignalView.Listener<Boolean> slot) {
+    public RFuture<T> bindComplete (ValueView.Listener<Boolean> slot) {
         isComplete().connectNotify(slot);
         return this;
     }
 
     /** Transforms this future by mapping its result upon arrival. */
-    public <R> RFuture<R> transform (final Function<Try<? super T>,Try<R>> func) {
-        final RPromise<R> xf = RPromise.create();
+    public <R> RFuture<R> transform (Function<Try<? super T>,Try<R>> func) {
+        RPromise<R> xf = RPromise.create();
         onComplete(new SignalView.Listener<Try<T>>() {
             public void onEmit (Try<T> result) {
                 Try<R> xfResult;
@@ -264,7 +265,7 @@ public abstract class RFuture<T> extends Reactor {
     }
 
     /** Maps the value of a successful result using {@code func} upon arrival. */
-    public <R> RFuture<R> map (final Function<? super T, R> func) {
+    public <R> RFuture<R> map (Function<? super T, R> func) {
         Object sigh = Try.lift(func);
         @SuppressWarnings("unchecked") Function<Try<? super T>,Try<R>> lifted =
             (Function<Try<? super T>,Try<R>>)sigh;
@@ -274,7 +275,7 @@ public abstract class RFuture<T> extends Reactor {
     /** Maps the value of a failed result using {@code func} upon arrival. Ideally one could
       * generalize the type {@code T} here but Java doesn't allow type parameters with lower
       * bounds. */
-    public RFuture<T> recover (final Function<? super Throwable, T> func) {
+    public RFuture<T> recover (Function<? super Throwable, T> func) {
         Object sigh = new Function<Try<T>,Try<T>>() {
             public Try<T> apply (Try<T> result) {
                 return result.recover(func);
@@ -288,8 +289,8 @@ public abstract class RFuture<T> extends Reactor {
     /** Maps a successful result to a new result using {@code func} when it arrives. Failure on the
      * original result or the mapped result are both dispatched to the mapped result. This is
      * useful for chaining asynchronous actions. It's also known as monadic bind. */
-    public <R> RFuture<R> flatMap (final Function<? super T, RFuture<R>> func) {
-        final RPromise<R> mapped = RPromise.create();
+    public <R> RFuture<R> flatMap (Function<? super T, RFuture<R>> func) {
+        RPromise<R> mapped = RPromise.create();
         onComplete(new SignalView.Listener<Try<T>>() {
             public void onEmit (Try<T> result) {
                 if (result.isFailure()) mapped.fail(result.getFailure());
@@ -301,7 +302,7 @@ public abstract class RFuture<T> extends Reactor {
                         mapped.fail(t);
                         return;
                     }
-                    mappedResult.onComplete(mapped.completer());
+                    mappedResult.onComplete(mapped::complete);
                 }
             }
         });
@@ -321,8 +322,7 @@ public abstract class RFuture<T> extends Reactor {
     public abstract Try<T> result ();
 
     @Override RListener placeholderListener () {
-        /*@SuppressWarnings("unchecked")*/ RListener p = (RListener)Slots.NOOP;
-        return p;
+        return Slot.NOOP;
     }
 
     private ValueView<Boolean> _isCompleteView;

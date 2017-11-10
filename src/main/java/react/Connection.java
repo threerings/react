@@ -42,9 +42,6 @@ public abstract class Connection implements Closeable
      */
     public abstract void close ();
 
-    /** @deprecated Call {@link #close} instead. */
-    @Deprecated public void disconnect () { close(); }
-
     /**
      * Converts this connection into a one-shot connection. After the first time the slot or
      * listener is notified, it will automatically be disconnected.
@@ -59,7 +56,7 @@ public abstract class Connection implements Closeable
      * Signal<Foo> signal = ...;
      * Connection conn;
      * synchronized (signal) {
-     *   conn = signal.connect(slot).once();
+     *   conn = signal.connect(v -> ...).once();
      * }
      * }</pre>
      *
@@ -75,7 +72,7 @@ public abstract class Connection implements Closeable
      *
      * <pre>{@code
      * Signal<Foo> signal = ...;
-     * Connection conn = signal.connect(new Slot<Foo>() { ... }).atPrio(5);
+     * Connection conn = signal.connect(value -> ... ).atPrio(5);
      * }</pre>
      *
      * <p><em>NOTE:</em> if you are dispatching signals in a multithreaded environment, it is
@@ -87,7 +84,7 @@ public abstract class Connection implements Closeable
      * Signal<Foo> signal = ...;
      * Connection conn;
      * synchronized (signal) {
-     *   conn = signal.connect(slot).atPrio(5);
+     *   conn = signal.connect(v -> ...).atPrio(5);
      * }
      * }</pre>
      *

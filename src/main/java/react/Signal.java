@@ -12,6 +12,21 @@ package react;
 public class Signal<T> extends AbstractSignal<T>
 {
     /**
+     * A signal that emits an event with no associated data. It can be used like so:
+     */
+    public static class Unit extends Signal<Void> {
+        /** Connects a zero-argument listener to this signal. */
+        public Connection connect (Runnable slot) {
+            return connect(v -> slot.run());
+        }
+
+        /** Causes this signal to emit an event to its connected slots. */
+        public void emit () {
+            notifyEmit(null);
+        }
+    }
+
+    /**
      * Convenience method for creating a signal without repeating the type parameter.
      */
     public static <T> Signal<T> create () {
@@ -19,21 +34,16 @@ public class Signal<T> extends AbstractSignal<T>
     }
 
     /**
+     * Convenience method for creating a {@link Unit} signal.
+     */
+    public static Signal.Unit createUnit () {
+        return new Signal.Unit();
+    }
+
+    /**
      * Causes this signal to emit the supplied event to connected slots.
      */
     public void emit (T event) {
         notifyEmit(event);
-    }
-
-    /**
-     * Returns a slot which can be used to wire this signal to the emissions of a {@link Signal} or
-     * another value.
-     */
-    public Slot<T> slot () {
-        return new Slot<T> () {
-            @Override public void onEmit (T value) {
-                emit(value);
-            }
-        };
     }
 }
