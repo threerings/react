@@ -1,6 +1,6 @@
 //
-// React - a library for functional-reactive-like programming in Java
-// Copyright (c) 2011, Three Rings Design, Inc. - All rights reserved.
+// React - a library for functional-reactive-like programming
+// Copyright (c) 2011-present, React Authors
 // http://github.com/threerings/react/blob/master/LICENSE
 
 package react;
@@ -9,31 +9,41 @@ package react;
  * A signal that emits events of type {@code T}. {@link Slot}s may be connected to a signal to be
  * notified upon event emission.
  */
-public class Signal<T> extends AbstractSignal<T>
-{
-    /**
-     * Convenience method for creating a signal without repeating the type parameter.
-     */
-    public static <T> Signal<T> create () {
-        return new Signal<T>();
+public class Signal<T> extends AbstractSignal<T> {
+
+  /**
+   * A signal that emits an event with no associated data. It can be used like so:
+   */
+  public static class Unit extends Signal<Void> {
+    /** Connects a zero-argument listener to this signal. */
+    public Connection connect (Runnable slot) {
+      return connect(v -> slot.run());
     }
 
-    /**
-     * Causes this signal to emit the supplied event to connected slots.
-     */
-    public void emit (T event) {
-        notifyEmit(event);
+    /** Causes this signal to emit an event to its connected slots. */
+    public void emit () {
+      notifyEmit(null);
     }
+  }
 
-    /**
-     * Returns a slot which can be used to wire this signal to the emissions of a {@link Signal} or
-     * another value.
-     */
-    public Slot<T> slot () {
-        return new Slot<T> () {
-            @Override public void onEmit (T value) {
-                emit(value);
-            }
-        };
-    }
+  /**
+   * Convenience method for creating a signal without repeating the type parameter.
+   */
+  public static <T> Signal<T> create () {
+    return new Signal<T>();
+  }
+
+  /**
+   * Convenience method for creating a {@link Unit} signal.
+   */
+  public static Signal.Unit createUnit () {
+    return new Signal.Unit();
+  }
+
+  /**
+   * Causes this signal to emit the supplied event to connected slots.
+   */
+  public void emit (T event) {
+    notifyEmit(event);
+  }
 }

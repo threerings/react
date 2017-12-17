@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
  */
 public class RSetTest
 {
-    public static class Counter extends RSet.Listener<Object> {
+    public static class Counter implements RSet.Listener<Object> {
         public int notifies;
         @Override public void onAdd (Object elem) {
             notifies++;

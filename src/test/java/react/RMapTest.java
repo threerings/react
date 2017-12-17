@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
  */
 public class RMapTest
 {
-    public static class Counter extends RMap.Listener<Object,Object> {
+    public static class Counter implements RMap.Listener<Object,Object> {
         public int notifies;
         @Override public void onPut (Object key, Object value) {
             notifies++;
@@ -30,12 +30,12 @@ public class RMapTest
     }
 
     @Test public void testBasicNotify () {
-        RMap<Integer,String> map = RMap.create(new HashMap<Integer,String>());
+        RMap<Integer,String> map = RMap.create(new HashMap<>());
         Counter counter = new Counter();
         map.connect(counter);
 
         // add a mapping, ensure that we're notified
-        map.connect(new RMap.Listener<Integer,String>() {
+        map.connect(new RMap.Listener<Integer, String>() {
             public void onPut (Integer key, String value, String ovalue) {
                 assertEquals(42, key.intValue());
                 assertEquals("LTUAE", value);

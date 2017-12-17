@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 
 public abstract class TestBase {
 
-    public static class Counter extends Slot<Object> {
+    public static class Counter implements Slot<Object> {
         public void trigger () {
             _count++;
         }

@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 
 public class RQueueTest
 {
-    public static class Counter extends RQueue.Listener<Object> {
+    public static class Counter implements RQueue.Listener<Object> {
         public int notifies;
         @Override public void onOffer (Object elem) { notifies++; }
         @Override public void onPoll (Object elem) { notifies++; }

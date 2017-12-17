@@ -1,6 +1,6 @@
 //
 // React - a library for functional-reactive-like programming
-// Copyright (c) 2013, Three Rings Design, Inc. - All rights reserved.
+// Copyright (c) 2011-present, React Authors
 // http://github.com/threerings/react/blob/master/LICENSE
 
 package react;
@@ -17,68 +17,41 @@ package react;
  */
 public class RPromise<T> extends RFuture<T> {
 
-    /** Creates a new, uncompleted, promise. */
-    public static <T> RPromise<T> create () {
-        return new RPromise<T>();
+  /** Creates a new, uncompleted, promise. */
+  public static <T> RPromise<T> create () {
+    return new RPromise<T>();
+  }
+
+  /** Causes this promise to be completed with {@code result}. */
+  public void complete (Try<T> result) {
+    if (_result != null) throw new IllegalStateException("Already completed");
+    _result = result;
+    try {
+      notify(COMPLETE, result, null, null);
+    } finally {
+      clearConnections();
     }
+  }
 
-    /** Causes this promise to be completed with {@code result}. */
-    public void complete (Try<T> result) {
-        if (_result != null) throw new IllegalStateException("Already completed");
-        _result = result;
-        try {
-            notify(COMPLETE, result, null, null);
-        } finally {
-            clearConnections();
-        }
+  /** Causes this promise to be completed successfully with {@code value}. */
+  public void succeed (T value) {
+    complete(Try.success(value));
+  }
+
+  /** Causes this promise to be completed with failure caused by {@code cause}. */
+  public void fail (Throwable cause) {
+    complete(Try.<T>failure(cause));
+  }
+
+  @Override public Try<T> result () {
+    return _result;
+  }
+
+  protected Try<T> _result;
+
+  @SuppressWarnings("unchecked") protected static final Notifier COMPLETE = new Notifier() {
+    public void notify (Object lner, Object value, Object i0, Object i1) {
+      ((SignalView.Listener<Try<Object>>)lner).onEmit((Try<Object>)value);
     }
-
-    /** Causes this promise to be completed successfully with {@code value}. */
-    public void succeed (T value) {
-        complete(Try.success(value));
-    }
-
-    /** Causes this promise to be completed with failure caused by {@code cause}. */
-    public void fail (Throwable cause) {
-        complete(Try.<T>failure(cause));
-    }
-
-    /** Returns a slot that can be used to complete this promise. */
-    public Slot<Try<T>> completer () {
-        return new Slot<Try<T>>() {
-            public void onEmit (Try<T> result) {
-                complete(result);
-            }
-        };
-    }
-
-    /** Returns a slot that can be used to {@link #succeed} this promise. */
-    public Slot<T> succeeder () {
-        return new Slot<T>() {
-            public void onEmit (T result) {
-                succeed(result);
-            }
-        };
-    }
-
-    /** Returns a slot that can be used to {@link #fail} this promise. */
-    public Slot<Throwable> failer () {
-        return new Slot<Throwable>() {
-            public void onEmit (Throwable cause) {
-                fail(cause);
-            }
-        };
-    }
-
-    @Override public Try<T> result () {
-        return _result;
-    }
-
-    protected Try<T> _result;
-
-    @SuppressWarnings("unchecked") protected static final Notifier COMPLETE = new Notifier() {
-        public void notify (Object lner, Object value, Object i0, Object i1) {
-            ((SignalView.Listener<Try<Object>>)lner).onEmit((Try<Object>)value);
-        }
-    };
+  };
 }

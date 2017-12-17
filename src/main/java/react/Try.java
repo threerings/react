@@ -1,6 +1,6 @@
 //
 // React - a library for functional-reactive-like programming
-// Copyright (c) 2013, Three Rings Design, Inc. - All rights reserved.
+// Copyright (c) 2011-present, React Authors
 // http://github.com/threerings/react/blob/master/LICENSE
 
 package react;
@@ -13,113 +13,113 @@ package react;
  */
 public abstract class Try<T> {
 
-    /** Represents a successful try. Contains the successful result. */
-    public static final class Success<T> extends Try<T> {
-        public final T value;
-        public Success (T value) {
-            this.value = value;
-        }
-
-        @Override public T get () { return value; }
-        @Override public Throwable getFailure () { throw new IllegalStateException(); }
-        @Override public boolean isSuccess () { return true; }
-        @Override public <R> Try<R> map (Function<? super T, R> func) {
-            try {
-                return success(func.apply(value));
-            } catch (Throwable t) {
-                return failure(t);
-            }
-        }
-        @Override public Try<T> recover (Function<? super Throwable, T> func) {
-            return this;
-        }
-        @Override public <R> Try<R> flatMap (Function<? super T, Try<R>> func) {
-            try {
-                return func.apply(value);
-            } catch (Throwable t) {
-                return failure(t);
-            }
-        }
-
-        @Override public String toString () { return "Success(" + value + ")"; }
+  /** Represents a successful try. Contains the successful result. */
+  public static final class Success<T> extends Try<T> {
+    public final T value;
+    public Success (T value) {
+      this.value = value;
     }
 
-    /** Represents a failed try. Contains the cause of failure. */
-    public static final class Failure<T> extends Try<T> {
-        public final Throwable cause;
-        public Failure (Throwable cause) {
-            this.cause = cause;
-        }
-
-        @Override public T get () {
-            if (cause instanceof RuntimeException) {
-                throw (RuntimeException)cause;
-            } else if (cause instanceof Error) {
-                throw (Error)cause;
-            } else {
-                throw (RuntimeException)new RuntimeException().initCause(cause);
-            }
-        }
-        @Override public Throwable getFailure () { return cause; }
-        @Override public boolean isSuccess () { return false; }
-        @Override public <R> Try<R> map (Function<? super T, R> func) {
-            return this.<R>casted();
-        }
-        @Override public Try<T> recover (Function<? super Throwable, T> func) {
-            try {
-                return success(func.apply(cause));
-            } catch (Throwable t) {
-                return failure(t);
-            }
-        }
-        @Override public <R> Try<R> flatMap (Function<? super T, Try<R>> func) {
-            return this.<R>casted();
-        }
-
-        @Override public String toString () { return "Failure(" + cause + ")"; }
-
-        @SuppressWarnings("unchecked") private <R> Try<R> casted () { return (Try<R>)this; }
+    @Override public T get () { return value; }
+    @Override public Throwable getFailure () { throw new IllegalStateException(); }
+    @Override public boolean isSuccess () { return true; }
+    @Override public <R> Try<R> map (Function<? super T, R> func) {
+      try {
+        return success(func.apply(value));
+      } catch (Throwable t) {
+        return failure(t);
+      }
+    }
+    @Override public Try<T> recover (Function<? super Throwable, T> func) {
+      return this;
+    }
+    @Override public <R> Try<R> flatMap (Function<? super T, Try<R>> func) {
+      try {
+        return func.apply(value);
+      } catch (Throwable t) {
+        return failure(t);
+      }
     }
 
-    /** Creates a successful try. */
-    public static <T> Try<T> success (T value) { return new Success<T>(value); }
+    @Override public String toString () { return "Success(" + value + ")"; }
+  }
 
-    /** Creates a failed try. */
-    public static <T> Try<T> failure (Throwable cause) { return new Failure<T>(cause); }
-
-    /** Lifts {@code func}, a function on values, to a function on tries. */
-    public static <T,R> Function<Try<T>,Try<R>> lift (final Function<T, R> func) {
-        return new Function<Try<T>,Try<R>>() {
-            public Try<R> apply (Try<T> result) { return result.map(func); }
-        };
+  /** Represents a failed try. Contains the cause of failure. */
+  public static final class Failure<T> extends Try<T> {
+    public final Throwable cause;
+    public Failure (Throwable cause) {
+      this.cause = cause;
     }
 
-    /** Returns the value associated with a successful try, or rethrows the exception if the try
-     * failed. If the exception is a checked exception, it will be thrown as a the {@code cause} of
-     * a newly constructed {@link RuntimeException}. */
-    public abstract T get ();
+    @Override public T get () {
+      if (cause instanceof RuntimeException) {
+        throw (RuntimeException)cause;
+      } else if (cause instanceof Error) {
+        throw (Error)cause;
+      } else {
+        throw (RuntimeException)new RuntimeException().initCause(cause);
+      }
+    }
+    @Override public Throwable getFailure () { return cause; }
+    @Override public boolean isSuccess () { return false; }
+    @Override public <R> Try<R> map (Function<? super T, R> func) {
+      return this.<R>casted();
+    }
+    @Override public Try<T> recover (Function<? super Throwable, T> func) {
+      try {
+        return success(func.apply(cause));
+      } catch (Throwable t) {
+        return failure(t);
+      }
+    }
+    @Override public <R> Try<R> flatMap (Function<? super T, Try<R>> func) {
+      return this.<R>casted();
+    }
 
-    /** Returns the cause of failure for a failed try. Throws {@link IllegalStateException} if
-     * called on a successful try. */
-    public abstract Throwable getFailure ();
+    @Override public String toString () { return "Failure(" + cause + ")"; }
 
-    /** Returns try if this is a successful try, false if it is a failed try. */
-    public abstract boolean isSuccess ();
+    @SuppressWarnings("unchecked") private <R> Try<R> casted () { return (Try<R>)this; }
+  }
 
-    /** Returns try if this is a failed try, false if it is a successful try. */
-    public boolean isFailure () { return !isSuccess(); }
+  /** Creates a successful try. */
+  public static <T> Try<T> success (T value) { return new Success<T>(value); }
 
-    /** Maps successful tries through {@code func}, passees failure through as is. */
-    public abstract <R> Try<R> map (Function<? super T, R> func);
+  /** Creates a failed try. */
+  public static <T> Try<T> failure (Throwable cause) { return new Failure<T>(cause); }
 
-    /** Maps failed tries through {@code func}, passes success through as is. Note: if {@code func}
-      * throws an exception, you will get back a failure try with the new failure. Ideally one
-      * could generalize the type {@code T} here but Java doesn't allow type parameters with lower
-      * bounds. */
-    public abstract Try<T> recover (Function<? super Throwable, T> func);
+  /** Lifts {@code func}, a function on values, to a function on tries. */
+  public static <T,R> Function<Try<T>,Try<R>> lift (final Function<T, R> func) {
+    return new Function<Try<T>,Try<R>>() {
+      public Try<R> apply (Try<T> result) { return result.map(func); }
+    };
+  }
 
-    /** Maps successful tries through {@code func}, passes failure through as is. */
-    public abstract <R> Try<R> flatMap (Function<? super T, Try<R>> func);
+  /** Returns the value associated with a successful try, or rethrows the exception if the try
+    * failed. If the exception is a checked exception, it will be thrown as a the {@code cause} of
+    * a newly constructed {@link RuntimeException}. */
+  public abstract T get ();
 
-    private Try () {}
+  /** Returns the cause of failure for a failed try. Throws {@link IllegalStateException} if
+    * called on a successful try. */
+  public abstract Throwable getFailure ();
+
+  /** Returns try if this is a successful try, false if it is a failed try. */
+  public abstract boolean isSuccess ();
+
+  /** Returns try if this is a failed try, false if it is a successful try. */
+  public boolean isFailure () { return !isSuccess(); }
+
+  /** Maps successful tries through {@code func}, passees failure through as is. */
+  public abstract <R> Try<R> map (Function<? super T, R> func);
+
+  /** Maps failed tries through {@code func}, passes success through as is. Note: if {@code func}
+    * throws an exception, you will get back a failure try with the new failure. Ideally one
+    * could generalize the type {@code T} here but Java doesn't allow type parameters with lower
+    * bounds. */
+  public abstract Try<T> recover (Function<? super Throwable, T> func);
+
+  /** Maps successful tries through {@code func}, passes failure through as is. */
+  public abstract <R> Try<R> flatMap (Function<? super T, Try<R>> func);
+
+  private Try () {}
 }

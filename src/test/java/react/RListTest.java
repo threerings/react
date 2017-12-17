@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 
 public class RListTest
 {
-    public static class Counter extends RList.Listener<Object> {
+    public static class Counter implements RList.Listener<Object> {
         public int notifies;
         @Override public void onAdd (int index, Object elem) {
             notifies++;
