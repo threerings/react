@@ -5,8 +5,6 @@
 
 package react;
 
-import java.util.function.Function;
-
 /**
  * Handles the machinery of connecting listeners to a value and notifying them, without exposing a
  * public interface for updating the value. This can be used by libraries which wish to provide

@@ -5,8 +5,6 @@
 
 package react;
 
-import java.util.function.Function;
-
 /**
  * A synonym for {@link SignalView.Listener} and {@link ValueView.Listener} (ignoring the old
  * value) name. Also provides some filtering and composition methods.

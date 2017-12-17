@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
-import java.util.function.Function;
 
 /**
  * Provides utility methods for {@link Value}s.

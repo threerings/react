@@ -8,7 +8,6 @@ package react;
 import org.junit.*;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
 
 import static org.junit.Assert.*;
 

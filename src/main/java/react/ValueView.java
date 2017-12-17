@@ -5,8 +5,6 @@
 
 package react;
 
-import java.util.function.Function;
-
 /**
  * A view of a {@link Value}, to which listeners may be added, but which one cannot update. This
  * can be used in combination with {@link AbstractValue} to provide {@link Value} semantics to an

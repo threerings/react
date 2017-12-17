@@ -5,8 +5,6 @@
 
 package react;
 
-import java.util.function.Function;
-
 /**
  * A view of a {@link Signal}, on which slots may listen, but to which one cannot emit events. This
  * is generally used to provide signal-like views of changing entities. See {@link AbstractValue}
