@@ -99,62 +99,45 @@ class Cons extends Connection
     static Cons insert (Cons head, Cons cons) {
         if (head == null) {
             return cons;
-
-        } else if (cons._priority > head._priority) {
+        }
+        if (cons._priority > head._priority) {
             cons.next = head;
             return cons;
         }
-
-        Cons cycleHead = head;
-        do {
-            if (cycleHead.next == null) {
-                cycleHead.next = cons;
-                break;
-
-            } else if (cons._priority > cycleHead.next._priority) {
-                cons.next = cycleHead.next;
-                cycleHead.next = cons;
-                break;
+        for (Cons curs = head; ; curs = curs.next) {
+            if (curs.next == null) {
+                curs.next = cons;
+                return head;
             }
-
-            cycleHead = cycleHead.next;
-
-        } while (cycleHead != null);
-
-
-        return head;
+            if (cons._priority > curs.next._priority) {
+                cons.next = curs.next;
+                curs.next = cons;
+                return head;
+            }
+        }
     }
 
     static Cons remove (Cons head, Cons cons) {
         if (head == null) return head;
         if (head == cons) return head.next;
-
-        Cons cycleHead = head;
-        do {
-            if (cycleHead.next == cons) {
-                cycleHead.next = cons.next;
+        for (Cons curs = head; curs != null; curs = curs.next) {
+            if (curs.next == cons) {
+                curs.next = cons.next;
                 break;
             }
-
-            cycleHead = cycleHead.next;
-
-        } while (cycleHead != null);
-
+        }
         return head;
     }
 
     static Cons removeAll (Cons head, RListener listener) {
         if (head == null) return null;
-
-        Cons cycleHead = head;
-        while (cycleHead.next != null) {
-            if (cycleHead.next.listener() == listener) {
-                cycleHead.next = cycleHead.next.next;
+        for (Cons curs = head; curs.next != null; ) {
+            if (curs.next.listener() == listener) {
+                curs.next = curs.next.next;
             } else {
-                cycleHead = cycleHead.next;
+                curs = curs.next;
             }
         }
-
         return head.listener() == listener ? head.next : head;
     }
 
