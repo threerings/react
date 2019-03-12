@@ -99,27 +99,63 @@ class Cons extends Connection
     static Cons insert (Cons head, Cons cons) {
         if (head == null) {
             return cons;
+
         } else if (cons._priority > head._priority) {
             cons.next = head;
             return cons;
-        } else {
-            head.next = insert(head.next, cons);
-            return head;
         }
+
+        Cons cycleHead = head;
+        do {
+            if (cycleHead.next == null) {
+                cycleHead.next = cons;
+                break;
+
+            } else if (cons._priority > cycleHead.next._priority) {
+                cons.next = cycleHead.next;
+                cycleHead.next = cons;
+                break;
+            }
+
+            cycleHead = cycleHead.next;
+
+        } while (cycleHead != null);
+
+
+        return head;
     }
 
     static Cons remove (Cons head, Cons cons) {
         if (head == null) return head;
         if (head == cons) return head.next;
-        head.next = remove(head.next, cons);
+
+        Cons cycleHead = head;
+        do {
+            if (cycleHead.next == cons) {
+                cycleHead.next = cons.next;
+                break;
+            }
+
+            cycleHead = cycleHead.next;
+
+        } while (cycleHead != null);
+
         return head;
     }
 
     static Cons removeAll (Cons head, RListener listener) {
         if (head == null) return null;
-        if (head.listener() == listener) return removeAll(head.next, listener);
-        head.next = removeAll(head.next, listener);
-        return head;
+
+        Cons cycleHead = head;
+        while (cycleHead.next != null) {
+            if (cycleHead.next.listener() == listener) {
+                cycleHead.next = cycleHead.next.next;
+            } else {
+                cycleHead = cycleHead.next;
+            }
+        }
+
+        return head.listener() == listener ? head.next : head;
     }
 
     private Reactor _owner;
